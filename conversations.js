@@ -25,10 +25,12 @@ export const CHARACTERS = {
   // DOLOMITES
   hans:         { city:'dolomites', name:'Hans',  nameZh:'Hans',         emoji:'🥾', color:'#2E7D32', tagline:'祖上三代都是山地向导', title:'登山向导 · 说Ladin语' },
   bruno:        { city:'dolomites', name:'Bruno', nameZh:'Bruno',        emoji:'🐑', color:'#6B8E23', tagline:'100只羊的爸爸',        title:'牧羊人 · 偶尔下山' },
+  sissi:        { city:'dolomites', name:'Sissi', nameZh:'茜茜公主',     emoji:'👑', color:'#9B7EBD', tagline:'逃离维也纳的皇后',     title:'Empress Elisabeth · 1837-1898' },
 
   // SORRENTO
   caruso:       { city:'sorrento', name:'Caruso', nameZh:'Caruso',       emoji:'🎤', color:'#1565C0', tagline:'歌剧史上的金嗓子',     title:'男高音传奇 · 1873-1921' },
   giuseppe:     { city:'sorrento', name:'Giuseppe',nameZh:'Giuseppe',    emoji:'🍋', color:'#F1C40F', tagline:'家里柠檬比人高',       title:'柠檬农 · 四代单传' },
+  ferrante:     { city:'sorrento', name:'Ferrante',nameZh:'Elena',       emoji:'📖', color:'#6B2C91', tagline:'没人知道我的真面目',   title:'Elena Ferrante · 匿名作家' },
 
   // NAPLES
   maradona:     { city:'naples', name:'Maradona', nameZh:'马拉多纳',     emoji:'⚽', color:'#1E88E5', tagline:'上帝之手',             title:'足球之神 · 那不勒斯教父' },
@@ -486,6 +488,42 @@ export const CONVERSATIONS = {
     ),
   ],
 
+  sissi: [
+    t('Guten Tag. 我是 Elisabeth.'),
+    t('别人叫我 Sissi。'),
+    t('我本该坐在维也纳的霍夫堡宫里。'),
+    t('但在那里我每天都喘不过气。'),
+    t('所以我一次次逃——到梅拉诺，到这些山。'),
+    t('这里的空气让我活着。'),
+    choice(
+      { label:'你为什么逃离维也纳', reply:'宫廷礼仪把我捆成玩偶。婆婆监视我。丈夫忙于战争。我唯一的儿子鲁道夫 30 岁自杀了。我每年逃到这里三次。' },
+      { label:'为什么人们这么爱你', reply:'因为电影。1955 年《Sissi》三部曲 Romy Schneider 把我拍成了甜蜜公主。真实的我——抑郁、厌食、头发长到膝盖要六个人合力梳。没那么甜。' },
+    ),
+    t('我最后死在日内瓦。一个意大利无政府主义者用一把锉刀刺进我的心脏。'),
+    t('我 60 岁。'),
+    t('但我在多洛米蒂度过的时间——是我这一生为数不多真正活着的日子。'),
+    art(PHOTOS.dolomites, 'Merano (梅拉诺)', '南蒂罗尔 · 多洛米蒂西边 2 小时车程', '我最爱的温泉小镇。我每年春天在这里住一个月。', '沿 Passer 河找 "Passeggiata Sissi"（茜茜散步道）。我每天走的那条。'),
+    t('那条步道有一座我的雕像。游客都拍。'),
+    t('但没人知道——雕像立的位置，是我读完儿子死讯的那张长椅。'),
+    t('美的地方总藏着看不见的悲伤。'),
+    ref('🎬 电影彩蛋', '《Sissi》三部曲(1955) Romy Schneider 主演 → 甜美版。Netflix《The Empress》(2022-) 德剧版 → 黑暗真实版。看完两部，你会明白我有两张脸。'),
+    t('再告诉你一个地方——'),
+    art(PHOTOS.dolomites, 'Castel Fragsburg', '梅拉诺山上', '我住过的小城堡。现在是五星酒店，可以去喝下午茶。', '露台能俯瞰整个 Merano 山谷。点一壶 Maria Theresia 茶——加橘子利口酒，我那个时代奥地利贵妇最爱。'),
+    tip('🛍️ 山里带什么回家', 'Speck 火腿（真空包装能飞回国）。苹果酒（Südtirol 产意大利 80% 苹果）。手工木雕——Val Gardena 家家户户雕木工 400 年。'),
+    task('在 Merano 找茜茜散步道走一段', '从市中心下到 Passer 河边。蜿蜒 2 公里。找到那座雕像——看一眼她的表情。不是童话里那个笑着的公主。'),
+    secret(
+      '一件我的秘密——',
+      '我 16 岁嫁给奥地利皇帝。新婚之夜后我给母亲写信："I have been sold." (我被卖了。)',
+      '我这一生最爱的不是丈夫。',
+      '是希腊语和莎士比亚。',
+      '我 20 岁开始学古希腊语。直到死，我都在读《伊利亚特》原文。',
+      '海涅是我最爱的诗人。一句话陪了我一辈子：',
+      '"Ich habe viel geweint und viel gesungen." (我哭了很多，也唱了很多。)',
+      '下次你为了逃离生活跑进山里——想一想我。',
+      '有些笼子是金的。但笼子就是笼子。',
+    ),
+  ],
+
   // ════════════ SORRENTO ════════════
   caruso: [
     t('Benvenuto. 我是 Enrico Caruso.'),
@@ -576,6 +614,47 @@ export const CONVERSATIONS = {
       '回来后我明白了。',
       '她不是没见过世界——她是早就选择了世界的一个角。',
       '我现在也没想走。',
+    ),
+  ],
+
+  ferrante: [
+    t('Ciao. 我是 Elena Ferrante。'),
+    t('全世界读我的书。'),
+    t('没有人知道我是谁。'),
+    t('你现在收到的这条信息——可能来自一个女人，也可能是一个男人，或是一对夫妻，或是一整间编辑部。'),
+    choice(
+      { label:'为什么匿名', reply:'因为书写出来之后，它就不再需要作者。"Elena Ferrante" 是一个写作的身份。不是一个需要被采访、签名、上镜的人。' },
+      { label:'我看过《我的天才女友》', reply:'那你已经去过那不勒斯了——即使你还没真正踏上那里。Lila 和 Elena 在那个街区的每一次呼吸，都是我想让你闻到的空气。' },
+    ),
+    t('我最喜欢写的城市是那不勒斯。'),
+    t('不是因为它美。'),
+    t('是因为它真实。'),
+    t('这是一座拒绝被拍成明信片的城市——它让你看到人的贫穷、愤怒、欲望、嫉妒。然后你发现——'),
+    t('这些也是你自己的。'),
+    art(PHOTOS.naples, '那不勒斯 Rione Luzzatti', 'Via Taddeo da Sessa 附近', '《我的天才女友》小说里 Lila 和 Elena 成长的街区。HBO 剧集就在这里取景。', '找小说第一页描写的那个 tunnel（隧道）。那个代表"离开"的地方——Lila 一辈子都没真的穿过去。'),
+    t('关于那不勒斯还有一个我没写进书的地方——'),
+    art(PHOTOS.underground, 'Gesù Nuovo 教堂', 'Piazza del Gesù Nuovo', '立面是黑色的钻石形石头——450 年前从一个贵族的宫殿墙上拆下来的。', '教堂里有一块石板——石头上的符号被学者破译为一段完整的音乐。听说有人演奏过，说那是中世纪的一首灵歌。'),
+    t('索伦托？索伦托是那不勒斯的假面。'),
+    t('美丽，柠檬，塞壬，旅游业。'),
+    t('但真实的那不勒斯——你必须走进 Spaccanapoli，必须坐 Circumvesuviana，必须去 Rione Sanità 那些 "危险的" 街区。'),
+    t('别怕。'),
+    t('那不勒斯人对外来者很直接——如果他们不喜欢你，你会立刻知道。'),
+    t('但如果他们认了你——他们会把最后一块面包给你。'),
+    ref('📚 阅读彩蛋', '我的"那不勒斯四部曲"从《我的天才女友》开始。2000 万册销量。《纽约时报》把我评为 21 世纪 100 位最重要作家之一——尽管他们不知道我是谁。这本身就是一种自由。'),
+    tip('📖 出发前读什么', '去那不勒斯前读我的《烦人的爱》(L\'amore molesto, 1992)——那是最短的一本，也是最锋利的。如果时间不够——读前 30 页就好。你会用这 30 页的眼睛看整个那不勒斯。'),
+    task('在索伦托的书店找一本意大利文版', '即使你读不懂——带一本回家。放在你的书架上。每次看到它，你都会记起：最响的声音，有时候是选择不露脸的那一个。'),
+    secret(
+      '一件事——',
+      '2016 年一个意大利记者花了几个月查我的出版社账单、房产记录、税务数据。',
+      '他说他"找到"了我——一个叫 Anita Raja 的女翻译。',
+      '我的出版社没承认也没否认。',
+      '这篇报道发表后，读者分成两派。',
+      '一派愤怒——"他剥夺了她选择匿名的权利"。',
+      '另一派好奇——"终于知道她是谁了"。',
+      '我的回应很简单：',
+      '我继续写。',
+      '你继续猜。',
+      '名字不重要。书才是。',
     ),
   ],
 

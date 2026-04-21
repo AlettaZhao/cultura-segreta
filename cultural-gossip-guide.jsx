@@ -32,6 +32,20 @@ button{font-family:inherit;cursor:pointer}
 .typing-dot:nth-child(2){animation-delay:.15s}.typing-dot:nth-child(3){animation-delay:.3s}
 `;
 
+// ═══ Photo tags ═══
+const PHOTO_TAGS = [
+  { id:'pretty',    emoji:'✨', label:'最美',     color:'#d4a574' },
+  { id:'yummy',     emoji:'🍝', label:'最好吃',   color:'#e67e22' },
+  { id:'absurd',    emoji:'😂', label:'最离谱',   color:'#e74c3c' },
+  { id:'abstract',  emoji:'🤯', label:'最抽象',   color:'#9b59b6' },
+  { id:'shock',     emoji:'🗿', label:'最震撼',   color:'#34495e' },
+  { id:'heart',     emoji:'🥺', label:'最破防',   color:'#c0392b' },
+  { id:'tipsy',     emoji:'🍷', label:'最微醺',   color:'#8e44ad' },
+  { id:'cinematic', emoji:'🎬', label:'最电影感', color:'#2c3e50' },
+  { id:'squad',     emoji:'👥', label:'最合影',   color:'#16a085' },
+];
+const TAG_BY_ID = Object.fromEntries(PHOTO_TAGS.map(t=>[t.id,t]));
+
 // ═══ Persistence ═══
 function load(){
   try { const s = localStorage.getItem("cs_v10"); if (s) return JSON.parse(s); } catch {}
@@ -84,25 +98,29 @@ function ChatList({ city, state, onOpen, onBack, onTab, tab }){
     return Math.max(0, total - seen);
   };
   return (
-    <div style={{minHeight:"100vh",background:"#fff",display:"flex",flexDirection:"column"}}>
+    <div style={{minHeight:"100vh",background:"#faf7f2",display:"flex",flexDirection:"column"}}>
       <CityHeader city={cityInfo} onBack={onBack}/>
       <Tabs tab={tab} onTab={onTab}/>
-      <div style={{flex:1,padding:"4px 0"}}>
+      <div style={{padding:"18px 20px 6px"}}>
+        <div style={{fontSize:11,letterSpacing:3,color:"#8a6f47",fontWeight:700}}>LETTERS FROM LOCALS</div>
+        <div style={{fontFamily:"'Noto Serif SC',serif",fontSize:17,fontWeight:700,marginTop:2,color:"#2a1e10"}}>他们想跟你说几件事</div>
+      </div>
+      <div style={{flex:1,padding:"4px 12px 20px"}}>
         {chars.map(c => {
           const u = unread(c.id);
           const preview = getPreview(c.id);
           return (
             <button key={c.id} onClick={()=>onOpen(c.id)}
-              style={{width:"100%",border:"none",background:"#fff",padding:"14px 18px",display:"flex",gap:12,alignItems:"center",textAlign:"left",borderBottom:"1px solid #f3f3f3",cursor:"pointer"}}>
-              <div style={{width:52,height:52,borderRadius:"50%",background:c.color,color:"#fff",display:"flex",alignItems:"center",justifyContent:"center",fontSize:26,flexShrink:0,boxShadow:"0 2px 8px rgba(0,0,0,.08)"}}>{c.emoji}</div>
+              style={{width:"100%",border:"none",background:"#fff",padding:"14px 16px",marginBottom:8,borderRadius:16,display:"flex",gap:12,alignItems:"center",textAlign:"left",cursor:"pointer",boxShadow:"0 1px 4px rgba(60,40,20,.05)"}}>
+              <div style={{width:54,height:54,borderRadius:"50%",background:c.color,color:"#fff",display:"flex",alignItems:"center",justifyContent:"center",fontSize:26,flexShrink:0,boxShadow:`0 4px 12px ${c.color}55`}}>{c.emoji}</div>
               <div style={{flex:1,minWidth:0}}>
-                <div style={{display:"flex",justifyContent:"space-between",alignItems:"baseline"}}>
-                  <div style={{fontWeight:700,fontSize:16}}>{c.nameZh}</div>
-                  <div style={{fontSize:11,color:"#999",flexShrink:0,marginLeft:8}}>{c.tagline}</div>
+                <div style={{display:"flex",justifyContent:"space-between",alignItems:"baseline",gap:8}}>
+                  <div style={{fontFamily:"'Noto Serif SC',serif",fontWeight:700,fontSize:16.5,color:"#1a1a1a"}}>{c.nameZh}</div>
+                  <div style={{fontSize:10.5,color:c.color,flexShrink:0,fontWeight:600,letterSpacing:.5}}>{c.tagline}</div>
                 </div>
-                <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginTop:4,gap:8}}>
-                  <div style={{color:"#666",fontSize:13,overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap",flex:1}}>{preview}</div>
-                  {u > 0 && <div style={{background:"#ff3b30",color:"#fff",fontSize:11,fontWeight:700,borderRadius:12,padding:"2px 8px",minWidth:22,textAlign:"center"}}>{u}</div>}
+                <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginTop:5,gap:8}}>
+                  <div style={{color:"#7a6a54",fontSize:13,overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap",flex:1,fontStyle:"italic"}}>"{preview}"</div>
+                  {u > 0 && <div style={{background:"#d94f3a",color:"#fff",fontSize:11,fontWeight:700,borderRadius:12,padding:"2px 8px",minWidth:22,textAlign:"center"}}>{u}</div>}
                 </div>
               </div>
             </button>
@@ -183,19 +201,27 @@ function Chat({ charId, state, setState, onBack }){
     if (revealed < 1) setRevealed(1);
   }, [display.length]);
 
-  // auto-advance with pacing
+  // auto-advance with pacing (slower, leave reading time)
   useEffect(()=>{
     if (revealed >= display.length) return;
     const next = display[revealed];
     if (!next) return;
     if (next.t === 'choice') return; // user must pick
-    // secrets stay locked until task done
     if (next.t === 'secret' && !taskDone) return;
-    // pacing based on message type & length
     const prev = display[revealed-1];
-    const isSameSide = prev && !prev.mine === !next.mine;
-    const base = next.t === 'text' ? Math.min(1400, 400 + (next.text||'').length*18) : 900;
-    const delay = isSameSide ? base : base + 400;
+    const prevIsCard = prev && (prev.t==='artwork'||prev.t==='ref'||prev.t==='tip'||prev.t==='task');
+    let delay;
+    if (next.mine) delay = 450;
+    else if (next.t === 'text') {
+      const len = (next.text||'').length;
+      // ~3-4 Chinese chars per second reading, plus 1s "read and digest"
+      delay = 1100 + Math.min(2600, len * 55);
+    }
+    else if (next.t === 'artwork') delay = 2000;
+    else if (next.t === 'ref' || next.t === 'tip') delay = 1500;
+    else if (next.t === 'task') delay = 1600;
+    else delay = 1200;
+    if (prevIsCard) delay += 1200;  // extra pause after visual cards
     setTyping(!next.mine && next.t === 'text');
     const timer = setTimeout(()=>{
       setTyping(false);
@@ -233,7 +259,7 @@ function Chat({ charId, state, setState, onBack }){
   const finished = revealed >= display.length;
 
   return (
-    <div style={{display:"flex",flexDirection:"column",height:"100vh",background:"#f2f2f7"}}>
+    <div style={{display:"flex",flexDirection:"column",height:"100vh",background:"#f5f0e4"}}>
       <ChatHeader char={char} color={cityColor} onBack={onBack}/>
       <div ref={scrollRef} className="no-scrollbar" style={{flex:1,overflowY:"auto",padding:"14px 14px 20px"}}
            onClick={()=>{ if (!atChoice && revealed < display.length && !atLockedSecret) setRevealed(r=>Math.min(r+1, display.length)); }}>
@@ -256,8 +282,8 @@ function ChatHeader({ char, color, onBack }){
       <button onClick={onBack} style={{border:"none",background:"transparent",color:color,fontSize:26,padding:"0 6px",cursor:"pointer"}}>‹</button>
       <div style={{width:36,height:36,borderRadius:"50%",background:color,color:"#fff",display:"flex",alignItems:"center",justifyContent:"center",fontSize:18}}>{char.emoji}</div>
       <div style={{flex:1,minWidth:0}}>
-        <div style={{fontWeight:700,fontSize:15}}>{char.nameZh}</div>
-        <div style={{fontSize:11,color:"#999"}}>{char.title}</div>
+        <div style={{fontFamily:"'Noto Serif SC',serif",fontWeight:700,fontSize:15.5,color:"#1a1a1a"}}>{char.nameZh}</div>
+        <div style={{fontSize:11,color:"#999",marginTop:1}}>{char.title}</div>
       </div>
     </div>
   );
@@ -491,43 +517,143 @@ function AskDock({ char, color }){
 function Photos({ state, setState, city, onBack, tab, onTab }){
   const cityInfo = CITIES[city];
   const [preview, setPreview] = useState(null);
+  const [pendingPhoto, setPendingPhoto] = useState(null); // {url} before tagging
+  const [filter, setFilter] = useState('all');
   const fileRef = useRef(null);
   const myPhotos = (state.photos||[]).filter(p=>p.city===city);
+  const filtered = filter==='all' ? myPhotos : myPhotos.filter(p=>p.tag===filter);
 
-  const add = (e) => {
+  const pickFile = (e) => {
     const f = e.target.files?.[0]; if (!f) return;
     const reader = new FileReader();
-    reader.onload = (ev) => {
-      setState(s=>({...s, photos:[...(s.photos||[]), { id:Date.now(), city, url:ev.target.result, ts:Date.now() }]}));
-    };
+    reader.onload = (ev) => setPendingPhoto({ url:ev.target.result });
     reader.readAsDataURL(f);
     e.target.value = "";
   };
 
+  const commitPhoto = (tagId) => {
+    setState(s=>({...s, photos:[...(s.photos||[]), { id:Date.now(), city, url:pendingPhoto.url, tag:tagId, ts:Date.now() }]}));
+    setPendingPhoto(null);
+  };
+
+  const retagPhoto = (photoId, tagId) => setState(s=>({...s, photos:(s.photos||[]).map(p=>p.id===photoId?{...p,tag:tagId}:p)}));
   const del = (id) => setState(s=>({...s, photos:(s.photos||[]).filter(p=>p.id!==id)}));
 
+  // tag counts for filter chips
+  const counts = {};
+  PHOTO_TAGS.forEach(t => counts[t.id] = myPhotos.filter(p=>p.tag===t.id).length);
+
   return (
-    <div style={{minHeight:"100vh",background:"#fff",display:"flex",flexDirection:"column"}}>
+    <div style={{minHeight:"100vh",background:"#faf7f2",display:"flex",flexDirection:"column"}}>
       <CityHeader city={cityInfo} onBack={onBack}/>
       <Tabs tab={tab} onTab={onTab}/>
-      <div style={{padding:16}}>
-        <button onClick={()=>fileRef.current?.click()} style={{width:"100%",padding:"14px",background:cityInfo.color,color:"#fff",border:"none",borderRadius:12,fontWeight:700,fontSize:15,cursor:"pointer",marginBottom:16}}>📷 添加照片</button>
-        <input ref={fileRef} type="file" accept="image/*" capture="environment" onChange={add} style={{display:"none"}}/>
+      <div style={{padding:"14px 16px 6px"}}>
+        <button onClick={()=>fileRef.current?.click()} style={{width:"100%",padding:"14px",background:cityInfo.color,color:"#fff",border:"none",borderRadius:14,fontWeight:700,fontSize:15,cursor:"pointer",boxShadow:"0 4px 14px rgba(0,0,0,.08)"}}>📷 添加一张照片</button>
+        <input ref={fileRef} type="file" accept="image/*" capture="environment" onChange={pickFile} style={{display:"none"}}/>
+      </div>
+      {myPhotos.length > 0 && (
+        <div className="no-scrollbar" style={{display:"flex",gap:8,padding:"10px 16px 6px",overflowX:"auto"}}>
+          <FilterChip active={filter==='all'} onClick={()=>setFilter('all')} label={`全部 ${myPhotos.length}`} color="#666"/>
+          {PHOTO_TAGS.filter(t=>counts[t.id]>0).map(t=>(
+            <FilterChip key={t.id} active={filter===t.id} onClick={()=>setFilter(t.id)}
+              label={`${t.emoji} ${t.label} ${counts[t.id]}`} color={t.color}/>
+          ))}
+        </div>
+      )}
+      <div style={{padding:"6px 12px 30px",flex:1}}>
         {myPhotos.length === 0 ? (
-          <div style={{textAlign:"center",color:"#999",padding:"40px 20px",fontSize:14}}>还没有照片。<br/>去打卡、拍风景、记录瞬间。</div>
+          <div style={{textAlign:"center",color:"#999",padding:"40px 20px",fontSize:14,fontFamily:"'Noto Serif SC',serif",lineHeight:1.8}}>
+            <div style={{fontSize:32,marginBottom:10}}>📷</div>
+            还没有照片。<br/>去打卡、拍风景、记录瞬间。
+          </div>
         ) : (
           <div style={{display:"grid",gridTemplateColumns:"repeat(3,1fr)",gap:6}}>
-            {myPhotos.map(p=>(
-              <div key={p.id} onClick={()=>setPreview(p)} style={{aspectRatio:"1",background:`url(${p.url}) center/cover,#eee`,borderRadius:8,cursor:"pointer"}}/>
+            {filtered.map(p=>(
+              <div key={p.id} onClick={()=>setPreview(p)} style={{position:"relative",aspectRatio:"1",background:`url(${p.url}) center/cover,#eee`,borderRadius:10,cursor:"pointer",overflow:"hidden"}}>
+                {p.tag && TAG_BY_ID[p.tag] && (
+                  <div style={{position:"absolute",bottom:4,left:4,background:TAG_BY_ID[p.tag].color,color:"#fff",fontSize:10,fontWeight:700,padding:"2px 6px",borderRadius:10}}>
+                    {TAG_BY_ID[p.tag].emoji} {TAG_BY_ID[p.tag].label}
+                  </div>
+                )}
+              </div>
             ))}
           </div>
         )}
       </div>
+      {pendingPhoto && <TagPicker photo={pendingPhoto} onPick={commitPhoto} onCancel={()=>setPendingPhoto(null)}/>}
       {preview && (
-        <div onClick={()=>setPreview(null)} style={{position:"fixed",inset:0,background:"rgba(0,0,0,.9)",display:"flex",alignItems:"center",justifyContent:"center",zIndex:100,padding:20}}>
-          <img src={preview.url} style={{maxWidth:"100%",maxHeight:"80vh",borderRadius:8}}/>
-          <button onClick={(e)=>{e.stopPropagation();if(confirm("删除这张照片?")){del(preview.id);setPreview(null);}}}
-            style={{position:"absolute",bottom:40,background:"#ff3b30",color:"#fff",border:"none",padding:"10px 24px",borderRadius:24,fontSize:14,cursor:"pointer"}}>删除</button>
+        <PhotoPreview photo={preview} onClose={()=>setPreview(null)}
+          onRetag={(tagId)=>{ retagPhoto(preview.id, tagId); setPreview({...preview, tag:tagId}); }}
+          onDelete={()=>{ del(preview.id); setPreview(null); }}/>
+      )}
+    </div>
+  );
+}
+
+function FilterChip({ active, onClick, label, color }){
+  return (
+    <button onClick={onClick} style={{
+      flexShrink:0, border:"none", padding:"6px 12px", borderRadius:16, fontSize:12, fontWeight:700,
+      cursor:"pointer", background:active?color:"#fff", color:active?"#fff":"#555",
+      boxShadow:active?"none":"0 1px 3px rgba(0,0,0,.06)"
+    }}>{label}</button>
+  );
+}
+
+function TagPicker({ photo, onPick, onCancel }){
+  return (
+    <div style={{position:"fixed",inset:0,background:"rgba(0,0,0,.75)",zIndex:200,display:"flex",flexDirection:"column",justifyContent:"flex-end"}}>
+      <div className="anim-slide" style={{background:"#fff",borderTopLeftRadius:22,borderTopRightRadius:22,padding:"18px 18px 24px",paddingBottom:"max(18px,env(safe-area-inset-bottom))"}}>
+        <div style={{display:"flex",gap:12,marginBottom:14}}>
+          <img src={photo.url} style={{width:70,height:70,borderRadius:12,objectFit:"cover"}}/>
+          <div style={{flex:1}}>
+            <div style={{fontWeight:800,fontSize:16,fontFamily:"'Noto Serif SC',serif"}}>这张是？</div>
+            <div style={{fontSize:12.5,color:"#999",marginTop:3,lineHeight:1.5}}>给它贴一个标签。留作这一路最抽象、最好吃、最破防的回忆。</div>
+          </div>
+        </div>
+        <div style={{display:"grid",gridTemplateColumns:"repeat(3,1fr)",gap:8,marginBottom:10}}>
+          {PHOTO_TAGS.map(t=>(
+            <button key={t.id} onClick={()=>onPick(t.id)}
+              style={{background:"#f7f3eb",border:"none",padding:"12px 4px",borderRadius:12,cursor:"pointer",display:"flex",flexDirection:"column",alignItems:"center",gap:4}}>
+              <div style={{fontSize:22}}>{t.emoji}</div>
+              <div style={{fontSize:12,fontWeight:700,color:t.color}}>{t.label}</div>
+            </button>
+          ))}
+        </div>
+        <button onClick={()=>onPick(null)} style={{width:"100%",background:"#f0f0f0",border:"none",padding:"10px",borderRadius:10,fontSize:13,color:"#666",cursor:"pointer",marginTop:6}}>不贴标签，直接保存</button>
+        <button onClick={onCancel} style={{width:"100%",background:"transparent",border:"none",padding:"10px",fontSize:13,color:"#999",cursor:"pointer",marginTop:4}}>取消</button>
+      </div>
+    </div>
+  );
+}
+
+function PhotoPreview({ photo, onClose, onRetag, onDelete }){
+  const [showTags, setShowTags] = useState(false);
+  return (
+    <div style={{position:"fixed",inset:0,background:"rgba(0,0,0,.92)",zIndex:100,display:"flex",flexDirection:"column"}}>
+      <div onClick={onClose} style={{flex:1,display:"flex",alignItems:"center",justifyContent:"center",padding:20,cursor:"pointer"}}>
+        <img src={photo.url} style={{maxWidth:"100%",maxHeight:"100%",borderRadius:10}} onClick={e=>e.stopPropagation()}/>
+      </div>
+      <div style={{background:"rgba(0,0,0,.4)",padding:"14px 20px",paddingBottom:"max(14px,env(safe-area-inset-bottom))",display:"flex",gap:10,justifyContent:"center",flexWrap:"wrap"}}>
+        <button onClick={()=>setShowTags(v=>!v)} style={{background:"rgba(255,255,255,.15)",border:"1px solid rgba(255,255,255,.25)",color:"#fff",padding:"8px 16px",borderRadius:22,fontSize:13,cursor:"pointer"}}>
+          🏷️ {photo.tag && TAG_BY_ID[photo.tag] ? `${TAG_BY_ID[photo.tag].emoji} ${TAG_BY_ID[photo.tag].label}` : "加标签"}
+        </button>
+        <button onClick={()=>{if(confirm("删除这张照片？"))onDelete();}} style={{background:"rgba(255,59,48,.85)",border:"none",color:"#fff",padding:"8px 16px",borderRadius:22,fontSize:13,cursor:"pointer"}}>🗑 删除</button>
+        <button onClick={onClose} style={{background:"rgba(255,255,255,.15)",border:"1px solid rgba(255,255,255,.25)",color:"#fff",padding:"8px 16px",borderRadius:22,fontSize:13,cursor:"pointer"}}>关闭</button>
+      </div>
+      {showTags && (
+        <div className="anim-slide" style={{position:"absolute",bottom:70,left:10,right:10,background:"#fff",borderRadius:16,padding:14,maxHeight:"50vh",overflowY:"auto"}}>
+          <div style={{fontSize:12,color:"#999",marginBottom:8,textAlign:"center"}}>选一个标签</div>
+          <div style={{display:"grid",gridTemplateColumns:"repeat(3,1fr)",gap:6}}>
+            {PHOTO_TAGS.map(t=>(
+              <button key={t.id} onClick={()=>{onRetag(t.id);setShowTags(false);}}
+                style={{background:photo.tag===t.id?t.color:"#f7f3eb",color:photo.tag===t.id?"#fff":t.color,border:"none",padding:"10px 4px",borderRadius:10,cursor:"pointer",display:"flex",flexDirection:"column",alignItems:"center",gap:2,fontSize:11,fontWeight:700}}>
+                <div style={{fontSize:18}}>{t.emoji}</div>
+                {t.label}
+              </button>
+            ))}
+          </div>
+          {photo.tag && <button onClick={()=>{onRetag(null);setShowTags(false);}} style={{width:"100%",marginTop:8,background:"transparent",border:"1px solid #eee",padding:"8px",borderRadius:8,fontSize:12,color:"#999",cursor:"pointer"}}>移除标签</button>}
         </div>
       )}
     </div>
@@ -551,11 +677,12 @@ function Tasks({ state, city, onBack, tab, onTab, onOpenChar }){
   const doneCount = allTasks.filter(t => done[t.charId]).length;
 
   return (
-    <div style={{minHeight:"100vh",background:"#fff",display:"flex",flexDirection:"column"}}>
+    <div style={{minHeight:"100vh",background:"#faf7f2",display:"flex",flexDirection:"column"}}>
       <CityHeader city={cityInfo} onBack={onBack}/>
       <Tabs tab={tab} onTab={onTab}/>
-      <div style={{padding:"20px 16px 10px"}}>
-        <div style={{fontSize:13,color:"#666",marginBottom:4}}>观察任务进度</div>
+      <div style={{padding:"20px 20px 10px"}}>
+        <div style={{fontSize:11,letterSpacing:3,color:"#8a6f47",fontWeight:700}}>OBSERVATIONS</div>
+        <div style={{fontFamily:"'Noto Serif SC',serif",fontSize:15,fontWeight:700,marginTop:2,marginBottom:10,color:"#2a1e10"}}>你抬头看了多少次</div>
         <div style={{fontSize:26,fontWeight:800,color:cityInfo.color,fontFamily:"'Playfair Display',serif"}}>{doneCount} <span style={{fontSize:16,color:"#999",fontWeight:500}}>/ {allTasks.length}</span></div>
         <div style={{height:6,background:"#eee",borderRadius:3,marginTop:8,overflow:"hidden"}}>
           <div style={{width:`${allTasks.length?doneCount/allTasks.length*100:0}%`,height:"100%",background:cityInfo.color,transition:"width .4s"}}/>
