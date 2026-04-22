@@ -9,33 +9,20 @@ import { CHARACTERS, CONVERSATIONS, GROUPS, charactersInCity, getPreview, getGro
 
 const FONT = "https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;600;700;900&family=Playfair+Display:ital,wght@0,400;0,800;1,400;1,800&family=Inter:wght@400;500;600;700&display=swap";
 
-// Kimi (Moonshot) API — OpenAI-compatible. Put your key in localStorage['kimi_api_key']
-// or import.meta.env.VITE_KIMI_API_KEY at build time. Leave empty to disable remote calls.
-const KIMI_API_KEY = (typeof window !== 'undefined' && window.localStorage?.getItem('kimi_api_key'))
-  || (typeof import.meta !== 'undefined' && import.meta.env?.VITE_KIMI_API_KEY)
-  || "";
-const KIMI_ENDPOINT = "https://api.moonshot.cn/v1/chat/completions";
-const KIMI_MODEL = "moonshot-v1-8k";
-
+// Kimi calls go through /api/chat so the API key stays on the server.
 async function askKimi({ system, user }){
-  if (!KIMI_API_KEY){
-    throw new Error("no-key");
-  }
-  const r = await fetch(KIMI_ENDPOINT, {
+  const r = await fetch("/api/chat", {
     method:"POST",
-    headers:{ "Content-Type":"application/json", "Authorization":`Bearer ${KIMI_API_KEY}` },
-    body:JSON.stringify({
-      model: KIMI_MODEL,
-      messages: [{ role:"system", content: system }, { role:"user", content: user }],
-      max_tokens: 300,
-      temperature: 0.7,
-    })
+    headers:{ "Content-Type":"application/json" },
+    body:JSON.stringify({ system, user })
   });
   if (!r.ok){
-    throw new Error(`http-${r.status}`);
+    let detail = {};
+    try { detail = await r.json(); } catch {}
+    throw new Error(detail.code || `http-${r.status}`);
   }
   const j = await r.json();
-  return j.choices?.[0]?.message?.content?.trim() || "";
+  return j.text?.trim() || "";
 }
 
 const CN_SERIF = `'Noto Serif SC','Source Han Serif SC','Songti SC','STSong','SimSun',serif`;
@@ -485,7 +472,7 @@ ${mentionId ? '你被 @ 了，请针对用户这条消息作答。' : '在群里
       appendGroupExtra({ t:'text', from:responderId, text: txt || '…' });
     } catch (e) {
       const fallback = e.message === 'no-key'
-        ? "🔑（还没接入 Kimi——在浏览器控制台跑 localStorage.setItem('kimi_api_key','你的 key') 再刷新。）"
+        ? "🔑（还没接入 Kimi——请在 Vercel 环境变量里设置 MOONSHOT_API_KEY 后重新部署。）"
         : '📶（暂时连不上 Kimi，稍后再试。）';
       appendGroupExtra({ t:'text', from:responderId, text: fallback });
     }
@@ -1035,7 +1022,7 @@ function AskDock({ char, charId, color }){
       setMsgs(m=>[...m,{mine:false,text: txt || "…我一时想不出怎么回你。"}]);
     } catch (e) {
       if (e.message === "no-key"){
-        setMsgs(m=>[...m,{mine:false,text:"🔑 还没接入 Kimi API。\n本地暂存 key 的方法：打开浏览器控制台输入\nlocalStorage.setItem('kimi_api_key','你的 key')\n然后刷新页面即可。"}]);
+        setMsgs(m=>[...m,{mine:false,text:"🔑 还没接入 Kimi API。\n请在 Vercel 环境变量里设置 MOONSHOT_API_KEY，然后重新部署项目。"}]);
       } else {
         setMsgs(m=>[...m,{mine:false,text:"📶 暂时连不上 Kimi，稍后再试一次。"}]);
       }
