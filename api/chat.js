@@ -1,5 +1,5 @@
-const MOONSHOT_ENDPOINT = "https://api.moonshot.ai/v1/chat/completions";
-const KIMI_MODEL = "kimi-k2.5";
+const MOONSHOT_ENDPOINT = process.env.MOONSHOT_ENDPOINT || "https://api.moonshot.cn/v1/chat/completions";
+const KIMI_MODEL = process.env.KIMI_MODEL || "kimi-k2.5";
 
 export default async function handler(req, res) {
   if (req.method !== "POST") {
@@ -7,7 +7,7 @@ export default async function handler(req, res) {
     return res.status(405).json({ error: "Method not allowed" });
   }
 
-  const apiKey = process.env.MOONSHOT_API_KEY;
+  const apiKey = process.env.MOONSHOT_API_KEY?.trim().replace(/^Bearer\s+/i, "");
   if (!apiKey) {
     return res.status(500).json({
       code: "no-key",
