@@ -8,7 +8,35 @@ import { CHARACTERS, CONVERSATIONS, GROUPS, charactersInCity, getPreview, getGro
    ═══════════════════════════════════════════ */
 
 const FONT = "https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;600;700;900&family=Playfair+Display:ital,wght@0,400;0,800;1,400;1,800&family=Inter:wght@400;500;600;700&display=swap";
-const API_KEY = "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";
+
+// Kimi (Moonshot) API — OpenAI-compatible. Put your key in localStorage['kimi_api_key']
+// or import.meta.env.VITE_KIMI_API_KEY at build time. Leave empty to disable remote calls.
+const KIMI_API_KEY = (typeof window !== 'undefined' && window.localStorage?.getItem('kimi_api_key'))
+  || (typeof import.meta !== 'undefined' && import.meta.env?.VITE_KIMI_API_KEY)
+  || "";
+const KIMI_ENDPOINT = "https://api.moonshot.cn/v1/chat/completions";
+const KIMI_MODEL = "moonshot-v1-8k";
+
+async function askKimi({ system, user }){
+  if (!KIMI_API_KEY){
+    throw new Error("no-key");
+  }
+  const r = await fetch(KIMI_ENDPOINT, {
+    method:"POST",
+    headers:{ "Content-Type":"application/json", "Authorization":`Bearer ${KIMI_API_KEY}` },
+    body:JSON.stringify({
+      model: KIMI_MODEL,
+      messages: [{ role:"system", content: system }, { role:"user", content: user }],
+      max_tokens: 300,
+      temperature: 0.7,
+    })
+  });
+  if (!r.ok){
+    throw new Error(`http-${r.status}`);
+  }
+  const j = await r.json();
+  return j.choices?.[0]?.message?.content?.trim() || "";
+}
 
 const CSS = `
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent;-webkit-font-smoothing:antialiased}
@@ -57,10 +85,10 @@ const TAG_BY_ID = Object.fromEntries(PHOTO_TAGS.map(t=>[t.id,t]));
 
 // ═══ Persistence ═══
 function load(){
-  try { const s = localStorage.getItem("cs_v10"); if (s) return JSON.parse(s); } catch {}
-  return { progress:{}, choices:{}, tasksDone:{}, photos:[], city:null };
+  try { const s = localStorage.getItem("cs_v13"); if (s) return JSON.parse(s); } catch {}
+  return { progress:{}, choices:{}, tasksDone:{}, tasksDeferred:{}, photos:[], city:null };
 }
-function save(s){ try { localStorage.setItem("cs_v10", JSON.stringify(s)); } catch {} }
+function save(s){ try { localStorage.setItem("cs_v13", JSON.stringify(s)); } catch {} }
 
 // ═══════════════════════════════
 // Welcome / City Picker
@@ -75,12 +103,16 @@ function Welcome({ onPick }){
     <div style={{minHeight:"100vh",background:"linear-gradient(180deg,#faf7f2 0%,#fff 60%)",overflow:"hidden"}}>
       <div style={{maxWidth:720,margin:"0 auto",padding:"60px 20px 40px"}}>
         <div style={{textAlign:"center",marginBottom:36}}>
-          <div style={{fontSize:13,letterSpacing:4,color:"#8a6f47",fontWeight:600,marginBottom:10}}>CULTURA SEGRETA</div>
-          <h1 style={{fontFamily:"'Playfair Display',serif",fontSize:44,fontWeight:800,margin:"0 0 10px",lineHeight:1.05}}>他们都在<br/>等你回消息</h1>
-          <p style={{color:"#555",fontSize:15,lineHeight:1.7,margin:"18px auto 0",maxWidth:440}}>米开朗基罗死了 460 年，Lucia 奶奶还住在河对岸。<br/>17 个意大利人，有人想骂你，有人想请你吃饭。<br/>选一座城市，打开收件箱。</p>
+          <div style={{fontSize:13,letterSpacing:4,color:"#8a6f47",fontWeight:600,marginBottom:10}}>MESSAGES FROM ITALY</div>
+          <h1 style={{fontFamily:"'Playfair Display',serif",fontSize:44,fontWeight:800,margin:"0 0 10px",lineHeight:1.05}}>打开来自<br/>意大利的消息</h1>
+          <p style={{color:"#555",fontSize:15,lineHeight:1.7,margin:"18px auto 0",maxWidth:440}}>
+            从米开朗基罗到 Lucia 奶奶，<br/>
+            艺术家、原住民、导览者——<br/>
+            选一座城市，看看他们在说什么。
+          </p>
           <div style={{display:"inline-flex",alignItems:"center",gap:6,marginTop:18,padding:"6px 12px",background:"#fff",borderRadius:20,boxShadow:"0 2px 10px rgba(0,0,0,.05)",fontSize:12,color:"#8a6f47",fontWeight:600}}>
             <span style={{width:8,height:8,borderRadius:"50%",background:"#4caf50",display:"inline-block",animation:"pulse 2s infinite"}}/>
-            {Object.keys(CITIES).reduce((n,c)=>n+charactersInCity(c).length,0)} 人在线 · 2 个群聊
+            {Object.keys(CITIES).reduce((n,c)=>n+charactersInCity(c).length,0)} 人在线 · 6 个城市群
           </div>
         </div>
         <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fit,minmax(150px,1fr))",gap:12,marginTop:24}}>
@@ -105,7 +137,7 @@ function Welcome({ onPick }){
             );
           })}
         </div>
-        <div style={{textAlign:"center",fontSize:11,color:"#aaa",marginTop:40}}>v11 · 跨越五百年的收件箱</div>
+        <div style={{textAlign:"center",fontSize:11,color:"#aaa",marginTop:40,letterSpacing:1.5}}>By Xiaoxuan</div>
       </div>
     </div>
   );
@@ -127,7 +159,15 @@ function ChatList({ city, state, onOpen, onOpenGroup, onBack, onTab, tab, onOpen
     const seen = state.progress[`g_${gid}`] || 0;
     return Math.max(0, total - seen);
   };
-  const groupIds = Object.keys(GROUPS);
+  // City-specific group first, then cross-city pinned groups
+  const groupIds = Object.keys(GROUPS).filter(gid => {
+    const G = GROUPS[gid];
+    return !G.city || G.city === city;
+  }).sort((a,b)=>{
+    const A = GROUPS[a].city === city ? 0 : 1;
+    const B = GROUPS[b].city === city ? 0 : 1;
+    return A - B;
+  });
   return (
     <div className="anim-right" style={{minHeight:"100vh",background:"#faf7f2",display:"flex",flexDirection:"column"}}>
       <CityHeader city={cityInfo} onBack={onBack}/>
@@ -233,9 +273,9 @@ function Tabs({ tab, onTab }){
 // Chat (conversation) — supports 1v1 and group chats
 // ═══════════════════════════════
 const PACE_SPEEDS = {
-  slow:   { base:1600, perChar:90, cardBase:2400, cardExtra:1800, mine:600 },
-  normal: { base:1300, perChar:70, cardBase:2000, cardExtra:1400, mine:500 },
-  fast:   { base:800,  perChar:40, cardBase:1300, cardExtra:800,  mine:350 },
+  slow:   { base:950,  perChar:45, cardBase:1400, cardExtra:450, mine:350, afterMine:1200, cap:2300 },
+  normal: { base:700,  perChar:32, cardBase:1050, cardExtra:300, mine:260, afterMine:850,  cap:1700 },
+  fast:   { base:420,  perChar:20, cardBase:680,  cardExtra:200, mine:190, afterMine:550,  cap:1050 },
 };
 
 function Chat({ charId, groupId, state, setState, onBack, onOpenProfile, onOpenArtwork }){
@@ -278,11 +318,14 @@ function Chat({ charId, groupId, state, setState, onBack, onOpenProfile, onOpenA
   }, [convo, myChoices]);
 
   const taskDone = !isGroup && !!state.tasksDone[charId];
+  const taskDeferred = !isGroup && !!(state.tasksDeferred || {})[charId];
 
   const savedProg = state.progress[conversationKey] || 1;
   const [revealed, setRevealed] = useState(Math.min(savedProg, display.length));
   const [typing, setTyping] = useState(false);
   const [paused, setPaused] = useState(false);
+  // holdForTap: when true, auto-reveal is blocked until the user taps (natural chat rhythm)
+  const [holdForTap, setHoldForTap] = useState(false);
   const paceMode = state.pace || 'normal';
   const scrollRef = useRef(null);
 
@@ -291,34 +334,51 @@ function Chat({ charId, groupId, state, setState, onBack, onOpenProfile, onOpenA
     if (revealed < 1) setRevealed(1);
   }, [display.length]);
 
+  // Hold only after cards so the user has a chance to open/dismiss them.
+  // Text messages stream through continuously — no arbitrary "3-in-a-row" pause.
   useEffect(()=>{
-    if (paused) return;
-    if (revealed >= display.length) return;
+    if (revealed <= 0 || revealed >= display.length) { setHoldForTap(false); return; }
+    const last = display[revealed-1];
+    if (!last) { setHoldForTap(false); return; }
+    if (last.t === 'artwork' || last.t === 'task' || last.t === 'tip' || last.t === 'ref' || last.t === 'place') {
+      setHoldForTap(true); return;
+    }
+    setHoldForTap(false);
+  }, [revealed, display.length]);
+
+  useEffect(()=>{
+    if (paused)                      { setTyping(false); return; }
+    if (holdForTap)                  { setTyping(false); return; }
+    if (revealed >= display.length)  { setTyping(false); return; }
     const next = display[revealed];
-    if (!next) return;
-    if (next.t === 'choice') return;
-    if (next.t === 'secret' && !taskDone && !isGroup) return;
+    if (!next)                       { setTyping(false); return; }
+    if (next.t === 'choice')         { setTyping(false); return; }
+    if (next.t === 'secret' && !taskDone && !isGroup) { setTyping(false); return; }
     const prev = display[revealed-1];
-    const prevIsCard = prev && (prev.t==='artwork'||prev.t==='ref'||prev.t==='tip'||prev.t==='task');
+    const prevIsCard = prev && (prev.t==='artwork'||prev.t==='ref'||prev.t==='tip'||prev.t==='task'||prev.t==='place');
+    const prevIsMine = prev && prev.t === 'text' && prev.mine;
     const P = PACE_SPEEDS[paceMode] || PACE_SPEEDS.normal;
     let delay;
     if (next.mine) delay = P.mine;
     else if (next.t === 'text') {
       const len = (next.text||'').length;
-      delay = P.base + Math.min(3500, len * P.perChar);
+      delay = P.base + Math.min(P.cap - P.base, len * P.perChar);
     }
-    else if (next.t === 'artwork') delay = P.cardBase + 400;
-    else if (next.t === 'ref' || next.t === 'tip') delay = P.cardBase - 200;
+    else if (next.t === 'artwork') delay = P.cardBase + 200;
+    else if (next.t === 'ref' || next.t === 'tip') delay = P.cardBase - 100;
     else if (next.t === 'task') delay = P.cardBase;
+    else if (next.t === 'place') delay = P.cardBase - 150;
     else delay = P.base;
     if (prevIsCard) delay += P.cardExtra;
+    if (prevIsMine && !next.mine) delay = Math.max(delay, P.afterMine);
+    delay = Math.min(delay, P.cap + P.cardExtra);
     setTyping(!next.mine && next.t === 'text');
     const timer = setTimeout(()=>{
       setTyping(false);
       setRevealed(r=>r+1);
     }, delay);
     return ()=>clearTimeout(timer);
-  }, [revealed, display.length, taskDone, paceMode, paused]);
+  }, [revealed, display.length, taskDone, paceMode, paused, holdForTap]);
 
   useEffect(()=>{
     setState(s=>{
@@ -333,11 +393,19 @@ function Chat({ charId, groupId, state, setState, onBack, onOpenProfile, onOpenA
 
   const pickChoice = (msgIdx, optIdx) => {
     setState(s=>({ ...s, choices:{ ...s.choices, [conversationKey]:{...(s.choices[conversationKey]||{}), [msgIdx]:optIdx} }}));
-    setRevealed(r=>r+2);
+    // Only reveal the user's echoed message. The reply rolls in through the typing effect
+    // with a natural thinking pause (P.afterMine) instead of popping in instantly.
+    setRevealed(r=>r+1);
   };
 
   const completeTask = () => {
-    setState(s=>({ ...s, tasksDone:{...s.tasksDone, [charId]:Date.now()} }));
+    setState(s=>({ ...s, tasksDone:{...s.tasksDone, [charId]:Date.now()}, tasksDeferred:{...(s.tasksDeferred||{}), [charId]:false} }));
+  };
+  const deferTask = () => {
+    setState(s=>({ ...s, tasksDeferred:{...(s.tasksDeferred||{}), [charId]:Date.now()} }));
+    // Release the hold so the conversation can flow past the task card.
+    setHoldForTap(false);
+    setRevealed(r=>Math.min(r+1, display.length));
   };
 
   const addReaction = (msgKey, emoji) => {
@@ -370,14 +438,23 @@ function Chat({ charId, groupId, state, setState, onBack, onOpenProfile, onOpenA
         progress={progress} pace={paceMode} onPace={setPace} paused={paused} onPause={()=>setPaused(p=>!p)}
         onOpenProfile={openProfileForChat}/>
       <div ref={scrollRef} className="no-scrollbar" style={{flex:1,overflowY:"auto",padding:"14px 14px 20px"}}
-           onClick={()=>{ if (!atChoice && revealed < display.length && !atLockedSecret) setRevealed(r=>Math.min(r+1, display.length)); }}>
+           onClick={()=>{
+             if (atChoice || atLockedSecret || revealed >= display.length) return;
+             if (holdForTap) { setHoldForTap(false); return; }
+             setRevealed(r=>Math.min(r+1, display.length));
+           }}>
         {items.map((m,i)=>(
-          <MessageBubble key={m._k} msg={m} charColor={cityColor} onTask={completeTask} taskDone={taskDone}
+          <MessageBubble key={m._k} msg={m} charColor={cityColor} onTask={completeTask} onDeferTask={deferTask} taskDone={taskDone} taskDeferred={taskDeferred}
             isGroup={isGroup} members={groupMembers} onOpenArtwork={onOpenArtwork}
             reaction={reactions[m._k]} onReact={(e)=>addReaction(m._k, e)} onOpenProfile={onOpenProfile}/>
         ))}
         {atLockedSecret && <LockedSecret/>}
         {typing && !atChoice && <TypingBubble color={cityColor} isGroup={isGroup} nextMsg={display[revealed]} members={groupMembers}/>}
+        {holdForTap && !atChoice && !atLockedSecret && revealed < display.length && !typing && (
+          <div className="anim-fade" style={{textAlign:"center",padding:"14px 0 6px"}}>
+            <span style={{display:"inline-block",padding:"7px 16px",background:"#fff",borderRadius:999,boxShadow:"0 2px 10px rgba(0,0,0,.08)",fontSize:12.5,fontWeight:600,color:"#8a6f47",letterSpacing:.5}}>⌄ 点一下继续</span>
+          </div>
+        )}
         {paused && !finished && (
           <div onClick={(e)=>{e.stopPropagation(); setPaused(false);}} style={{textAlign:"center",padding:"12px",margin:"8px 0",background:"#fff",borderRadius:12,fontSize:12,color:"#666",cursor:"pointer",boxShadow:"0 1px 4px rgba(0,0,0,.06)"}}>⏸ 已暂停 · 点击继续</div>
         )}
@@ -468,7 +545,7 @@ function ChatHeader({ entity, isGroup, members, color, onBack, progress, pace, o
 // ═══════════════════════════════
 const REACTIONS = ['❤️','😂','🤯','🗿','👀','🔥'];
 
-function MessageBubble({ msg, charColor, onTask, taskDone, isGroup, members, onOpenArtwork, reaction, onReact, onOpenProfile }){
+function MessageBubble({ msg, charColor, onTask, onDeferTask, taskDone, taskDeferred, isGroup, members, onOpenArtwork, reaction, onReact, onOpenProfile }){
   if (msg.t === 'system'){
     return (
       <div className="anim-fade" style={{textAlign:"center",fontSize:11,color:"#a89a80",margin:"10px 0",padding:"0 20px",lineHeight:1.5,letterSpacing:.5}}>
@@ -485,7 +562,7 @@ function MessageBubble({ msg, charColor, onTask, taskDone, isGroup, members, onO
     return <ArtworkCard msg={msg} color={charColor} onOpen={()=>onOpenArtwork && onOpenArtwork(msg)} reaction={reaction} onReact={onReact}/>;
   }
   if (msg.t === 'task'){
-    return <TaskCard msg={msg} color={charColor} done={taskDone} onTask={onTask}/>;
+    return <TaskCard msg={msg} color={charColor} done={taskDone} deferred={taskDeferred} onTask={onTask} onDeferTask={onDeferTask}/>;
   }
   if (msg.t === 'secret'){
     return <SecretBlock texts={msg.texts} color={charColor}/>;
@@ -496,22 +573,48 @@ function MessageBubble({ msg, charColor, onTask, taskDone, isGroup, members, onO
   if (msg.t === 'ref'){
     return <RefCard label={msg.label} text={msg.text} color={charColor} onOpen={()=>onOpenArtwork && onOpenArtwork({...msg, t:'ref'})}/>;
   }
+  if (msg.t === 'place'){
+    return <PlaceCard italianName={msg.italianName} address={msg.address} zh={msg.zh} color={charColor}/>;
+  }
   return null;
 }
 
-function ReactionBar({ color, reaction, onReact }){
+function PlaceCard({ italianName, address, zh, color }){
+  const query = encodeURIComponent(`${italianName}, ${address}`);
+  const href = `https://www.google.com/maps/search/?api=1&query=${query}`;
+  return (
+    <a href={href} target="_blank" rel="noopener noreferrer" className="anim-rise"
+      style={{alignSelf:"flex-start",maxWidth:"85%",textDecoration:"none",display:"block",margin:"2px 0"}}>
+      <div style={{background:"#fff",border:`1px solid ${color}33`,borderRadius:18,borderBottomLeftRadius:6,padding:"12px 14px",boxShadow:"0 2px 8px rgba(0,0,0,.04)"}}>
+        <div style={{display:"flex",alignItems:"flex-start",gap:10}}>
+          <div style={{width:34,height:34,borderRadius:10,background:`${color}14`,display:"flex",alignItems:"center",justifyContent:"center",fontSize:18,flexShrink:0}}>📍</div>
+          <div style={{flex:1,minWidth:0}}>
+            <div style={{fontWeight:700,fontSize:14.5,color:"#1a1a1a",fontFamily:"'Playfair Display',serif",letterSpacing:.2}}>{italianName}</div>
+            {zh && <div style={{fontSize:12,color:"#888",marginTop:2}}>{zh}</div>}
+            <div style={{fontSize:12,color:"#666",marginTop:4,lineHeight:1.45}}>{address}</div>
+          </div>
+          <div style={{fontSize:11,color:color,fontWeight:700,letterSpacing:.5,whiteSpace:"nowrap",paddingTop:3}}>在地图打开 ↗</div>
+        </div>
+      </div>
+    </a>
+  );
+}
+
+function ReactionBar({ color, reaction, onReact, hasReaction }){
   const [picker, setPicker] = useState(false);
+  // If a reaction is already attached to the bubble, hide this bar entirely so there is no duplicate display.
+  if (hasReaction) return null;
   return (
     <div style={{position:"relative"}}>
       <button onClick={(e)=>{e.stopPropagation(); setPicker(v=>!v);}}
-        style={{border:"none",background:"transparent",padding:"4px 6px",fontSize:11,color:"#bbb",cursor:"pointer"}}>
-        {reaction ? <span style={{fontSize:14,animation:"heartPop .3s ease"}}>{reaction}</span> : <span>+ 反应</span>}
+        style={{border:"none",background:"transparent",padding:"2px 6px",fontSize:11,color:"#bbb",cursor:"pointer"}}>
+        + 反应
       </button>
       {picker && (
         <div onClick={e=>e.stopPropagation()} className="anim-pop" style={{position:"absolute",bottom:"100%",left:0,background:"#fff",borderRadius:20,padding:"6px 8px",boxShadow:"0 4px 20px rgba(0,0,0,.15)",display:"flex",gap:4,zIndex:5}}>
           {REACTIONS.map(e=>(
             <button key={e} onClick={()=>{onReact(e); setPicker(false);}}
-              style={{border:"none",background:reaction===e?`${color}22`:"transparent",padding:"4px 6px",fontSize:18,cursor:"pointer",borderRadius:12}}>{e}</button>
+              style={{border:"none",background:"transparent",padding:"4px 6px",fontSize:18,cursor:"pointer",borderRadius:12}}>{e}</button>
           ))}
         </div>
       )}
@@ -547,10 +650,12 @@ function TextBubble({ mine, text, color, sender, isGroup, reaction, onReact, onO
         }}>
           {text}
           {reaction && (
-            <div style={{position:"absolute",bottom:-10,right:mine?8:-6,background:"#fff",borderRadius:12,padding:"2px 6px",fontSize:12,boxShadow:"0 1px 4px rgba(0,0,0,.12)",animation:"heartPop .3s ease"}}>{reaction}</div>
+            <button onClick={(e)=>{e.stopPropagation(); onReact && onReact(reaction);}}
+              title="再点一次取消反应"
+              style={{position:"absolute",bottom:-10,right:mine?8:-6,background:"#fff",border:"none",borderRadius:12,padding:"2px 6px",fontSize:12,boxShadow:"0 1px 4px rgba(0,0,0,.12)",animation:"heartPop .3s ease",cursor:"pointer"}}>{reaction}</button>
           )}
         </div>
-        {!mine && <div style={{marginTop:reaction?10:2,marginLeft:8}}><ReactionBar color={color} reaction={reaction} onReact={onReact}/></div>}
+        {!mine && <div style={{marginTop:reaction?12:2,marginLeft:8}}><ReactionBar color={color} reaction={reaction} onReact={onReact} hasReaction={!!reaction}/></div>}
       </div>
     </div>
   );
@@ -590,29 +695,48 @@ function ArtworkCard({ msg, color, onOpen, reaction, onReact }){
             <div style={{fontSize:13.5,color:"#333",lineHeight:1.5,marginTop:8,display:"-webkit-box",WebkitLineClamp:2,WebkitBoxOrient:"vertical",overflow:"hidden"}}>{msg.why}</div>
             {msg.observe && <div style={{marginTop:10,padding:"8px 10px",background:"#fffbee",borderLeft:`3px solid ${color}`,fontSize:12.5,color:"#5a4a1a",lineHeight:1.5,borderRadius:"0 6px 6px 0",display:"-webkit-box",WebkitLineClamp:2,WebkitBoxOrient:"vertical",overflow:"hidden"}}>👁️ <b>观察</b>：{msg.observe}</div>}
           </div>
-          {reaction && <div style={{position:"absolute",bottom:-10,right:16,background:"#fff",borderRadius:12,padding:"2px 6px",fontSize:12,boxShadow:"0 1px 4px rgba(0,0,0,.12)"}}>{reaction}</div>}
+          {reaction && (
+            <span onClick={(e)=>{e.stopPropagation(); onReact && onReact(reaction);}}
+              title="再点一次取消反应"
+              style={{position:"absolute",bottom:-10,right:16,background:"#fff",borderRadius:12,padding:"2px 6px",fontSize:12,boxShadow:"0 1px 4px rgba(0,0,0,.12)",cursor:"pointer"}}>{reaction}</span>
+          )}
         </button>
-        <div style={{marginTop:reaction?10:2,marginLeft:8}}><ReactionBar color={color} reaction={reaction} onReact={onReact}/></div>
+        <div style={{marginTop:reaction?12:2,marginLeft:8}}><ReactionBar color={color} reaction={reaction} onReact={onReact} hasReaction={!!reaction}/></div>
       </div>
     </div>
   );
 }
 
-function TaskCard({ msg, color, done, onTask }){
+function TaskCard({ msg, color, done, onTask, onDeferTask, deferred }){
   const [shooting, setShooting] = useState(false);
+  const muted = deferred && !done;
   return (
     <div className="anim-up" style={{margin:"12px 0",display:"flex",justifyContent:"center"}}>
-      <div style={{width:"92%",background:done?"#e8f5e9":"#fff",border:`2px dashed ${done?"#4caf50":color}`,borderRadius:16,padding:14,transition:"all .3s"}}>
+      <div style={{width:"92%",background:done?"#e8f5e9":(muted?"#faf7f0":"#fff"),border:`2px dashed ${done?"#4caf50":(muted?"#d8cfbd":color)}`,borderRadius:16,padding:14,transition:"all .3s",opacity:muted?.85:1}}>
         <div style={{display:"flex",alignItems:"center",gap:8,marginBottom:6}}>
-          <span style={{fontSize:20}}>{done?"✅":"📸"}</span>
-          <div style={{fontWeight:800,fontSize:15,color:done?"#2e7d32":"#222"}}>{done?"打卡完成":"观察任务"}</div>
+          <span style={{fontSize:20}}>{done?"✅":(muted?"⏳":"📸")}</span>
+          <div style={{fontWeight:800,fontSize:15,color:done?"#2e7d32":"#222"}}>
+            {done?"打卡完成":(muted?"已存入待办":"观察任务")}
+          </div>
         </div>
         <div style={{fontWeight:700,fontSize:14.5,marginBottom:4}}>{msg.title}</div>
         <div style={{fontSize:12.5,color:"#666",lineHeight:1.5}}>{msg.hint}</div>
-        {!done && (
-          <button onClick={()=>{ setShooting(true); setTimeout(()=>{ onTask(); setShooting(false); }, 800); }}
+        {!done && !muted && (
+          <div style={{display:"flex",gap:8,marginTop:12}}>
+            <button onClick={()=>{ setShooting(true); setTimeout(()=>{ onTask(); setShooting(false); }, 700); }}
+              style={{flex:2,padding:"10px",background:color,color:"#fff",border:"none",borderRadius:10,fontWeight:700,fontSize:14,cursor:"pointer",opacity:shooting?.6:1}}>
+              {shooting?"📸 拍照中…":"立刻拍照"}
+            </button>
+            <button onClick={()=> onDeferTask && onDeferTask()}
+              style={{flex:1,padding:"10px",background:"#fff",color:"#8a6e3f",border:`1px solid ${color}55`,borderRadius:10,fontWeight:700,fontSize:13,cursor:"pointer"}}>
+              稍后再拍
+            </button>
+          </div>
+        )}
+        {!done && muted && (
+          <button onClick={()=>{ setShooting(true); setTimeout(()=>{ onTask(); setShooting(false); }, 700); }}
             style={{marginTop:12,width:"100%",padding:"10px",background:color,color:"#fff",border:"none",borderRadius:10,fontWeight:700,fontSize:14,cursor:"pointer",opacity:shooting?.6:1}}>
-            {shooting?"📸 拍照中…":"去打卡"}
+            {shooting?"📸 拍照中…":"现在去补拍"}
           </button>
         )}
         {done && <div style={{marginTop:10,fontSize:12,color:"#2e7d32",fontStyle:"italic"}}>🔓 解锁了 TA 的小秘密（往下看）</div>}
@@ -707,53 +831,32 @@ function AskDock({ char, charId, color }){
   const [msgs, setMsgs] = useState([]);
   const [busy, setBusy] = useState(false);
 
-  const ask = async () => {
-    const q = input.trim();
-    if (!q || busy) return;
+  const runAsk = async (q) => {
     setMsgs(m=>[...m,{mine:true,text:q}]);
     setInput("");
     setBusy(true);
+    const system = `你现在扮演${char.nameZh} (${char.name})，${char.title}。性格：${char.tagline}。用第一人称回答，保持角色声音（${char.nameZh}独有的语气和视角）。回答要简短（2-4 句），像在手机上发消息。可以用表情。不要说"作为 AI 助手"之类的话。只说${char.nameZh}会说的话。`;
     try {
-      const sys = `你现在扮演${char.nameZh} (${char.name})，${char.title}。性格：${char.tagline}。用第一人称回答，保持角色声音（${char.nameZh}独有的语气和视角）。回答要简短（2-4 句），像在手机上发消息。可以用表情。不要说"作为 AI 助手"之类的话。只说${char.nameZh}会说的话。问题：${q}`;
-      const r = await fetch("https://api.anthropic.com/v1/messages",{
-        method:"POST",
-        headers:{"Content-Type":"application/json","x-api-key":API_KEY,"anthropic-version":"2023-06-01","anthropic-dangerous-direct-browser-access":"true"},
-        body:JSON.stringify({model:"claude-sonnet-4-20250514",max_tokens:300,messages:[{role:"user",content:sys}]})
-      });
-      const j = await r.json();
-      const txt = j.content?.[0]?.text || "…我一时想不出怎么回你。";
-      setMsgs(m=>[...m,{mine:false,text:txt}]);
+      const txt = await askKimi({ system, user:q });
+      setMsgs(m=>[...m,{mine:false,text: txt || "…我一时想不出怎么回你。"}]);
     } catch (e) {
-      setMsgs(m=>[...m,{mine:false,text:"📶 网络不太好。等等再问我一次。"}]);
+      if (e.message === "no-key"){
+        setMsgs(m=>[...m,{mine:false,text:"🔑 还没接入 Kimi API。\n本地暂存 key 的方法：打开浏览器控制台输入\nlocalStorage.setItem('kimi_api_key','你的 key')\n然后刷新页面即可。"}]);
+      } else {
+        setMsgs(m=>[...m,{mine:false,text:"📶 暂时连不上 Kimi，稍后再试一次。"}]);
+      }
     }
     setBusy(false);
   };
 
-  const suggestions = getSuggestions(charId);
-  const askSuggestion = (q) => {
-    setInput(q);
-    setTimeout(()=>{
-      (async ()=>{
-        setMsgs(m=>[...m,{mine:true,text:q}]);
-        setInput("");
-        setBusy(true);
-        try {
-          const sys = `你现在扮演${char.nameZh} (${char.name})，${char.title}。性格：${char.tagline}。用第一人称回答，保持角色声音。回答要简短（2-4 句），像在手机上发消息。可以用表情。不要说"作为 AI 助手"之类的话。问题：${q}`;
-          const r = await fetch("https://api.anthropic.com/v1/messages",{
-            method:"POST",
-            headers:{"Content-Type":"application/json","x-api-key":API_KEY,"anthropic-version":"2023-06-01","anthropic-dangerous-direct-browser-access":"true"},
-            body:JSON.stringify({model:"claude-sonnet-4-20250514",max_tokens:300,messages:[{role:"user",content:sys}]})
-          });
-          const j = await r.json();
-          const txt = j.content?.[0]?.text || "…我一时想不出怎么回你。";
-          setMsgs(m=>[...m,{mine:false,text:txt}]);
-        } catch (e) {
-          setMsgs(m=>[...m,{mine:false,text:"📶 网络不太好。等等再问我一次。"}]);
-        }
-        setBusy(false);
-      })();
-    }, 50);
+  const ask = async () => {
+    const q = input.trim();
+    if (!q || busy) return;
+    runAsk(q);
   };
+
+  const suggestions = getSuggestions(charId);
+  const askSuggestion = (q) => { if (!busy) runAsk(q); };
 
   if (!open){
     return (
@@ -1030,23 +1133,25 @@ function Tasks({ state, city, onBack, tab, onTab, onOpenChar }){
 // ═══════════════════════════════
 // Character Profile Sheet — opens when you tap an avatar or header
 // ═══════════════════════════════
-function CharacterProfileSheet({ charId, onClose, onOpenChat, alreadyInChat }){
+function CharacterProfileSheet({ charId, onClose, onOpenChat, alreadyInChat, photos, onOpenGallery }){
   if (!charId) return null;
   const c = CHARACTERS[charId];
   if (!c) return null;
   const city = CITIES[c.city];
   const convo = CONVERSATIONS[charId] || [];
-  const msgCount = convo.filter(m => m.t === 'text' || m.t === 'artwork' || m.t === 'secret').length;
-  const firstLines = convo.filter(m => m.t === 'text' && !m.mine).slice(0,2).map(m => m.text);
   const hasTask = convo.some(m => m.t === 'task');
   const hasSecret = convo.some(m => m.t === 'secret');
   const groupIn = Object.entries(GROUPS).filter(([_,g])=>g.members.includes(charId)).map(([_,g])=>g.name);
+  const myPhotos = (photos || []).filter(p => p.charId === charId);
+  const bio = c.bio || c.tagline || '';
+  const wiki = c.wiki;
+  const fun = c.funFacts || [];
 
   return (
     <div onClick={onClose} style={{position:"fixed",inset:0,background:"rgba(0,0,0,.55)",zIndex:150,display:"flex",flexDirection:"column",justifyContent:"flex-end"}}>
-      <div onClick={e=>e.stopPropagation()} className="anim-slide" style={{background:"#fff",borderTopLeftRadius:22,borderTopRightRadius:22,maxHeight:"86vh",overflowY:"auto",paddingBottom:"max(18px,env(safe-area-inset-bottom))"}}>
+      <div onClick={e=>e.stopPropagation()} className="anim-slide" style={{background:"#fff",borderTopLeftRadius:22,borderTopRightRadius:22,maxHeight:"88vh",overflowY:"auto",paddingBottom:"max(18px,env(safe-area-inset-bottom))"}}>
         {/* Hero */}
-        <div style={{position:"relative",padding:"28px 22px 18px",background:`linear-gradient(180deg,${c.color}22 0%,#fff 100%)`,borderTopLeftRadius:22,borderTopRightRadius:22}}>
+        <div style={{position:"relative",padding:"26px 22px 16px",background:`linear-gradient(180deg,${c.color}22 0%,#fff 100%)`,borderTopLeftRadius:22,borderTopRightRadius:22}}>
           <button onClick={onClose} style={{position:"absolute",top:14,right:14,border:"none",background:"rgba(0,0,0,.08)",width:30,height:30,borderRadius:"50%",fontSize:16,color:"#666",cursor:"pointer"}}>✕</button>
           <div style={{display:"flex",alignItems:"center",gap:16}}>
             <div style={{width:72,height:72,borderRadius:"50%",background:c.color,color:"#fff",display:"flex",alignItems:"center",justifyContent:"center",fontSize:34,boxShadow:`0 6px 20px ${c.color}55`}}>{c.emoji}</div>
@@ -1054,39 +1159,75 @@ function CharacterProfileSheet({ charId, onClose, onOpenChat, alreadyInChat }){
               <div style={{fontFamily:"'Noto Serif SC',serif",fontWeight:800,fontSize:22,color:"#1a1a1a"}}>{c.nameZh}</div>
               <div style={{fontSize:13,color:"#888",fontStyle:"italic",marginTop:2}}>{c.name}</div>
               <div style={{fontSize:12.5,color:c.color,fontWeight:600,marginTop:4}}>{c.title}</div>
+              <div style={{fontSize:11,color:"#9a8a6a",marginTop:4}}>📍 {city.emoji} {city.nameZh} · {city.en}</div>
             </div>
           </div>
-          <div style={{marginTop:14,fontSize:14.5,color:"#3a2f1e",fontFamily:"'Noto Serif SC',serif",fontStyle:"italic",lineHeight:1.5,padding:"10px 12px",background:"#fff",borderLeft:`3px solid ${c.color}`,borderRadius:"0 8px 8px 0"}}>
-            "{c.tagline}"
+        </div>
+
+        {/* Bio — casual, human */}
+        <div style={{padding:"4px 22px 10px"}}>
+          <div style={{fontSize:11,letterSpacing:2,color:"#999",fontWeight:700,marginBottom:6}}>TA 是谁</div>
+          <div style={{fontSize:14.5,lineHeight:1.65,color:"#2a2a2a",fontFamily:"'Noto Serif SC',serif",whiteSpace:"pre-wrap"}}>{bio}</div>
+          {fun.length > 0 && (
+            <div style={{marginTop:10,padding:"10px 12px",background:`${c.color}0c`,border:`1px dashed ${c.color}40`,borderRadius:12}}>
+              {fun.map((f,i)=>(
+                <div key={i} style={{fontSize:12.5,color:"#3a2f1e",lineHeight:1.5,paddingLeft:14,position:"relative",marginTop:i===0?0:4}}>
+                  <span style={{position:"absolute",left:0,top:0,color:c.color}}>·</span>{f}
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+
+        {/* Photos with this character / place */}
+        <div style={{padding:"4px 22px 10px"}}>
+          <div style={{display:"flex",justifyContent:"space-between",alignItems:"baseline",marginBottom:8}}>
+            <div style={{fontSize:11,letterSpacing:2,color:"#999",fontWeight:700}}>你和 TA 的合影 / 打卡</div>
+            {myPhotos.length > 3 && <button onClick={()=>onOpenGallery && onOpenGallery(charId)} style={{border:"none",background:"transparent",color:c.color,fontSize:11.5,fontWeight:700,cursor:"pointer"}}>看全部 ›</button>}
           </div>
+          {myPhotos.length === 0 ? (
+            <div style={{padding:"18px 14px",background:"#faf7f0",border:`1px dashed ${c.color}40`,borderRadius:12,textAlign:"center"}}>
+              <div style={{fontSize:26,marginBottom:6,opacity:.5}}>📷</div>
+              <div style={{fontSize:12.5,color:"#8a6e3f",lineHeight:1.5}}>还没有合影或打卡<br/>去完成 TA 给的任务，或在相册上传一张</div>
+            </div>
+          ) : (
+            <div style={{display:"flex",gap:8,overflowX:"auto",paddingBottom:4}} className="no-scrollbar">
+              {myPhotos.slice(0,6).map((p,i)=>(
+                <div key={i} style={{flexShrink:0,width:96,height:96,borderRadius:12,overflow:"hidden",background:`${c.color}22`,border:`1px solid ${c.color}33`,position:"relative"}}>
+                  {p.dataUrl
+                    ? <img src={p.dataUrl} alt="" style={{width:"100%",height:"100%",objectFit:"cover"}}/>
+                    : <div style={{width:"100%",height:"100%",display:"flex",alignItems:"center",justifyContent:"center",fontSize:28}}>{c.emoji}</div>}
+                </div>
+              ))}
+            </div>
+          )}
         </div>
 
-        {/* Stats */}
-        <div style={{display:"grid",gridTemplateColumns:"repeat(3,1fr)",gap:8,padding:"14px 20px 6px"}}>
-          <StatBox color={c.color} label="所在" value={`${city.emoji} ${city.nameZh}`}/>
-          <StatBox color={c.color} label="消息" value={`${msgCount} 条`}/>
-          <StatBox color={c.color} label="解锁" value={hasSecret?"🔓 有秘密":"无秘密"}/>
+        {/* Meta chips */}
+        <div style={{padding:"0 22px 4px",display:"flex",flexWrap:"wrap",gap:6}}>
+          {hasTask && <Tag color="#e67e22" emoji="📸" label="有打卡任务"/>}
+          {hasSecret && <Tag color="#8e44ad" emoji="🔒" label="有隐藏秘密"/>}
+          {groupIn.map((gn,i)=><Tag key={i} color="#B8860B" emoji="👥" label={gn}/>)}
+          {c.domain && <Tag color={c.color} emoji="🎯" label={c.domain}/>}
         </div>
 
-        {/* Preview */}
-        {firstLines.length > 0 && (
-          <div style={{padding:"10px 20px 4px"}}>
-            <div style={{fontSize:11,letterSpacing:2,color:"#999",fontWeight:700,marginBottom:8}}>TA 会跟你说</div>
-            {firstLines.map((l,i)=>(
-              <div key={i} style={{background:"#f7f3eb",padding:"10px 14px",borderRadius:16,borderBottomLeftRadius:6,fontSize:14,lineHeight:1.5,color:"#2a1e10",marginBottom:6,maxWidth:"90%"}}>{l}</div>
-            ))}
+        {/* Wiki link */}
+        {wiki && (
+          <div style={{padding:"10px 22px 0"}}>
+            <a href={wiki} target="_blank" rel="noreferrer"
+               style={{display:"flex",alignItems:"center",gap:10,padding:"10px 14px",background:"#f5f1e8",border:"1px solid #e4d9bf",borderRadius:12,textDecoration:"none",color:"#3a2f1e"}}>
+              <span style={{fontSize:18}}>📚</span>
+              <div style={{flex:1}}>
+                <div style={{fontSize:13,fontWeight:700}}>Wikipedia</div>
+                <div style={{fontSize:11,color:"#8a6e3f",wordBreak:"break-all"}}>{wiki.replace(/^https?:\/\//,'')}</div>
+              </div>
+              <span style={{fontSize:14,color:"#8a6e3f"}}>↗</span>
+            </a>
           </div>
         )}
 
-        {/* Meta tags */}
-        <div style={{padding:"10px 20px 4px",display:"flex",flexWrap:"wrap",gap:6}}>
-          {hasTask && <Tag color="#e67e22" emoji="📸" label="有打卡任务"/>}
-          {hasSecret && <Tag color="#8e44ad" emoji="🔒" label="有隐藏秘密"/>}
-          {groupIn.map((gn,i)=><Tag key={i} color="#B8860B" emoji="👥" label={`在「${gn}」群`}/>)}
-        </div>
-
         {/* Actions */}
-        <div style={{padding:"14px 20px 8px",display:"flex",gap:8}}>
+        <div style={{padding:"14px 22px 8px",display:"flex",gap:8}}>
           {!alreadyInChat && (
             <button onClick={()=>{onOpenChat(charId); onClose();}}
               style={{flex:1,background:c.color,color:"#fff",border:"none",padding:"12px",borderRadius:14,fontWeight:700,fontSize:14,cursor:"pointer"}}>💬 打开聊天</button>
@@ -1124,11 +1265,16 @@ function ArtworkDetailSheet({ msg, onClose }){
   const kind = msg.t;
 
   if (kind === 'artwork') {
+    const factPairs = [];
+    if (msg.year)    factPairs.push(['年代', msg.year]);
+    if (msg.artist)  factPairs.push(['作者', msg.artist]);
+    if (msg.medium)  factPairs.push(['材质', msg.medium]);
+    if (msg.size)    factPairs.push(['尺寸', msg.size]);
     return (
       <div onClick={onClose} style={{position:"fixed",inset:0,background:"rgba(0,0,0,.88)",zIndex:150,display:"flex",flexDirection:"column"}}>
         <button onClick={onClose} style={{position:"absolute",top:"max(16px,env(safe-area-inset-top))",right:16,border:"none",background:"rgba(255,255,255,.15)",color:"#fff",width:36,height:36,borderRadius:"50%",fontSize:18,cursor:"pointer",zIndex:10}}>✕</button>
         {msg.image && (
-          <div style={{flex:"0 0 auto",height:"42vh",background:"#1a1a1a",overflow:"hidden",display:"flex",alignItems:"center",justifyContent:"center"}}>
+          <div style={{flex:"0 0 auto",height:"38vh",background:"#1a1a1a",overflow:"hidden",display:"flex",alignItems:"center",justifyContent:"center"}}>
             <img src={msg.image} alt={msg.title}
               style={{maxWidth:"100%",maxHeight:"100%",objectFit:"contain"}}/>
           </div>
@@ -1136,17 +1282,59 @@ function ArtworkDetailSheet({ msg, onClose }){
         <div onClick={e=>e.stopPropagation()} className="anim-slide" style={{flex:1,background:"#fff",borderTopLeftRadius:22,borderTopRightRadius:22,marginTop:-22,padding:"22px 22px 30px",paddingBottom:"max(22px,env(safe-area-inset-bottom))",overflowY:"auto"}}>
           <div style={{fontSize:10.5,letterSpacing:3,color:"#b8860b",fontWeight:700,marginBottom:6}}>ARTWORK · 作品卡</div>
           <div style={{fontFamily:"'Playfair Display',serif",fontSize:26,fontWeight:800,lineHeight:1.2,color:"#1a1a1a"}}>{msg.title}</div>
+          {msg.nameIt && <div style={{fontSize:13,color:"#9a8a6a",fontStyle:"italic",marginTop:2}}>{msg.nameIt}</div>}
           <div style={{fontSize:13,color:"#8a6f47",fontWeight:600,marginTop:6}}>📍 {msg.location}</div>
+
+          {factPairs.length > 0 && (
+            <div style={{marginTop:14,display:"grid",gridTemplateColumns:"repeat(2,1fr)",gap:8}}>
+              {factPairs.map(([k,v],i)=>(
+                <div key={i} style={{padding:"8px 10px",background:"#f7f3eb",borderRadius:10}}>
+                  <div style={{fontSize:10,letterSpacing:1.5,color:"#a8792a",fontWeight:700}}>{k}</div>
+                  <div style={{fontSize:13,color:"#2a1e10",fontWeight:600,marginTop:2}}>{v}</div>
+                </div>
+              ))}
+            </div>
+          )}
+
           {msg.why && (
-            <div style={{marginTop:18,padding:"14px 16px",background:"#faf7f2",borderRadius:12,fontSize:14.5,lineHeight:1.65,color:"#2a1e10"}}>
+            <div style={{marginTop:16,padding:"14px 16px",background:"#faf7f2",borderRadius:12,fontSize:14.5,lineHeight:1.65,color:"#2a1e10"}}>
               <div style={{fontSize:11,letterSpacing:2,color:"#8a6f47",fontWeight:700,marginBottom:6}}>为什么重要</div>
               {msg.why}
+            </div>
+          )}
+          {msg.story && (
+            <div style={{marginTop:12,padding:"14px 16px",background:"#fff",border:"1px solid #eadfc2",borderRadius:12,fontSize:14,lineHeight:1.65,color:"#3a2f1e"}}>
+              <div style={{fontSize:11,letterSpacing:2,color:"#8a6f47",fontWeight:700,marginBottom:6}}>📖 幕后故事</div>
+              {msg.story}
             </div>
           )}
           {msg.observe && (
             <div style={{marginTop:12,padding:"14px 16px",background:"#fffbee",borderLeft:"3px solid #d4a574",borderRadius:"0 12px 12px 0",fontSize:14,lineHeight:1.65,color:"#5a4a1a"}}>
               <div style={{fontSize:11,letterSpacing:2,color:"#a8792a",fontWeight:700,marginBottom:6}}>👁️ 现场怎么看</div>
               {msg.observe}
+            </div>
+          )}
+          {Array.isArray(msg.lookAt) && msg.lookAt.length > 0 && (
+            <div style={{marginTop:12,padding:"14px 16px",background:"#f4efe3",borderRadius:12,fontSize:13.5,lineHeight:1.6,color:"#3a2f1e"}}>
+              <div style={{fontSize:11,letterSpacing:2,color:"#8a6f47",fontWeight:700,marginBottom:8}}>🔍 三个细节不要错过</div>
+              {msg.lookAt.map((item,i)=>(
+                <div key={i} style={{display:"flex",gap:10,marginTop:i===0?0:6}}>
+                  <div style={{flexShrink:0,width:22,height:22,borderRadius:"50%",background:"#8a6f47",color:"#fff",fontSize:11,fontWeight:700,display:"flex",alignItems:"center",justifyContent:"center"}}>{i+1}</div>
+                  <div style={{flex:1}}>{item}</div>
+                </div>
+              ))}
+            </div>
+          )}
+          {msg.ticket && (
+            <div style={{marginTop:12,padding:"12px 14px",background:"#eef6ff",border:"1px solid #cfe1ff",borderRadius:12,fontSize:12.5,lineHeight:1.55,color:"#1a3a6a"}}>
+              <div style={{fontSize:10.5,letterSpacing:2,color:"#4a6aa8",fontWeight:700,marginBottom:4}}>🎫 实用信息</div>
+              {msg.ticket}
+            </div>
+          )}
+          {msg.quote && (
+            <div style={{marginTop:14,padding:"12px 16px",background:"#fff",borderLeft:"3px solid #c9a55b",fontStyle:"italic",fontFamily:"'Noto Serif SC',serif",fontSize:14,lineHeight:1.6,color:"#3a2f1e"}}>
+              "{msg.quote}"
+              {msg.quoteBy && <div style={{fontStyle:"normal",fontSize:11.5,color:"#8a6f47",marginTop:4}}>— {msg.quoteBy}</div>}
             </div>
           )}
           <div style={{marginTop:22,fontSize:12,color:"#aaa",textAlign:"center",fontStyle:"italic"}}>— 把这张卡截图带到现场 —</div>
@@ -1162,19 +1350,26 @@ function ArtworkDetailSheet({ msg, onClose }){
   const label = msg.label || (isTip ? '实用小贴士' : '文艺彩蛋');
   const kindLabel = isTip ? 'TIP · 小贴士' : 'REFERENCE · 彩蛋';
 
+  const firstEmoji = (label.match(/^\p{Extended_Pictographic}/u) || [])[0] || (isTip ? '💡' : '✨');
   return (
     <div onClick={onClose} style={{position:"fixed",inset:0,background:"rgba(0,0,0,.55)",zIndex:150,display:"flex",flexDirection:"column",justifyContent:"flex-end"}}>
-      <div onClick={e=>e.stopPropagation()} className="anim-slide" style={{background:"#fff",borderTopLeftRadius:22,borderTopRightRadius:22,padding:"24px 22px 26px",paddingBottom:"max(24px,env(safe-area-inset-bottom))",maxHeight:"80vh",overflowY:"auto"}}>
-        <div style={{display:"flex",justifyContent:"space-between",alignItems:"flex-start",gap:10,marginBottom:12}}>
-          <div>
-            <div style={{fontSize:10.5,letterSpacing:3,color:accent,fontWeight:700,marginBottom:4}}>{kindLabel}</div>
-            <div style={{fontFamily:"'Noto Serif SC',serif",fontSize:20,fontWeight:800,color:"#1a1a1a"}}>{label}</div>
+      <div onClick={e=>e.stopPropagation()} className="anim-slide" style={{background:"#fff",borderTopLeftRadius:22,borderTopRightRadius:22,paddingBottom:"max(24px,env(safe-area-inset-bottom))",maxHeight:"85vh",overflowY:"auto",position:"relative"}}>
+        <button onClick={onClose} aria-label="关闭"
+          style={{position:"sticky",top:10,marginLeft:"calc(100% - 44px)",marginBottom:-34,zIndex:5,border:"none",background:"rgba(255,255,255,.9)",backdropFilter:"blur(8px)",width:32,height:32,borderRadius:"50%",fontSize:15,color:"#333",cursor:"pointer",boxShadow:"0 2px 8px rgba(0,0,0,.12)"}}>✕</button>
+        {msg.image ? (
+          <div style={{height:"30vh",background:"#f4efe6",overflow:"hidden",display:"flex",alignItems:"center",justifyContent:"center"}}>
+            <img src={msg.image} alt={label} style={{width:"100%",height:"100%",objectFit:"cover"}}/>
           </div>
-          <button onClick={onClose} style={{border:"none",background:"#f2f2f7",width:30,height:30,borderRadius:"50%",fontSize:14,color:"#666",cursor:"pointer",flexShrink:0}}>✕</button>
-        </div>
-        <div style={{padding:"16px 18px",background:bg,borderLeft:`4px solid ${accent}`,borderRadius:"0 14px 14px 0",fontSize:15,lineHeight:1.7,color:"#2a1e10",whiteSpace:"pre-wrap"}}>{msg.text}</div>
-        <div style={{marginTop:18,fontSize:11.5,color:"#aaa",textAlign:"center",fontStyle:"italic",letterSpacing:.5}}>
-          {isTip ? '— 出发前截个图备用 —' : '— 一个小小的文艺连接 —'}
+        ) : (
+          <div style={{height:120,background:`linear-gradient(135deg,${accent}22,${accent}08)`,display:"flex",alignItems:"center",justifyContent:"center",fontSize:56}}>{firstEmoji}</div>
+        )}
+        <div style={{padding:"20px 22px 26px"}}>
+          <div style={{fontSize:10.5,letterSpacing:3,color:accent,fontWeight:700,marginBottom:4}}>{kindLabel}</div>
+          <div style={{fontFamily:"'Noto Serif SC',serif",fontSize:20,fontWeight:800,color:"#1a1a1a",marginBottom:14}}>{label}</div>
+          <div style={{padding:"16px 18px",background:bg,borderLeft:`4px solid ${accent}`,borderRadius:"0 14px 14px 0",fontSize:15,lineHeight:1.7,color:"#2a1e10",whiteSpace:"pre-wrap"}}>{msg.text}</div>
+          <div style={{marginTop:18,fontSize:11.5,color:"#aaa",textAlign:"center",fontStyle:"italic",letterSpacing:.5}}>
+            {isTip ? '— 出发前截个图备用 —' : '— 一个小小的文艺连接 —'}
+          </div>
         </div>
       </div>
     </div>
@@ -1217,6 +1412,8 @@ export default function App(){
     <>
       <CharacterProfileSheet charId={profileCharId} onClose={closeProfile}
         onOpenChat={(id)=>{ setCharId(id); setGroupId(null); }}
+        photos={state.photos || []}
+        onOpenGallery={()=>{ setProfileCharId(null); setTab('photos'); }}
         alreadyInChat={!!charId && profileCharId === charId}/>
       <ArtworkDetailSheet msg={sheetMsg} onClose={closeSheet}/>
     </>

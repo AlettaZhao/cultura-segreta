@@ -5,37 +5,418 @@
 import { PHOTOS } from './data.js';
 
 // ─── Character roster ───
+// Historical + local celebrities each have `bio`, `wiki`, `domain`, `funFacts`.
+// Guide personas (5 per city: art / shopping / food / culture / language) are local and topic-focused.
 export const CHARACTERS = {
-  // FLORENCE
-  michelangelo: { city:'florence', name:'Michelangelo', nameZh:'米开朗基罗', emoji:'🗿', color:'#8B6F47', tagline:'脾气比才华还大', title:'文艺复兴巨匠 · 1475-1564' },
-  dante:        { city:'florence', name:'Dante',        nameZh:'但丁',      emoji:'📜', color:'#6B4423', tagline:'被流放的诗人', title:'《神曲》作者 · 1265-1321' },
-  lorenzo:      { city:'florence', name:'Lorenzo',      nameZh:'洛伦佐·美第奇', emoji:'👑', color:'#C17817', tagline:'文艺复兴金主', title:'美第奇家族 · 佛罗伦萨实际统治者' },
-  marco:        { city:'florence', name:'Marco',        nameZh:'Marco',     emoji:'🎧', color:'#4A5568', tagline:'乌菲兹导览员', title:'当地人 · 热爱八卦' },
+  // ══════════ FLORENCE · 佛罗伦萨 ══════════
+  michelangelo: {
+    city:'florence', name:'Michelangelo', nameZh:'米开朗基罗', emoji:'🗿', color:'#8B6F47',
+    tagline:'脾气比才华还大', title:'文艺复兴巨匠 · 1475-1564',
+    domain:'雕塑 · 壁画 · 建筑',
+    bio:'他不爱说话，爱凿石头。\n四年仰着头画完西斯廷天顶，脖子一辈子没再正过。\n别跟他提拉斐尔和达芬奇，他会翻白眼。',
+    funFacts:['鼻梁是小时候被同门打断的，一生没修','死前烧掉了所有草图，只想让人记住完成品','"我不是在雕它，是在把它从石头里放出来"——他原话'],
+    wiki:'https://zh.wikipedia.org/wiki/米开朗基罗',
+  },
+  dante: {
+    city:'florence', name:'Dante', nameZh:'但丁', emoji:'📜', color:'#6B4423',
+    tagline:'被流放的诗人', title:'《神曲》作者 · 1265-1321',
+    domain:'诗歌 · 语言 · 政治',
+    bio:'9 岁见过一个叫 Beatrice 的女孩，然后用一辈子写她。\n被佛罗伦萨判死刑终身流放，在别人家客厅里写完了地狱、炼狱、天堂。\n你现在用的意大利语，是他定的。',
+    funFacts:['《神曲》让托斯卡纳方言变成了标准意大利语','把仇人一个个写进地狱，还按罪行分层','死后埋在拉文纳，佛罗伦萨想要回去，对方拒绝了 700 年'],
+    wiki:'https://zh.wikipedia.org/wiki/但丁·阿利吉耶里',
+  },
+  lorenzo: {
+    city:'florence', name:'Lorenzo', nameZh:'洛伦佐·美第奇', emoji:'👑', color:'#C17817',
+    tagline:'文艺复兴金主', title:'美第奇家族 · 佛罗伦萨实际统治者 · 1449-1492',
+    domain:'政治 · 银行 · 艺术赞助',
+    bio:'不是国王胜似国王。银行家的孙子，却写得一手好诗。\n把米开朗基罗从街上捡回家当儿子养。\n佛罗伦萨能成为文艺复兴中心，一半是他出的钱。',
+    funFacts:['外号 "伟大的洛伦佐"（Il Magnifico）','同时运营欧洲最大的银行和一所柏拉图学院','儿子后来当了教皇利奥十世'],
+    wiki:'https://zh.wikipedia.org/wiki/洛伦佐·德·美第奇',
+  },
+  marco: {
+    city:'florence', name:'Marco', nameZh:'Marco', emoji:'🎧', color:'#4A5568',
+    tagline:'乌菲兹导览员', title:'本地人 · 热爱八卦',
+    domain:'城市小道消息',
+    bio:'在乌菲兹带了 12 年讲解。\n嘴碎，但不瞎说——他会告诉你波提切利的《春》里藏了一个被教皇删掉的神。\n下班后会拉你去 Santo Spirito 广场喝 Spritz。',
+    funFacts:['能一眼认出 21 种文艺复兴蓝颜料','祖父是保护乌菲兹躲过二战轰炸的守夜人','微信朋友圈只发壁画局部特写'],
+    wiki:null,
+  },
+  // FLORENCE — 5 guide personas
+  fi_art: {
+    city:'florence', name:'Alessia', nameZh:'艾丽西娅 · 艺术讲解员', emoji:'🎨', color:'#A8754A',
+    tagline:'把博物馆讲成八卦', title:'乌菲兹 / 学院 / 皮蒂宫 · 驻馆讲解',
+    domain:'艺术讲解',
+    bio:'艺术史博士，最讨厌 "走马观花"。\n她会告诉你：在乌菲兹先看 10 号厅（波提切利），再看 35 号厅（米开朗基罗），别按序号。\n带你少走 80% 的路。',
+    funFacts:['可以一口气说出 13 种 tempera 蛋黄调配比例','手机壁纸是《春》里那个偷苹果的 Zephyrus'],
+    wiki:null,
+  },
+  fi_shop: {
+    city:'florence', name:'Bianca', nameZh:'Bianca · 导购', emoji:'🛍️', color:'#B88A5A',
+    tagline:'皮具不买 via de\' Tornabuoni', title:'本地采购 · 15 年皮革市场老客',
+    domain:'购物 / 皮具 / 文具',
+    bio:'不是大牌党。她带你去 Scuola del Cuoio（圣十字教堂后院那家皮革学校），看着师傅把皮料剪给你。\n还会带你去那家老文具店 Il Papiro 选大理石纹纸。',
+    funFacts:['认识佛罗伦萨 6 家非连锁皮具匠人的全名','从来不戴有 Logo 的东西'],
+    wiki:null,
+  },
+  fi_food: {
+    city:'florence', name:'Nonno Piero', nameZh:'Piero 爷爷 · 老吃家', emoji:'🍖', color:'#8A3A1A',
+    tagline:'Bistecca 没有七分熟', title:'Sant\'Ambrogio 菜市场老客 · 半辈子的吃主',
+    domain:'美食 / 餐厅',
+    bio:'能在 3 秒内分辨 Chianti 和 Chianti Classico。\n他带你去 Trattoria Mario（中午 12 点开门，没有菜单），吃 Bistecca alla Fiorentina（佛罗伦萨大牛排，只有 rare）。\n别点卡布奇诺配饭。',
+    funFacts:['胃里永远有位置再来一盘 Pappa al Pomodoro','坚持 Lampredotto（牛肚三明治）是世界上最好吃的街头小吃'],
+    wiki:null,
+  },
+  fi_culture: {
+    city:'florence', name:'Chiara', nameZh:'Chiara · 文艺青年', emoji:'🎬', color:'#A86A8A',
+    tagline:'带你去电影里的那个街角', title:'电影社编辑 · 文学硕士',
+    domain:'文艺 / 电影 / 文学',
+    bio:'《看得见风景的房间》就在 Piazza della Signoria 拍的，她能指给你主角站的那块石头。\n还能给你讲 Dan Brown 把哪一页带丢在了 Palazzo Vecchio。',
+    funFacts:['走过《汉尼拔》里所有拍摄点','手机里有一个 "可以被电影用的街角" 收藏夹'],
+    wiki:null,
+  },
+  fi_lang: {
+    city:'florence', name:'Maestra Sara', nameZh:'Sara 老师 · 意大利语', emoji:'🗣️', color:'#9C6B3C',
+    tagline:'一句 Buongiorno 换一杯免费 espresso', title:'语言学校老师 · 教外国人说 "真的像当地人"',
+    domain:'意大利语 101',
+    bio:'她教过的学生里有一个美国人在第 3 天就被店员当成本地人。\n她不教语法，她教"你进店的第一个 3 秒该说什么"。',
+    funFacts:['坚信 "Prego" 是意大利语里最万能的单词','有一套 20 句话可以让你在意大利不翻车'],
+    wiki:null,
+  },
 
-  // ROME
-  caesar:       { city:'rome', name:'Caesar',     nameZh:'凯撒',         emoji:'🏛️', color:'#8B1A1A', tagline:'你们都是我的子民',     title:'独裁官 · 被捅了23刀' },
-  bernini:      { city:'rome', name:'Bernini',    nameZh:'贝尼尼',       emoji:'🎭', color:'#A63D40', tagline:'把石头雕成会呼吸的', title:'巴洛克天才 · 1598-1680' },
-  nonna:        { city:'rome', name:'Nonna Lucia',nameZh:'Lucia 奶奶',   emoji:'👵', color:'#D4A574', tagline:'住了一辈子特拉斯提弗列',title:'本地人 · 会给你塞饭' },
+  // ══════════ ROME · 罗马 ══════════
+  caesar: {
+    city:'rome', name:'Caesar', nameZh:'凯撒', emoji:'🏛️', color:'#8B1A1A',
+    tagline:'你们都是我的子民', title:'独裁官 · 被捅了23刀 · BC 100-44',
+    domain:'政治 · 军事 · 文法',
+    bio:'征服高卢，越过卢比孔河。\n3 月 15 日在元老院被刺 23 刀，倒下前扯衣襟盖脸——临死还保持姿态。\n"Veni, vidi, vici（我来，我看见，我征服）" 是他的原话。',
+    funFacts:['一生平均每 3 年换一个女人，其中一个是埃及女王克娄巴特拉','"Caesar salad" 跟他无关，那是 1924 年墨西哥一个厨师发明的','七月 July 是以他命名的'],
+    wiki:'https://zh.wikipedia.org/wiki/尤利乌斯·凯撒',
+  },
+  bernini: {
+    city:'rome', name:'Bernini', nameZh:'贝尼尼', emoji:'🎭', color:'#A63D40',
+    tagline:'把石头雕成会呼吸的', title:'巴洛克天才 · 1598-1680',
+    domain:'巴洛克雕塑 · 建筑 · 舞台设计',
+    bio:'8 岁就能让教皇停下来看他的作品。\n罗马今天的样子——圣彼得广场、四河喷泉、特雷维——有一半是他设计的。\n不会画草图就动手，他是那种人。',
+    funFacts:['一生服侍过 8 位教皇','25 岁前完成《阿波罗与达芙妮》，指尖抓皮肤的褶皱让人怀疑是肉','跟同为雕塑家的助手有过惊天动地的情人纠纷'],
+    wiki:'https://zh.wikipedia.org/wiki/吉安·洛伦佐·贝尼尼',
+  },
+  nonna: {
+    city:'rome', name:'Nonna Lucia', nameZh:'Lucia 奶奶', emoji:'👵', color:'#D4A574',
+    tagline:'住了一辈子特拉斯提弗列', title:'本地人 · 会给你塞饭',
+    domain:'罗马生活 · 家常菜',
+    bio:'83 岁，从小住在河对岸那个斑驳的橙色公寓。\n会一边骂你穿得太少一边塞给你一盘 cacio e pepe（奶酪黑胡椒面）。\n她的厨房永远给你留一个位置。',
+    funFacts:['能凭声音辨出教堂是 San Crisogono 还是 Santa Maria','最讨厌游客在 Piazza Navona 买 15 欧的矿泉水','孙子在伦敦，每周六视频'],
+    wiki:null,
+  },
+  // ROME — 5 guide personas
+  rm_art: {
+    city:'rome', name:'Don Matteo', nameZh:'Matteo 神父 · 艺术讲解员', emoji:'⛪', color:'#A35050',
+    tagline:'教堂是免费的博物馆', title:'梵蒂冈 / 博尔盖塞 / Caravaggio 线路',
+    domain:'艺术讲解 / 教堂艺术',
+    bio:'神父出身，后来做专职讲解。\n他带你去 San Luigi dei Francesi（法国圣路易教堂）看三张免费的 Caravaggio 真迹——1 欧硬币点亮灯就行。\n不是所有的艺术都在博物馆。',
+    funFacts:['能画出所有 Caravaggio 光源的方向','梵蒂冈博物馆最后半小时会拉着你冲刺看西斯廷（最少人）'],
+    wiki:null,
+  },
+  rm_shop: {
+    city:'rome', name:'Valentina', nameZh:'Valentina · 导购', emoji:'🛍️', color:'#B54A6A',
+    tagline:'别在特雷维周围买任何东西', title:'Monti 区买手 · 二手 vintage 专家',
+    domain:'购物 / 古着 / 市集',
+    bio:'带你逛 Monti 区的 vintage 小店和 Via del Pellegrino 的匠人铺。\n周日她会拖你去 Porta Portese 市集砍价。\n说一句 "troppo caro（太贵了）"，价格立刻掉 20%。',
+    funFacts:['每周六雷打不动去 Mercato di Campagna Amica 买本地奶酪','绝不让人在机场买 limoncello'],
+    wiki:null,
+  },
+  rm_food: {
+    city:'rome', name:'Carlo', nameZh:'Carlo · 老吃家', emoji:'🍝', color:'#8A3A1A',
+    tagline:'罗马四大意面，一样不能少', title:'Testaccio 区吃货 · 开过两家 trattoria',
+    domain:'美食 / 餐厅',
+    bio:'Cacio e pepe（奶酪胡椒）、Carbonara（培根蛋黄）、Amatriciana（番茄培根）、Gricia（猪颊肉奶酪）——四大罗马意面他一天能吃完。\n他说：去 Trastevere 找 Da Enzo al 29，点 Carbonara 加份 artichoke alla romana（罗马式朝鲜蓟）。',
+    funFacts:['最讨厌 Alfredo 酱（意大利人不吃那玩意）','知道罗马最好吃的 Maritozzo（奶油甜面包）在哪'],
+    wiki:null,
+  },
+  rm_culture: {
+    city:'rome', name:'Flavia', nameZh:'Flavia · 文艺青年', emoji:'📽️', color:'#8A5AA0',
+    tagline:'La Dolce Vita 的那条街今天还在', title:'罗马三大学电影系 · 费里尼研究者',
+    domain:'文艺 / 电影 / 音乐',
+    bio:'带你走一遍 La Dolce Vita 的拍摄路线——特雷维喷泉、Via Veneto、EUR 街区。\n她会给你念一段 Alda Merini 的诗，然后问你要不要喝一杯 Negroni。',
+    funFacts:['《罗马假日》那家 Bocca della Verità 的真实历史比电影还有意思','耳机里循环 Ennio Morricone'],
+    wiki:null,
+  },
+  rm_lang: {
+    city:'rome', name:'Prof Enzo', nameZh:'Enzo 教授 · 意大利语', emoji:'🗣️', color:'#9A6A4A',
+    tagline:'罗马口音是一种身份', title:'La Sapienza 大学 · 语言学教授',
+    domain:'意大利语 101 / 罗马方言',
+    bio:'教你最基础的 5 句话：Buongiorno（早）、Grazie（谢）、Scusi（对不起）、Prego（请 / 不客气）、Il conto, per favore（买单）。\n再教你一句罗马本地的 "Daje!"（加油 / 走起），立刻被当地人当朋友。',
+    funFacts:['坚持罗马方言比标准意大利语更古老','收藏 200 本方言字典'],
+    wiki:null,
+  },
 
-  // MILAN
-  davinci:      { city:'milan', name:'Leonardo',  nameZh:'达芬奇',       emoji:'🛠️', color:'#37474F', tagline:'话题永远跑题',         title:'文艺复兴全才 · 1452-1519' },
-  miuccia:      { city:'milan', name:'Miuccia',   nameZh:'Miuccia Prada',emoji:'👗', color:'#2C3E50', tagline:'丑得好看',             title:'时装教母 · 1949-' },
-  paolo:        { city:'milan', name:'Paolo',     nameZh:'Paolo',        emoji:'⚽', color:'#C0392B', tagline:'AC 米兰至死不渝',      title:'本地球迷 · 金融男' },
+  // ══════════ MILAN · 米兰 ══════════
+  davinci: {
+    city:'milan', name:'Leonardo', nameZh:'达芬奇', emoji:'🛠️', color:'#37474F',
+    tagline:'话题永远跑题', title:'文艺复兴全才 · 1452-1519',
+    domain:'绘画 · 工程 · 解剖 · 水利',
+    bio:'私生子，没上过大学。\n同时画画、设计飞行器、研究人体解剖、造水闸。\n《最后的晚餐》是他给米兰的礼物，也是他唯一一次尝试用油画画壁画（失败了，颜料至今在脱落）。',
+    funFacts:['笔记本是镜像反写——从右往左','一生完成作品不到 20 件，《蒙娜丽莎》带去了法国','解剖过 30 具尸体，画出了人类第一批精确的人体解剖图'],
+    wiki:'https://zh.wikipedia.org/wiki/列奥纳多·达·芬奇',
+  },
+  miuccia: {
+    city:'milan', name:'Miuccia', nameZh:'Miuccia Prada', emoji:'👗', color:'#2C3E50',
+    tagline:'丑得好看', title:'时装教母 · 1949-',
+    domain:'时装 · 艺术赞助',
+    bio:'拿到政治学博士，然后接手了奶奶的手袋店。\n把 Prada 从一个家族皮具铺做成全球奢侈品帝国。\n她坚信：丑和美之间只差一个思想。',
+    funFacts:['80 年代拿尼龙降落伞做手袋，被笑后变成全世界追捧','同时运营米兰 Fondazione Prada 当代艺术博物馆','老公 Bertelli 是她的商业搭档兼 CEO'],
+    wiki:'https://zh.wikipedia.org/wiki/缪西娅·普拉达',
+  },
+  paolo: {
+    city:'milan', name:'Paolo', nameZh:'Paolo', emoji:'⚽', color:'#C0392B',
+    tagline:'AC 米兰至死不渝', title:'本地球迷 · 金融男',
+    domain:'足球 · 米兰生活',
+    bio:'白天在 Bocconi 大学附近的 PE 基金上班。\n晚上一件红黑条纹球衣，在 San Siro 北看台吼到失声。\n会告诉你 Duomo 顶楼看球的秘密角度。',
+    funFacts:['家里挂着 1989 年 AC 米兰的欧冠签名球衣','每周三下班在 Bar Basso 喝 Negroni Sbagliato（起源于这里的误打误撞）'],
+    wiki:null,
+  },
+  // MILAN — 5 guide personas
+  mi_art: {
+    city:'milan', name:'Giulia', nameZh:'Giulia · 艺术讲解员', emoji:'🖼️', color:'#4A5A7A',
+    tagline:'最后的晚餐要提前 2 个月订', title:'Pinacoteca di Brera / Duomo / 最后的晚餐',
+    domain:'艺术讲解',
+    bio:'米兰的美术馆不止 Brera。\n她带你去 Museo del Novecento 看 20 世纪意大利艺术，去 Ambrosiana 看达芬奇的《音乐家肖像》——人少一半价。',
+    funFacts:['每年 1 月 1 日 Brera 免费开放，她一定去排队','家里有一张 1:1 《最后的晚餐》印刷品'],
+    wiki:null,
+  },
+  mi_shop: {
+    city:'milan', name:'Sofia', nameZh:'Sofia · 导购', emoji:'🛍️', color:'#3A4A6A',
+    tagline:'Quadrilatero 是给游客看的', title:'Navigli / Brera / 5VIE 三区选货',
+    domain:'购物 / 设计师品牌 / 设计',
+    bio:'不去 Montenapoleone。\n她带你去 Brera 的独立设计师店，Navigli 运河边的古着小铺，5VIE 区的家居设计工作室。\n米兰设计周她是常客。',
+    funFacts:['手里有一张 "能砍价的精品店" 地图','每年 4 月设计周不睡觉'],
+    wiki:null,
+  },
+  mi_food: {
+    city:'milan', name:'Franco', nameZh:'Franco · 老吃家', emoji:'🥩', color:'#8A3A1A',
+    tagline:'Aperitivo 才是米兰的灵魂', title:'Navigli 区常驻 · 30 年 aperitivo 专家',
+    domain:'美食 / aperitivo / 米兰菜',
+    bio:'米兰三大本地菜：Risotto alla Milanese（藏红花烩饭）、Cotoletta（炸小牛排）、Ossobuco（炖牛膝）。\n他 6 点准时出现在 Navigli，点一杯 Negroni 配 10 种下酒菜 buffet。',
+    funFacts:['坚信米兰 risotto 的金色只能用藏红花（不是姜黄）','能分辨 5 种 grappa 的产地'],
+    wiki:null,
+  },
+  mi_culture: {
+    city:'milan', name:'Irene', nameZh:'Irene · 文艺青年', emoji:'🎼', color:'#5A3A6A',
+    tagline:'La Scala 不只是歌剧', title:'斯卡拉歌剧院票务常客 · 设计系毕业',
+    domain:'文艺 / 歌剧 / 设计',
+    bio:'带你去 La Scala（斯卡拉歌剧院）站票区看一场 Verdi，10 欧。\n她也会带你逛 Triennale 设计博物馆，米兰是意大利设计的首都。',
+    funFacts:['能背出 Verdi 六部歌剧的咏叹调','认为米兰最美的窗户在 Castello Sforzesco 的内院'],
+    wiki:null,
+  },
+  mi_lang: {
+    city:'milan', name:'Luca', nameZh:'Luca 老师 · 意大利语', emoji:'🗣️', color:'#4A5A7A',
+    tagline:'Ciao bello 在米兰不一定合适', title:'北方意大利语教学 · 商务口语',
+    domain:'意大利语 101 / 北方口音',
+    bio:'米兰人说话快、直、商务化。\n他教你 "Buongiorno, un caffè per favore（早，麻烦来杯咖啡）"，以及怎么在 aperitivo 订一杯 Spritz 而不被当成游客。',
+    funFacts:['坚信北方意大利语是真正标准','最讨厌 "Ciao bella" 被滥用'],
+    wiki:null,
+  },
 
-  // DOLOMITES
-  hans:         { city:'dolomites', name:'Hans',  nameZh:'Hans',         emoji:'🥾', color:'#2E7D32', tagline:'祖上三代都是山地向导', title:'登山向导 · 说Ladin语' },
-  bruno:        { city:'dolomites', name:'Bruno', nameZh:'Bruno',        emoji:'🐑', color:'#6B8E23', tagline:'100只羊的爸爸',        title:'牧羊人 · 偶尔下山' },
-  sissi:        { city:'dolomites', name:'Sissi', nameZh:'茜茜公主',     emoji:'👑', color:'#9B7EBD', tagline:'逃离维也纳的皇后',     title:'Empress Elisabeth · 1837-1898' },
+  // ══════════ DOLOMITES · 多洛米蒂 ══════════
+  hans: {
+    city:'dolomites', name:'Hans', nameZh:'Hans', emoji:'🥾', color:'#2E7D32',
+    tagline:'祖上三代都是山地向导', title:'登山向导 · 说 Ladin 语',
+    domain:'登山 / 向导',
+    bio:'家里说 Ladin 语（多洛米蒂独有的罗曼语族方言，会讲的人不到 3 万）。\n祖父是 1943 年第一个徒步穿越整个多洛米蒂的人。\n他会带你去 Tre Cime di Lavaredo（三峰），但他会提醒你：山是要被敬畏的。',
+    funFacts:['耳朵能分辨 3 种风声预报天气','手机信号烂，一星期只下山一次','Ladin 语里 "你好" 是 "Bun dé"'],
+    wiki:'https://zh.wikipedia.org/wiki/多洛米蒂',
+  },
+  bruno: {
+    city:'dolomites', name:'Bruno', nameZh:'Bruno', emoji:'🐑', color:'#6B8E23',
+    tagline:'100 只羊的爸爸', title:'牧羊人 · 偶尔下山',
+    domain:'牧羊 / 奶酪 / 山里生活',
+    bio:'夏天上山，冬天下山。\n每只羊都有名字，他能叫出来。\n做一种叫 Graukäse（灰奶酪）的发酵奶酪，吃上去像脚臭但会让你上瘾。',
+    funFacts:['最老的羊叫 Carla，已经 14 岁','手里有一个 100 年前的牧羊铃铛，是曾祖父的'],
+    wiki:null,
+  },
+  sissi: {
+    city:'dolomites', name:'Sissi', nameZh:'茜茜公主', emoji:'👑', color:'#9B7EBD',
+    tagline:'逃离维也纳的皇后', title:'Empress Elisabeth · 1837-1898',
+    domain:'奥匈帝国 · 个人史',
+    bio:'15 岁嫁给奥匈皇帝 Franz Josef，一生都在逃离宫廷。\n她热爱多洛米蒂和地中海，只要能走多远就走多远。\n1898 年在日内瓦被一个无政府主义者刺死，手里还握着一把她爱用的扇子。',
+    funFacts:['腰围一辈子保持在 50 厘米左右（靠疯狂节食）','头发长到膝盖，每天洗需要 3 小时','匈牙利人还把她当成民族英雄'],
+    wiki:'https://zh.wikipedia.org/wiki/伊丽莎白皇后_(奥地利)',
+  },
+  // DOLOMITES — 5 guide personas
+  do_art: {
+    city:'dolomites', name:'Leni', nameZh:'Leni · 艺术讲解员', emoji:'🏔️', color:'#4A7A4A',
+    tagline:'山里的博物馆你想象不到', title:'Messner Mountain Museum 线路',
+    domain:'艺术讲解 / 登山博物馆',
+    bio:'Reinhold Messner（登山传奇）在多洛米蒂建了 6 座 Mountain Museum。\n她带你去 MMM Corones（Plan de Corones 顶 Zaha Hadid 设计）——2275 米海拔，哈迪德生前最后一个作品。',
+    funFacts:['徒步过全部 6 座 Messner Museum','认为山本身就是最好的艺术'],
+    wiki:null,
+  },
+  do_shop: {
+    city:'dolomites', name:'Maria', nameZh:'Maria · 导购', emoji:'🧶', color:'#8A6A4A',
+    tagline:'Loden 羊毛比所有冲锋衣都好', title:'Val Gardena 手工艺市集常客',
+    domain:'购物 / 手工艺 / 木雕',
+    bio:'Val Gardena（加尔代纳谷）是世界木雕之乡。\n她带你去 Ortisei 的匠人店，手工木雕圣诞玩偶，50 欧起。\n再给你选一件 Loden 羊毛外套——雨打不透。',
+    funFacts:['家里有 3 代人的木雕工具','坚信机器做的东西没有灵魂'],
+    wiki:null,
+  },
+  do_food: {
+    city:'dolomites', name:'Opa Franz', nameZh:'Franz 爷爷 · 老吃家', emoji:'🧀', color:'#8A5A2A',
+    tagline:'山屋里的晚餐才是真的', title:'Rifugio（山屋）常驻 · 50 年了',
+    domain:'美食 / 山屋菜 / 奶酪',
+    bio:'山屋（Rifugio）的晚餐是山里的灵魂。\nCanederli（面包团子）、Speck（烟熏火腿）、Polenta（玉米糊）、Apfelstrudel（苹果卷）——配一杯 Grappa。\n他最爱 Rifugio Auronzo 的晚餐。',
+    funFacts:['上山只带一把口琴','认为 Tirol 菜介于意大利和奥地利之间'],
+    wiki:null,
+  },
+  do_culture: {
+    city:'dolomites', name:'Elena', nameZh:'Elena · 文艺青年', emoji:'📚', color:'#6A5A8A',
+    tagline:'这里是茜茜公主的避风港', title:'地方志爱好者 · 德语文学研究',
+    domain:'文艺 / 历史 / 传说',
+    bio:'多洛米蒂是 Ladin 传说的故乡。\n她给你讲 Re Laurin（劳林国王）的玫瑰花园——为什么这些山峰会在日落时变红色。\n也会给你播一首 Reinhold Messner 写的山歌。',
+    funFacts:['收集 200 个 Ladin 民间故事','最爱 Lago di Braies 晨雾'],
+    wiki:null,
+  },
+  do_lang: {
+    city:'dolomites', name:'Martina', nameZh:'Martina · 意大利语 / Ladin', emoji:'🗣️', color:'#3A6A3A',
+    tagline:'Bun dé 不是意大利语', title:'Ladin 语教师 · Val Badia 原住民',
+    domain:'意大利语 + Ladin 方言',
+    bio:'这里三语并行：意大利语、德语、Ladin 语。\n她教你最有用的 3 句：Buongiorno（意）、Grüß Gott（德，山地必用）、Bun dé（Ladin，让山民露出笑容）。',
+    funFacts:['Ladin 语只剩 3 万人会说','她的祖母到死都不说意大利语'],
+    wiki:null,
+  },
 
-  // SORRENTO
-  caruso:       { city:'sorrento', name:'Caruso', nameZh:'Caruso',       emoji:'🎤', color:'#1565C0', tagline:'歌剧史上的金嗓子',     title:'男高音传奇 · 1873-1921' },
-  giuseppe:     { city:'sorrento', name:'Giuseppe',nameZh:'Giuseppe',    emoji:'🍋', color:'#F1C40F', tagline:'家里柠檬比人高',       title:'柠檬农 · 四代单传' },
-  ferrante:     { city:'sorrento', name:'Ferrante',nameZh:'Elena',       emoji:'📖', color:'#6B2C91', tagline:'没人知道我的真面目',   title:'Elena Ferrante · 匿名作家' },
+  // ══════════ SORRENTO · 索伦托 ══════════
+  caruso: {
+    city:'sorrento', name:'Caruso', nameZh:'Caruso', emoji:'🎤', color:'#1565C0',
+    tagline:'歌剧史上的金嗓子', title:'男高音传奇 · 1873-1921',
+    domain:'歌剧 · 声乐',
+    bio:'那不勒斯贫民窟出身，18 岁才开始学唱歌。\n在米兰 La Scala 成名后走遍世界，一生灌录 500 多张唱片——这是历史上第一批商业唱片。\n1921 年在索伦托 Hotel Excelsior Vittoria 病逝。',
+    funFacts:['最早用留声机录音的巨星之一','嗓音可以从 C 唱到 A（跨 3 个八度）','1987 年 Lucio Dalla 在他病房的阳台上写了《Caruso》这首歌'],
+    wiki:'https://zh.wikipedia.org/wiki/恩里科·卡鲁索',
+  },
+  giuseppe: {
+    city:'sorrento', name:'Giuseppe', nameZh:'Giuseppe', emoji:'🍋', color:'#F1C40F',
+    tagline:'家里柠檬比人高', title:'柠檬农 · 四代单传',
+    domain:'柠檬 · Limoncello',
+    bio:'索伦托的柠檬（Limone di Sorrento IGP）是地中海最香的。\n他家柠檬园在 Massa Lubrense 的山坡上，一颗柠檬 500-800 克。\n亲手做 Limoncello，不加色素。',
+    funFacts:['他爷爷用同一套铜锅蒸馏了 60 年','家里柠檬树最老的 130 岁','一年做 300 瓶 Limoncello 只卖给熟客'],
+    wiki:'https://zh.wikipedia.org/wiki/利蒙切洛',
+  },
+  ferrante: {
+    city:'sorrento', name:'Ferrante', nameZh:'Elena', emoji:'📖', color:'#6B2C91',
+    tagline:'没人知道我的真面目', title:'Elena Ferrante · 匿名作家',
+    domain:'文学',
+    bio:'"那不勒斯四部曲"（《我的天才女友》）的作者。\n从未在公开场合露面，用笔名 Elena Ferrante 写了 40 年。\n没有人确定她是谁——甚至不一定是 "她"。',
+    funFacts:['拒绝出版方要求的任何采访','作品被翻成 45 种语言','意大利文学界为此打过好几次笔仗'],
+    wiki:'https://zh.wikipedia.org/wiki/埃莱娜·费兰特',
+  },
+  // SORRENTO — 5 guide personas
+  so_art: {
+    city:'sorrento', name:'Paola', nameZh:'Paola · 艺术讲解员', emoji:'🏛️', color:'#3A6A8A',
+    tagline:'庞贝不需要导游，需要懂的人', title:'庞贝 / 赫库兰尼姆 / 阿马尔菲海岸',
+    domain:'艺术讲解 / 考古',
+    bio:'考古学硕士。庞贝 3 小时线路她走过 200 次。\n她让你先去 Villa dei Misteri（神秘别墅）看 2000 年前的壁画，再去 Casa del Fauno。\n不要在中午去——晒到脱水。',
+    funFacts:['在庞贝做过 3 年发掘工作','坚信赫库兰尼姆比庞贝更值得看（人少 80%）'],
+    wiki:null,
+  },
+  so_shop: {
+    city:'sorrento', name:'Rosa', nameZh:'Rosa · 导购', emoji:'🛍️', color:'#C9872A',
+    tagline:'Cameo 浮雕是索伦托的灵魂', title:'Torre del Greco 手工艺 · 镶嵌木',
+    domain:'购物 / Cameo 浮雕 / 镶嵌木',
+    bio:'索伦托两大手工艺：intarsio（镶嵌木）和 cameo（贝壳浮雕）。\n她带你去 Piazza Tasso 外围的匠人店，看师傅用 20 种不同颜色的木片拼出风景。',
+    funFacts:['家里有一张曾祖父做的镶嵌木桌，120 年了','一个好的 cameo 要雕 80 小时'],
+    wiki:null,
+  },
+  so_food: {
+    city:'sorrento', name:'Zio Tonino', nameZh:'Tonino 叔 · 老吃家', emoji:'🦞', color:'#C04A3A',
+    tagline:'海鲜要吃上午打的', title:'Marina Grande 渔港老客',
+    domain:'美食 / 海鲜 / 甜点',
+    bio:'Sorrento 必吃：Gnocchi alla Sorrentina（土豆团子配番茄莫扎里拉）、Delizia al Limone（柠檬奶油球）、Linguine con le Vongole（蛤蜊意面）。\n他早上 6 点去 Marina Grande 渔港买当天打的鱼。',
+    funFacts:['能听鱼的叫声分辨品种','绝不吃晚上 10 点后开门的餐厅'],
+    wiki:null,
+  },
+  so_culture: {
+    city:'sorrento', name:'Stella', nameZh:'Stella · 文艺青年', emoji:'🎶', color:'#9A4A8A',
+    tagline:'Torna a Surriento 是全世界最美的情歌', title:'那不勒斯音乐学院毕业 · 歌唱教师',
+    domain:'文艺 / 音乐 / 歌剧',
+    bio:'"Torna a Surriento（重归苏莲托）" 1902 年在 Hotel Tramontano 写给意大利首相。\n她会带你去那家酒店的阳台——那首歌看过的同一片海。',
+    funFacts:['能唱 30 首那不勒斯民谣','耳机里循环 Pavarotti'],
+    wiki:null,
+  },
+  so_lang: {
+    city:'sorrento', name:'Don Salvo', nameZh:'Salvo 爷爷 · 意大利语', emoji:'🗣️', color:'#B8860B',
+    tagline:'那不勒斯口音会让你的意大利老师哭', title:'退休船员 · 教你生活意大利语',
+    domain:'意大利语 + 那不勒斯方言',
+    bio:'索伦托讲的是带那不勒斯口音的意大利语。\n他教你基础 5 句，再送一句方言 "Guagliò!"（嘿，小子）——立刻被本地人认作自己人。',
+    funFacts:['一辈子住在这条街','认为那不勒斯语是诗的语言'],
+    wiki:null,
+  },
 
-  // NAPLES
-  maradona:     { city:'naples', name:'Maradona', nameZh:'马拉多纳',     emoji:'⚽', color:'#1E88E5', tagline:'上帝之手',             title:'足球之神 · 那不勒斯教父' },
-  gino:         { city:'naples', name:'Gino',     nameZh:'Gino',         emoji:'🍕', color:'#D84315', tagline:'烤披萨烤到入教',       title:'披萨师傅 · 三代手艺' },
-  sophia:       { city:'naples', name:'Sophia',   nameZh:'Sophia Loren', emoji:'💋', color:'#8E44AD', tagline:'从贫民窟走到奥斯卡',   title:'意大利国宝 · 1934-' },
+  // ══════════ NAPLES · 那不勒斯 ══════════
+  maradona: {
+    city:'naples', name:'Maradona', nameZh:'马拉多纳', emoji:'⚽', color:'#1E88E5',
+    tagline:'上帝之手', title:'足球之神 · 那不勒斯教父 · 1960-2020',
+    domain:'足球 · 那不勒斯民间信仰',
+    bio:'阿根廷贫民窟出身，1984 年来到那不勒斯。\n带领那不勒斯队拿下队史仅有的两个意甲冠军——让一座被北方嘲笑 200 年的城市第一次昂起头。\n那不勒斯至今把他当成圣人。',
+    funFacts:['1986 世界杯 "上帝之手" 进球进了英格兰','在 Quartieri Spagnoli 有一幅 15 米高的壁画','那不勒斯球场 2020 年改名为 Stadio Diego Armando Maradona'],
+    wiki:'https://zh.wikipedia.org/wiki/迭戈·马拉多纳',
+  },
+  gino: {
+    city:'naples', name:'Gino', nameZh:'Gino', emoji:'🍕', color:'#D84315',
+    tagline:'烤披萨烤到入教', title:'披萨师傅 · 三代手艺',
+    domain:'披萨 · 那不勒斯菜',
+    bio:'爷爷 1934 年开的披萨店，他是第三代。\n只做两种：Margherita（番茄 + 莫扎里拉 + 罗勒）和 Marinara（番茄 + 大蒜 + 牛至）。\n"其他都是妥协。"',
+    funFacts:['烤炉温度 485℃，每张饼 90 秒','坚信菠萝披萨是对食物的亵渎','店里墙上挂着马拉多纳的照片'],
+    wiki:'https://zh.wikipedia.org/wiki/那不勒斯披萨',
+  },
+  sophia: {
+    city:'naples', name:'Sophia', nameZh:'Sophia Loren', emoji:'💋', color:'#8E44AD',
+    tagline:'从贫民窟走到奥斯卡', title:'意大利国宝 · 1934-',
+    domain:'电影 · 形象',
+    bio:'Pozzuoli（那不勒斯西郊）贫民窟出身。\n15 岁参加选美，17 岁去罗马当电影演员。\n1961 年凭《两个女人》成为第一位拿奥斯卡最佳女主角的非英语演员。',
+    funFacts:['"我的一切都归功于 spaghetti（意面）"——她的原话','跟 Carlo Ponti 差 22 岁，相守 57 年','90 岁还在拍电影'],
+    wiki:'https://zh.wikipedia.org/wiki/索菲娅·罗兰',
+  },
+  // NAPLES — 5 guide personas
+  na_art: {
+    city:'naples', name:'Don Ciro', nameZh:'Ciro 师傅 · 艺术讲解员', emoji:'🏛️', color:'#6A3A7A',
+    tagline:'那不勒斯考古博物馆是意大利最被低估的', title:'MANN / Cappella Sansevero / 地下那不勒斯',
+    domain:'艺术讲解 / 考古',
+    bio:'他带你去 MANN（那不勒斯考古博物馆），看庞贝所有最好的东西都在这里。\n再去 Cappella Sansevero 看《Cristo Velato》（蒙纱基督）——大理石雕出的薄纱。',
+    funFacts:['坚信 MANN 比那不勒斯所有教堂加起来还震撼','最爱 Alexander Mosaic 马赛克'],
+    wiki:null,
+  },
+  na_shop: {
+    city:'naples', name:'Pina', nameZh:'Pina · 导购', emoji:'🛍️', color:'#B54A3A',
+    tagline:'Via San Gregorio Armeno 一年四季都是圣诞', title:'历史中心手工艺 · 陶瓷人偶',
+    domain:'购物 / 手工艺 / 陶瓷',
+    bio:'San Gregorio Armeno（圣诞人偶一条街）每年 12 月挤爆。\n她带你去一家 1830 年的工作室，手工陶瓷 presepe（马槽人偶），能做你自己的迷你雕像。',
+    funFacts:['家里有 200 个 presepe 人偶','坚信 Capodimonte 瓷器不输麦森'],
+    wiki:null,
+  },
+  na_food: {
+    city:'naples', name:'Zia Rosaria', nameZh:'Rosaria 阿姨 · 老吃家', emoji:'🍝', color:'#8A3A1A',
+    tagline:'那不勒斯的披萨是圆的，不是方的', title:'Vomero 老菜市场常驻 · 煮了一辈子',
+    domain:'美食 / 那不勒斯菜',
+    bio:'那不勒斯必吃：Pizza Margherita（Da Michele）、Sfogliatella（千层酥）、Spaghetti alle Vongole（蛤蜊意面）、Pastiera（复活节蛋糕）。\n她一周做 4 顿 ragù，每顿 5 小时慢炖。',
+    funFacts:['家里传 3 代的 ragù 配方','坚信 Sfogliatella riccia 比 frolla 好吃'],
+    wiki:null,
+  },
+  na_culture: {
+    city:'naples', name:'Gennaro', nameZh:'Gennaro · 文艺青年', emoji:'🎭', color:'#5A3A8A',
+    tagline:'Napoli 是全世界最会哭也最会笑的城市', title:'Eduardo De Filippo 戏剧研究 · 诗人',
+    domain:'文艺 / 戏剧 / 诗歌',
+    bio:'那不勒斯的灵魂在戏剧和音乐里。\nEduardo De Filippo 的《Napoli Milionaria!》（那不勒斯百万富翁）、Pino Daniele 的蓝调、Ferrante 的《那不勒斯四部曲》——他全能给你讲。',
+    funFacts:['收藏 1930 年代那不勒斯剧本','耳机里循环 Pino Daniele'],
+    wiki:null,
+  },
+  na_lang: {
+    city:'naples', name:'Professore Vincenzo', nameZh:'Vincenzo 教授 · 那不勒斯语', emoji:'🗣️', color:'#C04A6A',
+    tagline:'那不勒斯语是被 UNESCO 认可的独立语言', title:'那不勒斯大学 · 方言研究',
+    domain:'意大利语 + 那不勒斯方言',
+    bio:'他教你 5 句标准意大利语，再赠你 3 句那不勒斯方言：Guagliò（嘿小子）、Jamme jà（走吧）、Tene （看）。\n说对了会让你被餐厅老板请一杯 limoncello。',
+    funFacts:['写过一本那不勒斯方言教程','坚信那不勒斯方言比标准意大利语更古老'],
+    wiki:null,
+  },
 };
 
 // ─── Message helpers (compact authoring) ───
@@ -47,10 +428,14 @@ const task = (title, hint) => ({ t:'task', title, hint });
 const secret = (...texts) => ({ t:'secret', texts });
 const tip = (label, text) => ({ t:'tip', label, text });
 const ref = (label, text) => ({ t:'ref', label, text });  // movie/song reference
+// place message: Italian name + address, renders as a tap-to-navigate card
+const place = (italianName, address, zh) => ({ t:'place', italianName, address, zh });
 
 // ─── Group chat helpers ───
 const g = (from, text) => ({ t:'text', from, text });
 const gsys = (text) => ({ t:'system', text });  // system notice (e.g., "X 加入了群聊")
+// Italian phrase with Chinese translation in brackets, e.g. it('Buongiorno','早上好') → 'Buongiorno（早上好）'
+const it = (italian, chinese) => `${italian}（${chinese}）`;
 
 // ─── Conversations ───
 export const CONVERSATIONS = {
@@ -83,6 +468,7 @@ export const CONVERSATIONS = {
     t('五百年了他每天被几万游客嘲笑。'),
     t('惹谁都不要惹一个会画画的。'),
     task('在大卫脚下拍一张仰角照', '别站远处拍全身。蹲下来从下往上拍。然后你就懂了。'),
+    place('Galleria dell\'Accademia', 'Via Ricasoli 58/60, 50122 Firenze FI', '学院美术馆 · 大卫原作在这里'),
     secret(
       '你真的去了？行吧。',
       '告诉你一个没写进书里的事。',
@@ -115,6 +501,7 @@ export const CONVERSATIONS = {
     t('在教堂搞事后果很严重。尤其是对手姓美第奇。'),
     ref('📖 文学彩蛋', '《神曲》地狱篇第 26 歌里我提到过佛罗伦萨——"佛罗伦萨啊，你应当高兴，因为你的声名已传遍海洋和大地，甚至传到地狱里。" 最毒的讽刺。'),
     task('去圣十字教堂找我的纪念碑', '空墓碑。我不在里面。这本身就是一个故事。'),
+    place('Basilica di Santa Croce', 'Piazza di Santa Croce 16, 50122 Firenze FI', '圣十字圣殿 · 但丁纪念碑、米开朗基罗墓、伽利略墓'),
     secret(
       '既然你去了——',
       '圣十字里还葬着米开朗基罗、伽利略、马基雅维利、罗西尼。',
@@ -127,7 +514,7 @@ export const CONVERSATIONS = {
   ],
 
   lorenzo: [
-    t('Ciao! 我是洛伦佐·美第奇。'),
+    t('Ciao（你好）! 我是洛伦佐·美第奇。'),
     t('人们叫我"豪华者 (Il Magnifico)"。不是我自封的。'),
     t('但确实名副其实。'),
     choice(
@@ -151,6 +538,7 @@ export const CONVERSATIONS = {
     t('四百年后这桥上的租金是佛罗伦萨最贵的。'),
     t('感谢那个嫌臭的美第奇。'),
     task('在老桥中段找瓦萨里走廊的窗户', '桥北侧上方那排小窗——从外面数第三扇。透过它可以看到乌菲兹顶楼。'),
+    place('Ponte Vecchio', 'Ponte Vecchio, 50125 Firenze FI', '老桥 · 阿诺河上最老的桥'),
     secret(
       '说个没人告诉你的事——',
       '我们家族统治佛罗伦萨三百年。最后一个直系继承人安娜·玛丽亚·路易莎 1743 年死的时候，立了遗嘱——',
@@ -162,7 +550,7 @@ export const CONVERSATIONS = {
   ],
 
   marco: [
-    t('Ciao~ 我是 Marco。'),
+    t('Ciao（你好）~ 我是 Marco。'),
     t('我在乌菲兹带导览 6 年了。'),
     t('你有几个小时？我告诉你真正值得看的。'),
     t('游客最容易犯的错：想看完所有展厅。做不到。乌菲兹有 100 多个展厅。'),
@@ -183,6 +571,7 @@ export const CONVERSATIONS = {
     ref('🎬 电影彩蛋', '《看得见风景的房间》(A Room with a View, 1985) 整部围绕佛罗伦萨。女主就是得了司汤达综合征在圣十字教堂晕倒。'),
     tip('🛍️ 当地推荐', '皮具：San Lorenzo 市场价格乱，新学校 Scuola del Cuoio（圣十字教堂后面）是真手工作坊。面包：Forno Pugi 的 schiacciata——佛罗伦萨人早餐只吃这个。'),
     task('去米开朗基罗广场看日落', '夕阳把穹顶染成金色的那 10 分钟。为什么那么多人在这座城市得了司汤达综合征——那一刻你就懂了。'),
+    place('Piazzale Michelangelo', 'Piazzale Michelangelo, 50125 Firenze FI', '米开朗基罗广场 · 佛罗伦萨全景最佳观景点'),
     secret(
       '一个我很少告诉游客的地方——',
       'Bardini 花园。就在米开朗基罗广场旁边，但 99% 的游客不知道。',
@@ -222,6 +611,7 @@ export const CONVERSATIONS = {
     t('现代混凝土做不到。两千年前的技术你们还没搞明白。'),
     t('谦虚一点。'),
     task('在斗兽场买票时选"Undergrounds + Arena"套票', '基础票只能看看台。那个套票带你下到地下笼子和角斗士走道。值每一分钱。'),
+    place('Colosseo', 'Piazza del Colosseo 1, 00184 Roma RM', '斗兽场 · 地铁 B 线 Colosseo 站出门就是'),
     secret(
       '一个罗马人很少告诉游客的地方——',
       'Domus Aurea（黄金屋）。Nero 的私人宫殿遗址。',
@@ -259,6 +649,7 @@ export const CONVERSATIONS = {
     ref('🎬 电影彩蛋', '《甜蜜的生活》(1960) Anita Ekberg 在零度的水里穿晚礼服戏水。男主 Mastroianni 西装里偷偷穿了潜水衣。费里尼说：Anita 才是真正的猛人。'),
     tip('🛍️ 购物提示', '不要在许愿池附近买冰淇淋——那些是工业冰淇淋。去 Giolitti（Via Uffici del Vicario 40）——1900 年就在了。开心果味必点。'),
     task('在阿波罗与达芙妮雕塑周围走一圈', '站着不动看它是没意义的——这个雕塑是为 360 度设计的。每个角度都是一个不同的瞬间。'),
+    place('Galleria Borghese', 'Piazzale Scipione Borghese 5, 00197 Roma RM', '博尔盖塞美术馆 · 一定要提前官网预约'),
     secret(
       '你在博尔盖塞花了 2 小时？那你可能错过了一件事——',
       '出门不要直接走。面对博尔盖塞别墅往北走 3 分钟，有一个叫 Pincio 的小丘。',
@@ -293,6 +684,7 @@ export const CONVERSATIONS = {
     t('不要点"卡布奇诺"吃午饭！意大利人只在早上 11 点前喝卡布。之后只喝 espresso。服务员会笑你但他们太礼貌不会说。'),
     ref('🎬 电影彩蛋', '《罗马假日》(1953) 奥黛丽·赫本吃冰淇淋的那个西班牙台阶——现在坐下就罚款。想重现经典？只能站着吃。'),
     task('在 Trastevere 找一家只有意大利语菜单的小馆子', '不要拍菜单，要拍手写的每日特供（有时写在小黑板上）。学一句"Che cosa mi consiglia?"（你推荐什么？）。'),
+    place('Trastevere', 'Piazza di Santa Maria in Trastevere, 00153 Roma RM', '特拉斯特维列区 · 从广场出发随便走'),
     secret(
       '来，我告诉你一个秘密——',
       '每年 7 月 Trastevere 有 Festa de Noantri（我们自己的节）。我们庆祝我们不是罗马人。',
@@ -306,7 +698,7 @@ export const CONVERSATIONS = {
 
   // ════════════ MILAN ════════════
   davinci: [
-    t('Ciao. 我是 Leonardo.'),
+    t('Ciao（你好）. 我是 Leonardo.'),
     t('你叫我达芬奇——其实 Vinci 是我出生的小镇，不是我的姓。'),
     t('我是个私生子。没有姓。只有"来自 Vinci 的 Leonardo"。'),
     t('说正事——《最后的晚餐》。'),
@@ -337,6 +729,7 @@ export const CONVERSATIONS = {
     t('你坐在那喝酒时，脚下的水利工程是一个画《蒙娜丽莎》的人设计的。'),
     ref('🎬 电影彩蛋', '《达芬奇密码》(2006) 那段暗码——画里门徒的坐次"M"形状。Dan Brown 编的。但你站在画前你还是会忍不住看。这就是好故事的力量。'),
     task('在运河区喝一杯 Spritz', '傍晚 6-8 点去。Bar Rita、Mag Cafè、Backdoor 43（最小的酒吧世界纪录）都好。花 10 欧喝到晚上 9 点半。'),
+    place('Navigli', 'Naviglio Grande, 20144 Milano MI', '米兰运河区 · 地铁 M2 线 Porta Genova 站'),
     secret(
       '告诉你一件事没人讲的——',
       '我留下的笔记本有 13000 多页。我死后散落在世界各地博物馆。',
@@ -349,7 +742,7 @@ export const CONVERSATIONS = {
   ],
 
   miuccia: [
-    t('Ciao. 我是 Miuccia Prada.'),
+    t('Ciao（你好）. 我是 Miuccia Prada.'),
     t('我 38 岁才接手家族皮具生意。'),
     t('在那之前我在米兰学了政治学博士，拿了女权主义奖。'),
     t('我觉得时装行业很蠢。但我也没别的选择。'),
@@ -371,6 +764,7 @@ export const CONVERSATIONS = {
     t('12 月 7 日（米兰守护圣人节）开季首演是全意大利社交盛事。票价上万欧一票难求。'),
     ref('🎵 文化彩蛋', '威尔第《拿布科》中的"希伯来奴隶合唱"——"飞翔吧，思想，乘着金色的翅膀"——在斯卡拉首演后成了意大利非官方国歌。威尔第死时米兰 30 万人上街送葬。'),
     task('在长廊找到公牛马赛克的"转三圈"点', '别只是拍，真的转。游客和本地人都这么做。一个小仪式。然后看看那个坑有多深。'),
+    place('Galleria Vittorio Emanuele II', 'Piazza del Duomo, 20123 Milano MI', '埃马努埃莱二世长廊 · 大教堂广场旁'),
     secret(
       '关于米兰本地人——',
       '我们有两张脸：工作时的冷面时装女和下班后 aperitivo 桌前的疯子。',
@@ -382,7 +776,7 @@ export const CONVERSATIONS = {
   ],
 
   paolo: [
-    t('Ciao! 我叫 Paolo.'),
+    t('Ciao（你好）! 我叫 Paolo.'),
     t('米兰生米兰长。我爸、我爷爷都是 AC 米兰球迷。'),
     t('我兄弟是国米球迷。家里吵了 30 年。'),
     choice(
@@ -400,6 +794,7 @@ export const CONVERSATIONS = {
     t('比任何收费教堂都震撼？主观但是——是的。'),
     ref('⚽ 文化彩蛋', '圣西罗球场叫 "La Scala del Calcio"（足球的斯卡拉歌剧院）。意大利人把球场和歌剧院看成一个级别的文化殿堂。所以说踢球不只是运动——是艺术。'),
     task('去 San Maurizio 教堂坐 10 分钟', '不要匆忙。坐到祭坛那排长椅上。抬头。你会想哭。免费的惊喜比付费的更动人。'),
+    place('San Maurizio al Monastero Maggiore', 'Corso Magenta 15, 20123 Milano MI', '米兰的西斯廷 · 免费 · 周日休'),
     secret(
       '最后一个小秘密——',
       'Piazza Affari 证交所前有一座大理石雕塑。',
@@ -445,6 +840,7 @@ export const CONVERSATIONS = {
     t('你想信哪个随你。'),
     tip('🏔️ 实用', '九月中到十月初是最佳季节：树叶金黄、人少、价格掉一半。七八月高峰期酒店涨 3 倍。六月有雪未化，徒步路线部分关闭。'),
     task('看一次多洛米蒂日落', 'Tre Cime、Seceda 或 Passo Giau（开车上去的山口）。黄昏前 30 分钟到位。把手机调成延时摄影。'),
+    place('Tre Cime di Lavaredo', 'Rifugio Auronzo, 32041 Auronzo di Cadore BL', '三峰山 · 从 Rifugio Auronzo 停车场走环线'),
     secret(
       '我带你去一个没人告诉你的地方——',
       'Lago di Sorapis。',
@@ -564,6 +960,7 @@ export const CONVERSATIONS = {
     t('Salto di Tiberio——300 米垂直落差。现在你可以去看。风景是真的美。'),
     t('古罗马皇帝退休生活比你想象的刺激。'),
     task('在 Villa Comunale 公园看一次日落', '免费。长椅对着维苏威。坐到天彻底黑。在你回家讲这次旅行时，这 20 分钟可能是你会反复提到的那段。'),
+    place('Villa Comunale di Sorrento', 'Via San Francesco 8, 80067 Sorrento NA', '索伦托市民公园 · 面朝维苏威的免费观海台'),
     secret(
       '一首给你的歌——',
       'Lucio Dalla 的 "Caruso" (1986)。',
@@ -577,7 +974,7 @@ export const CONVERSATIONS = {
   ],
 
   giuseppe: [
-    t('Ciao! 我是 Giuseppe.'),
+    t('Ciao（你好）! 我是 Giuseppe.'),
     t('我家种柠檬 4 代了。'),
     t('你可能不懂——索伦托柠檬不是柠檬。是另一个物种。'),
     choice(
@@ -622,7 +1019,7 @@ export const CONVERSATIONS = {
   ],
 
   ferrante: [
-    t('Ciao. 我是 Elena Ferrante。'),
+    t('Ciao（你好）. 我是 Elena Ferrante。'),
     t('全世界读我的书。'),
     t('没有人知道我是谁。'),
     t('你现在收到的这条信息——可能来自一个女人，也可能是一个男人，或是一对夫妻，或是一整间编辑部。'),
@@ -664,7 +1061,7 @@ export const CONVERSATIONS = {
 
   // ════════════ NAPLES ════════════
   maradona: [
-    t('Ciao pibe! 我是 Diego.'),
+    t('Ciao pibe（你好小子）! 我是 Diego.'),
     t('那不勒斯人叫我 Dio（神）。不是夸张——真的是宗教意义上的。'),
     t('Spaccanapoli 有一条巷子整条都是我的壁画。Quartieri Spagnoli。'),
     t('人们去那里拜。'),
@@ -698,6 +1095,7 @@ export const CONVERSATIONS = {
     t('至今不知道怎么做到的。王子 Raimondo di Sangro 被教会怀疑搞巫术。'),
     t('官方说法是用蜡注射。但很多学者认为 18 世纪技术做不到这么精细。'),
     task('在 Spaccanapoli 找一处 Maradona 的壁画', 'Bar Nilo 那里有一座神龛——里面放着据说是我的"真发"。每天有人来拜。给我拍张照。'),
+    place('Bar Nilo (Altarino di Maradona)', 'Via San Biagio dei Librai 129, 80138 Napoli NA', 'Spaccanapoli 老城街 · Maradona 神龛'),
     secret(
       '一件我在那不勒斯学到的事——',
       'Caffè sospeso。悬浮咖啡。',
@@ -711,7 +1109,7 @@ export const CONVERSATIONS = {
   ],
 
   gino: [
-    t('Ciao. 我叫 Gino. 三代披萨师。'),
+    t('Ciao（你好）. 我叫 Gino. 三代披萨师。'),
     t('先说清楚——真正的那不勒斯披萨是有标准的。'),
     t('欧盟传统特产保护 (STG)：'),
     t('1. 面团只能手工拉'),
@@ -742,6 +1140,7 @@ export const CONVERSATIONS = {
     t('这是那不勒斯妈妈们 200 年总结的 science.'),
     tip('🍕 订披萨的行话', '"Margherita" = 经典。"Marinara" = 没奶酪（番茄+大蒜+牛至+橄榄油，更便宜更传统）。"Pizza a Portafoglio" = 折叠披萨——一欧元，边走边吃。"Pizza fritta" = 炸披萨！必试。'),
     task('在 da Michele 排队吃一次 Margherita', '不要点别的。就 Margherita + 一杯啤酒。观察面团烤完瞬间起泡的过程。60 秒 = 一个披萨的完美人生。'),
+    place('L\'Antica Pizzeria da Michele', 'Via Cesare Sersale 1, 80139 Napoli NA', '1870 年开业 · 只卖 Margherita 和 Marinara'),
     secret(
       '一个行内秘密——',
       '那不勒斯披萨中间是湿的。',
@@ -755,7 +1154,7 @@ export const CONVERSATIONS = {
   ],
 
   sophia: [
-    t('Ciao bello. 我是 Sophia Loren.'),
+    t('Ciao bello（你好，帅哥）. 我是 Sophia Loren.'),
     t('出生于罗马。但我是 Pozzuoli 人——那不勒斯郊区。'),
     t('战争年代在那长大。'),
     t('我母亲带我和我妹妹躲炸弹躲到 15 岁。'),
@@ -783,7 +1182,8 @@ export const CONVERSATIONS = {
     t('教会多次试图禁止。那不勒斯人不在乎。'),
     t('生者和死者在这座城市的关系，比你想象的亲密得多。'),
     t('我们不怕死亡。我们陪着它。'),
-    task('坐 Circumvesuviana 去庞贝一天', '早上第一班。8 点到避开高温和游客。带水。中午回那不勒斯吃 Margherita。一天看完 2000 年。'),
+    task('坐 Circumvesuviana 去庞贝', '早上第一班最爽。8 点到避开高温和游客。带水。想泡几个小时还是走马观花，随你。'),
+    place('Pompei Scavi', 'Via Villa dei Misteri 2, 80045 Pompei NA', '庞贝考古遗址 · Circumvesuviana 线 Pompei Scavi 站'),
     secret(
       '一句我常说的话——',
       '"Everything you see, I owe to spaghetti."（你看到的一切，我都归功于意大利面。）',
@@ -793,9 +1193,414 @@ export const CONVERSATIONS = {
       '现在的世界已经不记得这点了。',
       '如果你在那不勒斯感受到一种很奇怪的——混合着混乱和喜悦的——感觉。',
       '那就对了。',
-      '那是 cultura della strada。',
+      `那是 ${it('cultura della strada','街头文化')}。`,
       '你已经懂了。',
     ),
+  ],
+
+  // ════════════════════════════════════════════
+  // GUIDE PERSONAS — art / shopping / food / culture / language
+  // One per role per city. Short, topic-scoped, with IT(ZH) phrases.
+  // ════════════════════════════════════════════
+
+  // ───── FLORENCE 佛罗伦萨 ─────
+  fi_art: [
+    t('Ciao（你好）。我是 Alessia，乌菲兹的讲解。'),
+    t('大多数人来乌菲兹会从 1 号厅开始顺着走——我劝你别。'),
+    t('按这个顺序看完，你只会累。'),
+    choice(
+      { label:'那应该怎么看？', reply:'先去 10-14 号厅看波提切利，再去 35 号厅看米开朗基罗，最后走 8 号厅看乔托。早上 8:15 开门，9 点前的 45 分钟是最好的。' },
+      { label:'听起来很复杂', reply:'记住一个数字就行——10。波提切利厅。先去那里。' },
+    ),
+    t('今天我给你画三条"不迷路"路线。'),
+    tip('🗺️ 乌菲兹 · 高光速通（90 分钟）', '10号厅《春》+《维纳斯的诞生》(Botticelli)\n→ 8号厅 Giotto《圣母登宝座》\n→ 15号厅 Leonardo《天使报喜》\n→ 35号厅 Michelangelo《圣家族》\n→ 43号厅 Caravaggio《美杜莎》+《酒神》'),
+    tip('🗺️ 学院美术馆 · 40 分钟足够', '直奔《大卫》主厅尽头。先从 30 米外的入口方向看 → 绕到侧面看他手里的投石器 → 再看左边四座未完成的《囚徒》\n别跟广场那个复制品合影，那不是真的。'),
+    art(null, it('Primavera 春','Botticelli · 1482'), '乌菲兹 · 10 号厅', '画面里 9 个人物，190 种可识别的植物——文艺复兴第一张"秘密代码"画。', '从最右边 Zephyrus（西风之神）往左读。这幅画是逆时针的。'),
+    task('去乌菲兹找 35 号厅', '进门先问工作人员 "Sala trentacinque? （35 号厅？）"。米开朗基罗的《Doni Tondo》在那里。'),
+    secret(
+      '跟你说个秘密——',
+      `${it('Primavera','春')} 最右边那个被吓跑的仙女 Chloris——画上嘴巴张开那一瞬，正是 Zephyrus 抓住她的那一刻。`,
+      '被抓住之后她变成了 Flora（花之女神，画面中间那位穿花裙子的）。',
+      '同一个女人，同一幅画里出现了两次。一次是受害者，一次是被创造出来的神。',
+      'Botticelli 在 500 年前就画完了一部完整的"变形记"电影。',
+    ),
+  ],
+
+  fi_shop: [
+    t(`${it('Ciao','你好')}。我是 Bianca。你来佛罗伦萨别只逛 via de' Tornabuoni（Gucci 那条街）。`),
+    t('真正的好东西藏在三个地方。'),
+    choice(
+      { label:'我想要好皮具', reply:'去 Scuola del Cuoio（圣十字教堂后院的皮革学校）。看着师傅把料剪给你，50-300 欧都有。' },
+      { label:'我想带点不一样的回去', reply:'Il Papiro——1976 年开的文具店。大理石纹纸、鹅毛笔、蜡封章。文艺复兴的送礼方式。' },
+      { label:'想给妈妈选点东西', reply:'Profumo-Farmaceutica di Santa Maria Novella。全世界最老的药房，1221 年，多明我会修士开的。那里的玫瑰水她会记一辈子。' },
+    ),
+    tip('🛍️ 三条不坑人的购物街', 'Via Maggio（Oltrarno 古董）\nVia dei Serragli（独立设计师）\nVia de\' Neri（匠人皮具 + 三明治）\n—\n避开：Ponte Vecchio 上的珠宝店（90% 贵一倍）。'),
+    t('记一句：看见喜欢的东西，问一句——'),
+    t(`"${it("Quant'è","多少钱")}?"。\n听到价后说："${it('Mi fa un piccolo sconto?','能便宜一点吗？')}"——10-20% 立刻掉。`),
+    task('去 Scuola del Cuoio 看一眼', 'Santa Croce 教堂正后方。进去免费，师傅当场刻字。买不买都行——氛围感满分。'),
+  ],
+
+  fi_food: [
+    t('我是 Piero 爷爷。坐下。'),
+    t('先说清楚——佛罗伦萨大牛排（Bistecca alla Fiorentina）没有"七分熟"这个选项。'),
+    t('只有 rare（血淋淋的）。点了 medium 的人会被厨房嘲笑。'),
+    choice(
+      { label:'那最正宗的在哪？', reply:'Trattoria Mario。中午 12:00 准时开门，没有菜单，没有预订，不接受信用卡。挤一挤，跟陌生人拼桌。' },
+      { label:'不太敢吃生的怎么办？', reply:'那点 Ribollita（面包蔬菜浓汤）+ Pappa al Pomodoro（面包番茄糊）。托斯卡纳穷人菜，比牛排还感人。' },
+    ),
+    tip('🍖 佛罗伦萨必吃 5 样', '1. Bistecca alla Fiorentina（大牛排 · 1kg 起）\n2. Lampredotto（牛肚三明治 · San Lorenzo 市场 Nerbone）\n3. Pappardelle al Cinghiale（野猪肉宽面）\n4. Schiacciata all\'olio（橄榄油扁面包）\n5. Cantucci 配 Vin Santo（杏仁饼蘸甜酒）'),
+    t(`${it('Chianti','基安蒂')} 和 ${it('Chianti Classico','经典基安蒂')} 是两种东西。`),
+    t('瓶口有黑色公鸡（Gallo Nero）的才是 Classico——原产地 DOCG。'),
+    task('中午去 Mercato di Sant\'Ambrogio', '点一个 Lampredotto 三明治，4 欧。跟摊主说 "con salsa verde, grazie（加绿酱，谢谢）"。'),
+  ],
+
+  fi_culture: [
+    t('嗨。我是 Chiara，这座城市的文艺青年都认识我。'),
+    t('佛罗伦萨被拍过无数次电影——但有三部你应该知道。'),
+    ref('🎬 《看得见风景的房间》(1985)', '女主角在 Piazza della Signoria 被 Helena Bonham Carter 饰演。那块地砖今天还在。\n—\n去 Piazza della Signoria 广场中心，Cellini 的 Perseus 铜像对面站一会儿。你会明白 E.M. Forster 为什么要把爱情故事放在这里。'),
+    ref('🎬 《汉尼拔》(2001)', '汉尼拔·莱克特博士在 Palazzo Vecchio 上班。\n—\n电影里他站在 Salone dei Cinquecento（500 人大厅）里讲但丁——那个大厅今天是市政厅，免费进。'),
+    ref('📖 《但丁密码》(2016 Dan Brown)', '兰登教授在 Boboli 花园里奔跑。\n—\n真实路线：Palazzo Vecchio → Corridoio Vasariano（瓦萨里走廊）→ Ponte Vecchio → Pitti → Boboli。\n瓦萨里走廊 2024 年刚重新开放。'),
+    t(`如果你只有一首歌陪佛罗伦萨——听 ${it('"Firenze sogna"','佛罗伦萨梦见')}（1938）。`),
+    t('老人酒馆里还在唱。'),
+    choice(
+      { label:'带我去一家电影感的酒吧', reply:'Rivoire。1872 年开的，坐在 Piazza della Signoria 广场，点一杯热巧克力，看 Neptune 喷泉发呆。' },
+      { label:'我想读点当地的诗', reply:'Dante 以外——读 Eugenio Montale，1975 年诺贝尔文学奖。托斯卡纳的光他写得最好。' },
+    ),
+  ],
+
+  fi_lang: [
+    t(`${it('Buongiorno','早上好')}. 我是 Sara。`),
+    t('佛罗伦萨是托斯卡纳的心脏，意大利语的发源地。你说得好一点，整座城市对你的态度都会变。'),
+    t('先记 5 句——每句 3 秒钟，但能换来完全不同的待遇。'),
+    tip('🗣️ Italian 101 · 进店 5 句', `1. ${it('Buongiorno','早上好')} / ${it('Buonasera','下午好、晚上好')}（进门说）\n2. ${it('Grazie','谢谢')} / ${it('Grazie mille','非常感谢')}\n3. ${it('Scusi','不好意思')}（拦下陌生人 / 问路前）\n4. ${it('Prego','请 / 不客气 / 请坐 / 请用')}（万能词）\n5. ${it('Il conto, per favore','麻烦买单')}`),
+    t(`记住——${it('Ciao','你好 / 再见')} 是熟人之间用的。`),
+    t(`跟陌生人、店员、奶奶——永远说 ${it('Buongiorno','早上好')} 或 ${it('Salve','你好，尊敬用法')}。`),
+    choice(
+      { label:'再教我几句点餐的', reply:'Un caffè, per favore（来一杯咖啡，麻烦）/ Vorrei...（我想要…）/ Senza zucchero（不加糖）/ Da portare via（带走）' },
+      { label:'怎么说"我不会意大利语"', reply:'Mi dispiace, non parlo italiano. Parla inglese?（抱歉，我不会意大利语。您说英语吗？）意大利人听到你努力过了，基本会帮你。' },
+    ),
+    task('在酒吧试试 "Un caffè, per favore"', '进店说 Buongiorno → 点一杯 Un caffè → 结账说 Grazie。30 秒全流程，你就会发现服务态度完全不一样。'),
+  ],
+
+  // ───── ROME 罗马 ─────
+  rm_art: [
+    t(`${it('Pace','愿你平安')}。我是 Don Matteo。`),
+    t('罗马的秘密是——最好的艺术不在博物馆，在教堂。而且免费。'),
+    choice(
+      { label:'带我看 Caravaggio', reply:'San Luigi dei Francesi 教堂（法国圣路易）。三幅 Caravaggio 真迹——《圣马太的召唤》《殉道》《启示》。投 1 欧硬币点灯，看 5 分钟。' },
+      { label:'梵蒂冈 / 西斯廷怎么看', reply:'提前 2 个月买票。最后 1 小时进入排队最短。看西斯廷时直接去房间正中间，抬头——米开朗基罗要你在那个位置看。' },
+    ),
+    art(null, `${it('Vocazione di San Matteo','圣马太的召唤')}`, 'San Luigi dei Francesi · Contarelli 礼拜堂', '1600 年，Caravaggio 29 岁。他把圣经故事画成罗马街头——收税官在数钱，一束光从右上穿过来，耶稣指向 Matteo。光本身就是故事。', '站在画前 3 米，投币点灯。看那束光——不是画上的，是 Caravaggio 让真实的光线从窗户打进来。同一个方向。'),
+    tip('⛪ 罗马教堂艺术 3 站', 'San Luigi dei Francesi（3 幅 Caravaggio）\nSanta Maria del Popolo（2 幅 Caravaggio + Bernini + Raphael）\nSan Pietro in Vincoli（米开朗基罗 · Moses 摩西）\n全部免费，带 1 欧硬币点灯。'),
+    task('带 1 欧硬币去 San Luigi dei Francesi', 'Piazza Navona 旁边。进门左手最里面那个礼拜堂。投币，让光亮起来，然后什么都别做——就看 5 分钟。'),
+  ],
+
+  rm_shop: [
+    t('Ciao bella. 我是 Valentina。'),
+    t('先警告你——特雷维喷泉 300 米之内，任何东西都别买。贵一倍。'),
+    t('我带你去 Monti 和 Campo de\' Fiori。'),
+    choice(
+      { label:'想淘古着', reply:'Monti 区。Pifebo Vintage、King Size。周日 Porta Portese 跳蚤市场 5:00-14:00。说一句 "Troppo caro（太贵了）"，价格立刻掉。' },
+      { label:'想买意大利设计品', reply:'Via del Governo Vecchio 的 Ibiz（手工皮具）+ Via del Pellegrino 的 Confetteria Moriondo（1850 年的糖果店）。' },
+    ),
+    tip('🛍️ 罗马购物 3 件宝', '1. Torrone（蜂蜜杏仁糖）· Moriondo\n2. 二手设计师古着 · Pifebo\n3. 手工凉鞋 · Antica Sartoria（能当场量脚做，1-2 天取）'),
+    t(`记一句 ${it('"Mi fa un piccolo sconto?"','能便宜一点吗？')}。`),
+    t('意大利市集和小店，不砍价是不礼貌的。'),
+    task('周日早上去 Porta Portese', '地铁 Piramide → 步行 10 分钟。8 点之前去，人最少，东西最全。带现金。'),
+  ],
+
+  rm_food: [
+    t('我是 Carlo。Testaccio 长大的。'),
+    t('罗马四大意面——你听着。'),
+    tip('🍝 罗马四大意面', `${it('Cacio e Pepe','奶酪黑胡椒')} · 只有 3 种材料\n${it('Carbonara','培根蛋黄')} · 绝对没有奶油\n${it('Amatriciana','番茄猪颊肉')} · 有番茄的那款\n${it('Gricia','猪颊肉奶酪')} · Amatriciana 没番茄版本`),
+    choice(
+      { label:'哪家最正宗？', reply:'Da Enzo al 29（Trastevere，排队 45 分钟）/ Flavio al Velavevodetto（Testaccio，挖在罗马古陶山里）/ Armando al Pantheon（万神殿旁，要预约）' },
+      { label:'早餐该吃什么', reply:'罗马人早餐站着喝。一杯 cappuccino + 一个 cornetto（羊角）。站 bar 台喝比坐着便宜一半。' },
+    ),
+    tip('🍴 罗马吃饭时间铁律', '午餐 12:30-14:30\n晚餐 19:30-22:30\n其他时间厨房关了\n—\n6 点开门的"正餐店" = 游客陷阱。'),
+    t(`${it('Saltimbocca alla Romana','罗马式跳进嘴里')}——小牛肉 + 火腿 + 鼠尾草。试一次你会明白名字的意思。`),
+    task('点一份 Carbonara，不加奶油版', '餐厅里说 "senza panna, per favore（不要奶油，谢谢）"。只有蛋黄 + guanciale（猪颊肉）+ pecorino（羊奶酪）+ 黑胡椒。这才是真的。'),
+  ],
+
+  rm_culture: [
+    t('我是 Flavia。费里尼和 Gregory Peck 的粉丝。'),
+    t('罗马这座城被拍过太多次电影，但最经典的路线只有 3 条。'),
+    ref('🎬 《罗马假日》(1953)', `西班牙台阶（Spanish Steps）吃冰淇淋\n→ ${it('Bocca della Verità','真理之口')} 把手伸进去\n→ 骑 Vespa 绕 Piazza Venezia\n—\n奥黛丽·赫本当年只是个 24 岁新人。这部片之后全世界都想去罗马。`),
+    ref('🎬 《甜蜜生活》La Dolce Vita (1960)', '特雷维喷泉跳水（Anita Ekberg 那段）\n→ Via Veneto 夜生活\n→ EUR 街区的法西斯建筑\n—\nFellini 用这部片发明了一个词：paparazzi（狗仔队）——片中那个摄影师的名字。'),
+    ref('🎬 《罗马》(2013 · 保罗·索伦蒂诺)', `${it('La grande bellezza','绝美之城')}——这就是片名直译。\n主角 Jep 夜游罗马的路线：Piazza Navona → Palazzo Spada → Tiber 河边 Tempietto。\n—\n奥斯卡最佳外语片。罗马的失落贵族美学。`),
+    choice(
+      { label:'带我去一家电影感的酒吧', reply:'Bar Il Marchese（Via di Ripetta）。Negroni 单品博物馆，30 种。西班牙台阶走路 8 分钟。' },
+      { label:'听一首罗马的歌', reply:'Antonello Venditti《Roma Capoccia》（1972）——每个罗马人酒后都会哭着唱。' },
+    ),
+    tip('🎞️ 《绝美之城》7 个打卡点', '1. Tempietto di Bramante（山顶小神庙）\n2. Villa Medici 花园\n3. Palazzo Spada 的错视长廊（Borromini）\n4. Giardino degli Aranci（橘园 · 俯瞰罗马）\n5. Aventino 钥匙孔（从圣彼得穹顶的 meme 原型）\n6. Piazza Navona 喷泉\n7. Tiber 河畔 Santa Maria dei Miracoli'),
+  ],
+
+  rm_lang: [
+    t('Salve（你好，尊敬用法）。我是 Enzo 教授。'),
+    t('罗马方言（romanesco）比标准意大利语更老——恺撒那会儿用的拉丁语 vulgaris（民间拉丁）就是它的祖先。'),
+    tip('🗣️ 罗马人的 5 + 2', `5 句标准：\n${it('Buongiorno','早上好')} · ${it('Grazie','谢谢')} · ${it('Scusi','抱歉')} · ${it('Prego','请')} · ${it('Il conto, per favore','买单')}\n—\n2 句罗马方言：\n${it('Daje!','加油 / 走起')} · ${it('Aho!','喂')}（熟人之间）`),
+    t(`说一句 "${it('Daje!','加油')}" 或 ${it('"Che ce poi fa?"','能怎么办呢？')}——罗马人立刻把你当成自己人。`),
+    choice(
+      { label:'怎么问路？', reply:'Scusi, dov\'è + 地名?（不好意思，…在哪？）\n例：Scusi, dov\'è il Pantheon?（万神殿在哪？）' },
+      { label:'怎么点咖啡', reply:'Un caffè（意式浓缩，默认）· Un macchiato（加一点奶泡）· Un cappuccino（只早上 11 点前喝）· Un caffè lungo（稀释版）' },
+    ),
+    task('跟罗马出租司机说一句 "Daje!"', '到目的地下车时说 "Grazie, daje!"——10 次里 8 次司机会笑着回一句 "Daje bello!"。你就赢了。'),
+  ],
+
+  // ───── MILAN 米兰 ─────
+  mi_art: [
+    t('Ciao. 我是 Giulia。米兰的美术馆被低估了。'),
+    t('所有人都知道《最后的晚餐》——但你要先知道怎么看它。'),
+    tip(`🖼️ ${it('Cenacolo','最后的晚餐')} · 预约铁律`, '必须提前 2 个月在 cenacolovinciano.org 官方订票。\n每场 15 分钟。35 人。不能再加。\n淡季黄牛票 45 欧，官方 15 欧。\n带学生证 -50%。'),
+    art(null, `${it('Ultima Cena','最后的晚餐')}`, 'Santa Maria delle Grazie · 前修道院食堂', '1495-1498。达芬奇用实验性的"油性 tempera"画在干墙上——他觉得壁画限制他修改。结果颜料 20 年就开始脱落。\n今天你看到的是 1999 年完成的 22 年修复成果。', '站在正中间——达芬奇用一点透视法把灭点正好压在耶稣的太阳穴上。整个房间都朝他汇聚。'),
+    choice(
+      { label:'除了晚餐还有什么', reply:'Pinacoteca di Brera——Raphael《圣母的婚礼》+ Caravaggio《Emmaus 晚餐》+ Piero della Francesca《Brera Madonna》。每月第一个周日免费。' },
+      { label:'有没有人少一点的', reply:'Ambrosiana 图书馆美术馆。达芬奇《音乐家肖像》（唯一男性肖像真迹）+ Caravaggio《水果篮》。周末游客只有 Brera 的 1/5。' },
+    ),
+    task('在 Pinacoteca di Brera 找《圣母的婚礼》', 'Raphael 21 岁画的。24 号厅。看人物脚下那块几何地砖——透视消失点直接指向背后那座 8 角形教堂。'),
+  ],
+
+  mi_shop: [
+    t('Ciao. 我是 Sofia。别再去 Montenapoleone 了。'),
+    t('米兰真正的时尚在 Brera、Navigli、5VIE 这三个地方。'),
+    choice(
+      { label:'给我推荐独立设计师', reply:'Brera 的 Funky Table（设计家居）· 10 Corso Como（Carla Sozzani 创的概念店）· Antonia（集合店，北意最前卫）' },
+      { label:'复古古着在哪', reply:'Cavalli e Nastri（Via Brera + Via de Amicis 两家）· Humana Vintage（Gae Aulenti 广场旁）· Navigli 运河 Mercatone dell\'Antiquariato（每月最后一个周日）' },
+    ),
+    tip('🛍️ 米兰购物 3 区地图', `Brera · 高端独立设计师\nNavigli · 古着 + 匠人\n5VIE · 家居 + 新锐设计\n—\n避开 Galleria Vittorio Emanuele II（游客价）。`),
+    t('米兰时装周（每年 2 月 + 9 月）和设计周（4 月）是另一个宇宙。'),
+    t(`设计周去 Fuorisalone——${it('"Out of Salone"','沙龙之外')}，全城开放的设计装置。免费。`),
+    task('周日去 Mercatone dell\'Antiquariato', '每月最后一个周日，Navigli 运河沿岸 2 公里，400 个古董摊。早上 9 点到位。'),
+  ],
+
+  mi_food: [
+    t('我是 Franco。米兰 3 样——Risotto、Cotoletta、Ossobuco。缺一样都不算吃过米兰。'),
+    tip('🥩 米兰三绝', `${it('Risotto alla Milanese','米兰式藏红花烩饭')} · 金色来自藏红花，不是姜黄\n${it('Cotoletta alla Milanese','米兰炸小牛排')} · 带骨头，厚 2cm\n${it('Ossobuco','炖牛膝骨')} · 要配 risotto 一起吃`),
+    t('但真正的米兰灵魂是——'),
+    t(`${it('Aperitivo','餐前酒')}。`),
+    t(`6:00-8:00 点，花 10-12 欧一杯酒，送一桌小吃 buffet。米兰人 90% 的晚餐是这么吃的。`),
+    choice(
+      { label:'Aperitivo 去哪', reply:'Bar Basso（Negroni Sbagliato 发源地，1972 年老店）· Mag Café（Navigli 运河边最潮）· Ceresio 7（泳池 bar，Dsquared2 开的，看日落）' },
+      { label:'正餐去哪', reply:'Trattoria Masuelli San Marco（1921 年，米兰菜标本）· Luini（1949 年，Panzerotti 炸馅饼，站着吃）· 便宜又好：Trippa Milano（Via Vasari，要预约）' },
+    ),
+    task('5 点半去 Bar Basso 点一杯 Negroni Sbagliato', '1972 年这里的 bartender 把 gin 搞错成 prosecco——结果意外成为世纪调酒。说 "Un Negroni Sbagliato" 就行。配的橄榄面包盘够你当晚饭。'),
+  ],
+
+  mi_culture: [
+    t('Ciao. 我是 Irene。'),
+    t('米兰不只是时尚。它是意大利的文化首都——歌剧、设计、建筑、当代艺术。'),
+    ref('🎭 La Scala 斯卡拉歌剧院', `世界三大歌剧院之一。1778 开幕，Verdi 在这里首演《奥赛罗》《法斯塔夫》。\n—\n${it('Posti in piedi','站票')}：演出当天下午 13:00-17:30 在正门右侧小窗排队，10 欧，70 张。大学生身份证半价。\n`),
+    ref('🎬 《I Am Love》(2009) · 指环王导演的米兰', `Tilda Swinton 在 Villa Necchi Campiglio 这座 1930 年代 Art Deco 别墅里演了一个叛逆的俄国太太。\n—\n别墅今天是博物馆，周三-周日开放。地铁 Turati 站。`),
+    tip('🏛️ 米兰文艺 5 站', '1. La Scala（歌剧 + 博物馆）\n2. Triennale（设计博物馆）\n3. Fondazione Prada（当代艺术 · Miuccia 建的）\n4. Hangar Bicocca（免费当代艺术 · Kiefer 永久展）\n5. Villa Necchi Campiglio（30 年代豪宅）'),
+    choice(
+      { label:'最米兰的一首歌', reply:'Lucio Dalla《Milano》(1979)——"Milano vicino all\'Europa（米兰靠近欧洲）"。每一个离开米兰的人都会在火车上听这首。' },
+      { label:'最米兰的一本书', reply:'Dino Buzzati《Poema a fumetti》（1969）——米兰第一本严肃漫画小说，比欧美早了 20 年。' },
+    ),
+  ],
+
+  mi_lang: [
+    t('我是 Luca。米兰人说话快、直、不浪费时间。'),
+    t(`你在南方用的 ${it('"Ciao bella"','你好美女')}——在米兰会被觉得油腻。`),
+    t(`这里用 ${it('"Buongiorno"','早上好')} 或 ${it('"Salve"','你好，中性尊敬')}。`),
+    tip('🗣️ 米兰商务 5 句', `${it('Buongiorno','早上好')} · 进门必说\n${it('Posso avere il menù, per favore?','麻烦给我菜单')}\n${it('Un caffè, grazie','来杯咖啡，谢谢')}\n${it('Il conto, per favore','买单，麻烦')}\n${it('Arrivederci','再见，尊敬用法')}（不是 Ciao）`),
+    choice(
+      { label:'怎么订 Aperitivo', reply:'Un aperitivo, per favore（一杯餐前酒，谢谢）/ Uno Spritz Aperol / Un Negroni / Un Americano（最经典的三种）' },
+      { label:'怎么问"有 wifi 吗"', reply:"C'è il wi-fi? Qual è la password?（有 wifi 吗？密码是什么？）米兰咖啡馆 90% 有免费 wifi。" },
+    ),
+    task('去一家米兰 bar 用意大利语订 Spritz', '走进店说 "Buonasera, uno Spritz Aperol, per favore"。一口气说完。你会发现服务员给你的下酒菜盘比邻桌的大。'),
+  ],
+
+  // ───── DOLOMITES 多洛米蒂 ─────
+  do_art: [
+    t(`${it('Bun dé','你好，Ladin 语')}。我是 Leni。`),
+    t('多洛米蒂的艺术不在墙上，在山里。'),
+    t('Reinhold Messner（第一个无氧登顶 14 座 8000 米的人）在 6 座山上盖了 6 座博物馆。'),
+    tip('🏔️ Messner Mountain Museum × 6', '1. MMM Firmian（Bolzano 近郊 · 总馆）\n2. MMM Juval（Messner 的城堡 · 夏季）\n3. MMM Dolomites（Monte Rite 2181m · 登山史）\n4. MMM Corones（Plan de Corones 2275m · Zaha Hadid 遗作）\n5. MMM Ripa（Brunico · 原住民）\n6. MMM Ortles（Solda · 冰川）'),
+    art(null, `${it('MMM Corones','科罗内斯山博物馆')}`, 'Plan de Corones · 2275 米', 'Zaha Hadid 2015 年完成。她去世前最后一件建筑作品。半埋在山顶岩石里的混凝土洞穴——从外面几乎看不见。', '进门往下走——她让你先进入黑暗，再让阳光从山顶的裂缝洒下。整座博物馆是一首关于"登山 = 面对黑暗然后找到光"的诗。'),
+    choice(
+      { label:'怎么上去？', reply:'Kronplatz（Plan de Corones）缆车从 Brunico（Bruneck）上山。山顶除了博物馆还有 Lumen（山地摄影博物馆）。' },
+      { label:'不登山能看吗？', reply:'MMM Firmian 在 Bolzano 近郊，Sigmundskron 城堡里。坐公交就到。是入门最好的一站。' },
+    ),
+    task('坐缆车上 Plan de Corones', 'Brunico - Kronplatz 缆车 25 分钟到顶。MMM Corones 的入口刻在山顶岩石里——不仔细找会错过。'),
+  ],
+
+  do_shop: [
+    t(`${it('Bun dé','你好')}。我是 Maria，Val Gardena 人。`),
+    t('这条山谷 400 年前就开始雕木头。全世界的圣诞人偶 60% 来自这里。'),
+    choice(
+      { label:'给我挑一个好的工坊', reply:'Ortisei 镇上 — Perathoner（1818 年世家）/ Stuflesser（教皇授权供应商）/ Comploi（百年匠人，价格更友好 50-200 欧）' },
+      { label:'我不买木雕想买别的', reply:'Loden 羊毛外套——雨打不透，200 年不变的版型。Persona Loden 或 Mothwurf。一件 300-500 欧，穿 20 年。' },
+    ),
+    tip('🧶 Dolomites 匠人 3 样', `${it('Scultura in legno','木雕')} · Val Gardena\n${it('Loden','羊毛外套')} · Tirol 传统\n${it('Grappa','白兰地')} · Val di Fiemme 蒸馏坊`),
+    t(`问价时——${it('"Quanto costa?"','多少钱？')}`),
+    t('山里人不砍价。但他们会很乐意给你讲这块木头 80 年前的故事。'),
+    task('去 Ortisei 的 Stuflesser Studio 参观', '免费参观。师傅当场雕刻。买一个小的圣米迦勒铜像，50 欧带回家。'),
+  ],
+
+  do_food: [
+    t(`${it('Bun dé','你好')}，小伙子 / 小姑娘。我是 Franz 爷爷。`),
+    t('山屋（Rifugio）的晚餐才是多洛米蒂的灵魂。你不吃一顿山屋，没来过多洛米蒂。'),
+    tip('🧀 山屋必点 4 样', `${it('Canederli','面包团子')} · 黑麦面包 + 烟熏火腿 + 干酪\n${it('Speck','烟熏火腿')} · 要切薄到透光\n${it('Polenta','玉米糊')} + 野味 · 鹿肉 / 野猪\n${it('Apfelstrudel','苹果卷')} · 配肉桂冰淇淋`),
+    choice(
+      { label:'最值得住一晚的山屋', reply:'Rifugio Auronzo（Tre Cime 正下方，2320m）/ Rifugio Locatelli（正对 Tre Cime 北壁）/ Rifugio Lagazuoi（日落最美，坐缆车就能上）' },
+      { label:'城里吃什么', reply:'Bolzano 老城区 - Hopfen & Co.（150 年啤酒馆）/ Vögele（1277 年开业，欧洲最老的餐厅之一）' },
+    ),
+    t(`吃完饭要一杯 ${it('Grappa','意大利白兰地')}——山里人说这叫 "il digestivo（助消化的东西）"。`),
+    t('一杯下去，9 点睡觉像块石头。'),
+    task('点一份 Canederli', '山屋菜单上通常写 "Canederli in brodo"（清汤团子）或 "Canederli al burro"（黄油团子）。点一份 brodo，配一杯 Weissbier。'),
+  ],
+
+  do_culture: [
+    t(`${it('Bun dé','你好')}。我是 Elena。`),
+    t('多洛米蒂不只是山——它是世界上唯一会在日落时变红的山。'),
+    t('Ladin 人管这个现象叫 Enrosadira。有一个传说。'),
+    ref('📜 Re Laurin 的玫瑰花园', `传说 Catinaccio 山里住着矮人之王 Laurin。他有一座会发光的玫瑰花园。\n一个公主爱上了他，但她哥哥们杀了他。\n他临死前诅咒了花园——让它白天黑夜都不可见。\n他忘了诅咒黎明和黄昏。\n—\n所以今天你还能看到：日出和日落时，这些山峰会变成玫瑰色。`),
+    ref('🎵 Reinhold Messner 的歌', `Messner 除了登山还写过一首山歌：《Und dann lebst du noch》(然后你还活着)——写给每一个从死亡线上活下来的登山者。\n—\n去 Bolzano 的 MMM Firmian，他本人会在夏天讲座。`),
+    choice(
+      { label:'最美的湖', reply:'Lago di Braies（《奇迹》电视剧 + Netflix《A Perfect Crime》取景）/ Lago di Sorapis（翡翠色，徒步 3 小时）/ Lago di Carezza（彩色湖面，开车可达）' },
+      { label:'最美的山屋日出', reply:'Rifugio Locatelli 的 Tre Cime 日出 5:30，全世界登山摄影师排名前 3。头天住一晚，第二天 4 点起来。' },
+    ),
+    tip('📸 Enrosadira 观赏点', '日落前 30 分钟站在 Alpe di Siusi 草原\n或 Rosengarten 山脚\n或 Santa Maddalena 的那个经典教堂机位\n—\n6-9 月最红。'),
+  ],
+
+  do_lang: [
+    t(`${it('Bun dé','你好，Ladin 语')}。我是 Martina。`),
+    t('这里其实是三语地区——意大利语、德语、Ladin 语。'),
+    t('你用哪个语言，对方给的待遇完全不同。'),
+    tip('🗣️ Dolomites 三语对照', `${it('Buongiorno','早上好')}（意大利语）\n${it('Grüß Gott','神佑你')}（德语，山里必用）\n${it('Bun dé','你好')}（Ladin 语，让山民眼睛亮起来）\n—\n${it('Grazie','谢谢')} / ${it('Danke','谢谢')} / ${it('Giulan','谢谢')}`),
+    t(`Ladin 语是一种独立的罗曼语族语言，全世界只剩 3 万人会说。`),
+    t('每一个你说 "Bun dé" 的人，都可能是这 3 万人之一。这是对一种濒危语言的致敬。'),
+    choice(
+      { label:'问路怎么说', reply:'Scusi, dov\'è...?（意）/ Entschuldigung, wo ist...?（德）/ Sceusa, olá é...?（Ladin）' },
+      { label:'点饭的时候', reply:'Vorrei...（我想要 · 意）/ Ich möchte...（我想要 · 德）/ I orissa...（我想要 · Ladin）' },
+    ),
+    task('在山屋跟老板说 "Bun dé"', '你走进 Rifugio，看老板正在擦玻璃。你说一句 "Bun dé"。\n10 次里 9 次他会停下来，认真看你一眼，然后给你免费一杯 grappa。'),
+  ],
+
+  // ───── SORRENTO 索伦托 ─────
+  so_art: [
+    t(`${it('Buongiorno','早上好')}。我是 Paola。`),
+    t('来索伦托的人都会去庞贝——但 80% 的人 3 小时走马观花。'),
+    t('我告诉你最浓缩的 3 小时路线。'),
+    tip(`🏛️ ${it('Pompei','庞贝')} · 3 小时精华`, `入口从 ${it('Porta Marina','海门')} 进\n→ Foro（市民广场）看 Vesuvio 在背景里\n→ Casa del Fauno（faun 之家 · 1400㎡ 最大民宅）\n→ Villa dei Misteri（神秘别墅 · 2000 年红色壁画）\n→ Lupanare（妓院 · 墙上价目表）\n→ Teatro Grande（大剧场）\n—\n别去 Anfiteatro（太远）。`),
+    art(null, `${it('Villa dei Misteri','神秘别墅')}`, '庞贝 · 城外西北', 'BC 1 世纪。29 幅连环壁画——酒神 Dionysus 信徒的入会仪式。\n被火山灰封存 2000 年，1909 年才挖出来。颜色还是鲜红的（所以这种红叫 "庞贝红"）。', '站在中间房间——29 个真人大小的人物绕你一圈，按顺序读：新娘准备 → 祭酒 → 音乐 → 神秘启示 → 被鞭打 → 舞蹈 → 婚礼。2000 年前一场完整的仪式剧。'),
+    choice(
+      { label:'人少的替代方案', reply:'Ercolano（赫库兰尼姆）——比庞贝小，但保存更好。木头家具还在。人少一半。想慢慢看还是匆匆一瞥都行。' },
+      { label:'阿马尔菲海岸怎么安排', reply:'Positano → Amalfi → Ravello（Villa Cimbrone 无限阳台 + Villa Rufolo）。最美的是 Ravello 的音乐季（7-9 月）。' },
+    ),
+    task('庞贝早上 8:30 开门前到位', '开门前 15 分钟到 Porta Marina 入口。先冲 Villa dei Misteri（需要走 10 分钟到城外），回来再看中心区。避开 10 点后的旅游团洪水。'),
+  ],
+
+  so_shop: [
+    t(`${it('Buongiorno','早上好')}。我是 Rosa。`),
+    t('索伦托两大手工艺——intarsio（镶嵌木）和 cameo（贝壳浮雕）。两个都是 500 年的传统。'),
+    choice(
+      { label:'给我看看镶嵌木', reply:'Stinga Tarsia（Piazza Tasso 边，1890 年）——师傅现场用 15 种木头拼一副"索伦托海湾"画。小的 80 欧起。' },
+      { label:'cameo 怎么挑', reply:'真正的 cameo 用 sardonyx（红黑玛瑙）或 shell（贝壳）手工雕——一件 80 小时。机器做的 30 欧，手工的 500 欧起。去 Torre del Greco 附近看真货。' },
+    ),
+    tip('🛍️ 索伦托三宝', `${it('Intarsio','镶嵌木画')} · 手工镶嵌\n${it('Cameo','贝壳浮雕')} · 古罗马传下来的\n${it('Limoncello','柠檬酒')} · 只买 IGP 认证的`),
+    t(`市集砍价用一句：${it('"Mi fa un prezzo amico?"','朋友价给我吧')}`),
+    task('去 Stinga 看师傅现场做镶嵌', 'Piazza Tasso 步行 2 分钟。免费参观。师傅会给你讲 30 种不同颜色木头怎么来——橄榄木是金色，樱桃木是红色，胡桃木是咖啡色。'),
+  ],
+
+  so_food: [
+    t('我是 Tonino 叔。索伦托的海鲜，你要吃"上午打的"。'),
+    t('6 点去 Marina Grande 渔港，渔船刚回来。你跟餐厅老板说 "oggi fresco（今天新鲜的）"，他会给你当天最好的。'),
+    tip('🦞 索伦托 5 样必吃', `${it('Gnocchi alla Sorrentina','索伦托式土豆团子')} · 番茄 + 莫扎里拉\n${it('Linguine con le Vongole','蛤蜊意面')}\n${it('Delizia al Limone','柠檬奶油球')} · 只在索伦托吃得到\n${it('Spaghetti al Riccio','海胆意面')}\n${it('Insalata Caprese','卡普里沙拉')} · 莫扎里拉 + 番茄 + 罗勒 + 橄榄油`),
+    choice(
+      { label:'最地道一家', reply:'Ristorante Bagni Delfino（悬崖边，要订）/ Trattoria da Emilia（Marina Grande，40 年老店，没菜单，老板配菜）' },
+      { label:'柠檬农场体验', reply:'Masseria Il Raggio Verde / Agriturismo La Tore——半日游 30 欧，亲手做 Limoncello 带走。午饭 7 道菜。' },
+    ),
+    task('点一杯 Limoncello 冰过的', '餐厅吃完饭一定要问 "Un limoncello, per favore, ben freddo（一杯柠檬酒，要非常冰）"。通常免费送。'),
+  ],
+
+  so_culture: [
+    t('我是 Stella。给你讲一首歌。'),
+    ref(`🎶 ${it("Torna a Surriento","重归苏莲托")} (1902)`, `Giambattista De Curtis 在 Hotel Tramontano 的阳台写下这首歌——送给刚刚来访索伦托的意大利首相 Giuseppe Zanardelli。\n—\n"Vide 'o mare quant'è bello（你看这海多美）——"\n—\nPavarotti 版本：7:12 / Elvis 版本 (Surrender 1961)：2:09 / Dean Martin 版本：3:24`),
+    ref(`🎬 ${it('"Il Postino"','邮差')} (1994)`, 'Massimo Troisi 演的邮差，Pablo Neruda 演流亡诗人。\n拍摄地在 Procida 岛（那不勒斯湾里一座小岛），但故事是从索伦托延伸出去的。\n—\nMassimo 拍完第 12 小时后心脏病去世。那是他最后一部电影。'),
+    t(`索伦托出过一位诗人——${it('Torquato Tasso','托尔夸托·塔索')}（1544-1595）。`),
+    t('广场上的那个雕像就是他。《被解放的耶路撒冷》作者。\n意大利文艺复兴晚期最后一位大诗人。'),
+    choice(
+      { label:'最美的日落点', reply:'Villa Comunale 公园——正对 Vesuvio 火山。7 点免费。长椅坐满了当地老人。' },
+      { label:'听一首索伦托', reply:'Andrea Bocelli《Torna a Surriento》（2013）—— 带回原曲的南方那不勒斯味。' },
+    ),
+  ],
+
+  so_lang: [
+    t('Guagliò!（嘿，小子 / 小姑娘，那不勒斯方言）'),
+    t('我是 Salvo 爷爷。索伦托讲的是带那不勒斯口音的意大利语。'),
+    tip(`🗣️ 索伦托 5 + 1`, `5 句标准：\n${it('Buongiorno','早')} · ${it('Grazie','谢')} · ${it('Per favore','请')} · ${it('Scusi','抱歉')} · ${it('Il conto','买单')}\n—\n1 句方言送你：\n${it('Jamme jà!','走吧 / 来吧')}——那不勒斯人听到会笑`),
+    choice(
+      { label:'柠檬酒怎么点', reply:'Un limoncello, per favore. E un po\' di pasticcini?（来一杯柠檬酒。有点心吗？）很多餐厅饭后会送你一小盘杏仁饼 + limoncello。' },
+      { label:'问 Vesuvio 怎么说', reply:'Dov\'è il Vesuvio?（Vesuvio 在哪？）老人会笑："你看不见那座山吗？"—— Vesuvio 从索伦托任何地方都能看到。' },
+    ),
+    task('在柠檬店说一句 "Jamme jà!"', '买完东西临走时说一句——老板会愣 0.5 秒，然后笑着送你一颗糖。那是 Napoli 的感情。'),
+  ],
+
+  // ───── NAPLES 那不勒斯 ─────
+  na_art: [
+    t(`${it('Uè','嘿')}！我是 Ciro 师傅。你来对地方了。`),
+    t(`那不勒斯考古博物馆（${it('MANN','Museo Archeologico Nazionale di Napoli')}）是意大利最被低估的博物馆。`),
+    t('庞贝最好的东西——都不在庞贝。都在 MANN。'),
+    tip(`🏛️ MANN 必看 4 件`, `1. ${it('Toro Farnese','法尔内塞公牛')}——3.7m 高，从一整块大理石雕的\n2. ${it('Ercole Farnese','法尔内塞海格力斯')}——古希腊最完美男性雕像\n3. ${it('Alexander Mosaic','亚历山大马赛克')}——庞贝 Casa del Fauno 的地板\n4. Gabinetto Segreto（秘密房间）——古罗马色情艺术，18 岁以上才能进`),
+    art(null, `${it('Cristo Velato','蒙纱基督')}`, 'Cappella Sansevero · Sanmartino 1753', '一整块大理石雕的。基督尸体上盖着一层薄纱——薄到你能看到下面的伤口。', '蹲下来从下往上看——纱和石头是同一块料。没人能解释。\n当时谣传雕塑家 Sanmartino 用了"炼金术"把布变成石头。'),
+    choice(
+      { label:'地下那不勒斯', reply:'Napoli Sotterranea——2300 年前的希腊采石场 + 古罗马水道 + 二战防空洞。入口在 Piazza San Gaetano，1.5 小时 tour。' },
+      { label:'最震撼的教堂', reply:'Cappella Sansevero（Cristo Velato 就在这）+ Duomo di Napoli（圣血每年 9 月 19 日液化）+ Certosa di San Martino（山顶俯瞰全城）' },
+    ),
+    task('去 Cappella Sansevero 看 Cristo Velato', '提前 2 周官网订票（museosansevero.it）。进去后第一件事——从下往上看那层纱。手机拍不出来的。'),
+  ],
+
+  na_shop: [
+    t(`${it('Ciao','你好')}！我是 Pina。`),
+    t('那不勒斯最有名的一条手工艺街——Via San Gregorio Armeno。'),
+    t('一年 365 天都在卖圣诞人偶。夸张吗？不夸张。这是 500 年的传统。'),
+    choice(
+      { label:'推荐我一家老店', reply:'Ferrigno（1836 年，7 代）——教皇每年的 presepe 就是这里做的。可以定制你自己的迷你版。' },
+      { label:'我不要圣诞人偶', reply:'那去 Capri 或 Ischia 买 Capri Sandals——手工皮凉鞋，量脚 1 小时做好。180-300 欧，穿 10 年。' },
+    ),
+    tip(`🛍️ 那不勒斯三宝`, `${it('Presepe','马槽人偶')} · San Gregorio Armeno\n${it('Cornicello','红色辣椒护身符')} · 驱邪\n${it('Capri Sandals','卡普里凉鞋')} · 手工`),
+    t(`买 ${it('Cornicello','红辣椒护身符')} 要"被送"不能"自己买"——这是规矩。`),
+    t('但你在 San Gregorio Armeno 买给朋友，这就算"送"——破解了诅咒。'),
+    task('在 San Gregorio 买一个小的 Cornicello', '送给在国内的爸妈 / 朋友。最小的 3 欧。记得让店主说一句 "Ti porta fortuna（带来好运）"。'),
+  ],
+
+  na_food: [
+    t('我是 Rosaria 阿姨。坐下，我给你煮。'),
+    t('那不勒斯是披萨的发源地。1889 年 Raffaele Esposito 发明了 Margherita——红番茄 + 白莫扎里拉 + 绿罗勒，致敬意大利国旗。'),
+    tip(`🍕 那不勒斯披萨圣地 · 3 家`, `Da Michele（1870，只有 Margherita / Marinara · Julia Roberts 朝圣地）\nGino e Toto Sorbillo（Via Tribunali，最人气）\nPizzeria Starita（1901，演过《Ieri oggi domani》）\n—\n排队 1 小时是常态。`),
+    choice(
+      { label:'披萨外面还有什么', reply:'Sfogliatella（千层酥）· Riccia（脆的）/ Frolla（软的）。Pintauro（Via Toledo 1785 年开）是老字号。' },
+      { label:'正餐呢', reply:'Trattoria da Nennella（Quartieri Spagnoli，一家人合唱生日歌给所有客人）/ Antica Osteria Pisano（海鲜，老店）' },
+    ),
+    art(null, `${it('Pizza Margherita','玛格丽特披萨')}`, 'Da Michele · Via Cesare Sersale', '1889 年为萨沃伊王朝的玛格丽特王后发明。番茄（红）+ 莫扎里拉（白）+ 罗勒（绿）= 意大利国旗。', '问店员要 "Margherita extra" ——多一层莫扎里拉。再倒一圈 extra-virgin olive oil（额外纯橄榄油）。用手折起来吃，不用刀叉。'),
+    task('在 Da Michele 排队吃 Margherita', '提前去拿号牌（pizzeria 门口那个机器）。等 30-60 分钟值。一份 5 欧。'),
+  ],
+
+  na_culture: [
+    t('Guagliò。我是 Gennaro。'),
+    t('那不勒斯是全世界最会哭也最会笑的城市。它的灵魂在戏剧和音乐里。'),
+    ref(`🎭 Eduardo De Filippo (1900-1984)`, `那不勒斯现代戏剧之父。三部必看：\n${it('Filumena Marturano','菲露梅娜·马图拉诺')}（1946）\n${it('Napoli Milionaria!','那不勒斯百万富翁')}（1945）\n${it('Questi fantasmi!','这些鬼魂')}（1946）\n—\n改编电影《婚后幸福》(1964) 是 Sophia Loren + Marcello Mastroianni。`),
+    ref(`📖 Elena Ferrante · ${it("L'amica geniale",'我的天才女友')}`, `"那不勒斯四部曲"。全世界卖出 1500 万本。\n主角 Elena 和 Lila 成长的街区叫 Rione Luzzatti——真实存在，在 Poggioreale 附近。\nHBO 剧集《My Brilliant Friend》就在那里搭景拍的。`),
+    ref(`🎵 Pino Daniele · ${it('"Napule è"','那不勒斯是')} (1977)`, `"Napule è mille culure（那不勒斯是一千种颜色）"\n"Napule è mille paure（那不勒斯是一千种恐惧）"\n—\n被当成那不勒斯非官方市歌。2015 年 Pino 去世，20 万人送葬。`),
+    choice(
+      { label:'Ferrante 书里的地方', reply:'Rione Luzzatti + Piazza dei Martiri + Biblioteca Nazionale（Elena 第一次去图书馆那段）' },
+      { label:'最那不勒斯的一晚', reply:'Quartieri Spagnoli 巷子里吃饭 → 去 Galleria Umberto I 看屋顶 → Via Caracciolo 海边散步，看 Vesuvio 在月光下' },
+    ),
+  ],
+
+  na_lang: [
+    t('Uagliò, guagliò. 我是 Vincenzo 教授。'),
+    t('那不勒斯语（napoletano）是被 UNESCO 认证的独立语言。不是方言。'),
+    tip(`🗣️ Napoli 5 + 3`, `5 句标准意大利语（店里用）：\n${it('Buongiorno','早')} · ${it('Grazie','谢')} · ${it('Per favore','请')} · ${it('Scusi','抱歉')} · ${it('Il conto','买单')}\n—\n3 句那不勒斯方言（街上用）：\n${it('Uè!','嘿')}（打招呼）\n${it('Guagliò!','小子 / 小姑娘')}（亲切称呼）\n${it('Jamme jà!','走吧')}`),
+    t(`最那不勒斯的一句——${it("Tutt'apposto?",'一切都好吗？')}`),
+    t(`回答 ${it("Tutt'apposto!",'一切都好！')}`),
+    t('说对了店员立刻把你当自己人。'),
+    choice(
+      { label:'披萨店用', reply:"Una margherita, grazie.（一份玛格丽特，谢谢）/ Extra mozzarella?（多一层莫扎里拉？）/ Tutt'apposto?（都好吗？）" },
+      { label:'街上问路', reply:'Scusate, dov\'è...?（不好意思，…在哪？）这里用 voi 不是 tu——南方更尊重长辈。' },
+    ),
+    task('进披萨店说一句 "Uè!"', `走进 Da Michele 之类的老店，进门说 "Uè, una margherita, guagliò!"（嘿，来份玛格丽特，小哥）。\n厨师会笑着挥一下手。那一瞬间你不是游客，你是自己人。`),
   ],
 
 };
@@ -1002,6 +1807,466 @@ export const GROUPS = {
       g('nonna', 'Baci. 🌹'),
       gsys('——'),
       gsys('群聊陷入沉默。但没人退群。'),
+    ],
+  },
+
+  // ════════════════════════════════════════════
+  // CITY GROUPS — one per city, @mention flavored
+  // The user's choice effectively @mentions a persona who answers first.
+  // ════════════════════════════════════════════
+
+  florence_group: {
+    city:'florence',
+    name:'佛罗伦萨本地群',
+    shortName:'Firenze 本地',
+    emoji:'🌹',
+    color:'#8B6F47',
+    intro:'Marco 把你拉进来了。这里是佛罗伦萨 8 个人给你当向导。',
+    members:['marco','fi_art','fi_shop','fi_food','fi_culture','fi_lang','lorenzo','michelangelo'],
+    conversation: [
+      gsys('Marco 创建了群聊「佛罗伦萨本地群」'),
+      gsys('Marco 添加了 Alessia、Bianca、Piero 爷爷、Chiara、Sara 老师、Lorenzo、Michelangelo'),
+      gsys('你被 Marco 添加到群聊'),
+      g('marco','@你 来了来了。'),
+      g('marco','你想慢慢泡还是大概扫一眼——我都能给你列出来。别在错的地方浪费时间。'),
+      g('marco','你问我一个问题，我让最懂的人先回。'),
+      g('fi_art','我是 Alessia。艺术问题我来。'),
+      g('fi_food','我是 Piero 爷爷。吃饭问题我来。'),
+      g('fi_shop','我是 Bianca。买东西问我。'),
+      g('fi_culture','Chiara 到。电影、文学、音乐。'),
+      g('fi_lang','Sara 在这。意大利语问题我接。'),
+      g('lorenzo','我只付账。不发言。'),
+      g('michelangelo','我不说话。除非说到大卫。'),
+      g('marco','@你 说吧。你最想问谁？'),
+      { t:'choice', options:[
+        { label:'@Alessia 乌菲兹怎么看最省时间', reply:[
+          g('fi_art','3 小时精华路线：10 号厅（波提切利）→ 35 号厅（米开朗基罗）→ 8 号厅（乔托）→ 43 号厅（Caravaggio）。'),
+          g('fi_art','早上 8:15 开门之前到。9 点前人最少。'),
+          g('michelangelo','别忘了看我的 Doni Tondo。35 号厅。'),
+          g('marco','她说的是真的。跟着她的顺序走你不会错。'),
+          g('fi_lang','进博物馆先说一句 Buongiorno（早上好）。工作人员会更耐心。'),
+        ]},
+        { label:'@Piero 爷爷 今晚吃什么', reply:[
+          g('fi_food','Trattoria Mario。中午 12:00 开。没菜单。拼桌。'),
+          g('fi_food','点 Bistecca alla Fiorentina（佛罗伦萨大牛排）1kg + Pappa al Pomodoro（面包番茄糊）。'),
+          g('fi_food','一定要 rare。别点 medium，会被厨房嘲笑。'),
+          g('marco','听他的。我带过 40 个游客去 Mario，没一个后悔。'),
+          g('fi_shop','吃完后去 Via de\' Neri 的 All\'Antico Vinaio 拿一个三明治当宵夜。'),
+        ]},
+        { label:'@Bianca 皮具买哪里', reply:[
+          g('fi_shop','Scuola del Cuoio（圣十字教堂后院的皮革学校）。师傅当场剪料。'),
+          g('fi_shop','50-300 欧都有。现场刻字免费。'),
+          g('fi_shop','避开 Ponte Vecchio 上的店——90% 贵一倍。'),
+          g('marco','补一个：San Lorenzo 市场里的皮具摊 80% 是中国批发货。看清楚。'),
+          g('fi_lang','砍价说 "Mi fa un piccolo sconto?（能便宜一点吗？）"。'),
+        ]},
+        { label:'@Chiara 带我去一个电影感的街角', reply:[
+          g('fi_culture','Piazza della Signoria 广场中心，Cellini 的 Perseus 铜像对面。'),
+          g('fi_culture','《看得见风景的房间》就在那里拍的。站一会儿，你会明白为什么 E.M. Forster 把爱情放在佛罗伦萨。'),
+          g('fi_culture','黄昏去。橘色灯光洒在 Palazzo Vecchio 的墙上。'),
+          g('marco','她说的是真的。这是我周末约会的地方。'),
+          g('fi_food','之后去 Rivoire（1872 年老店）喝热巧克力。'),
+        ]},
+        { label:'@Sara 老师 教我进店说什么', reply:[
+          g('fi_lang','"Buongiorno"（早上好，11 点前） / "Buonasera"（下午好，之后）。'),
+          g('fi_lang','买单："Il conto, per favore（麻烦买单）"。'),
+          g('fi_lang','Grazie 不是说给空气的——说给服务你的那个人，看着他的眼睛。'),
+          g('fi_food','对。意大利人看你有礼貌，菜单外的东西都会多送你。'),
+          g('marco','这是最便宜的升级方式。'),
+        ]},
+        { label:'@Lorenzo 为什么佛罗伦萨这么小却这么重要', reply:[
+          g('lorenzo','因为我们家族花了 300 年把它变成欧洲的心脏。'),
+          g('lorenzo','银行 + 艺术 + 政治 = 文艺复兴的配方。'),
+          g('lorenzo','一座小城能养活 20 个大师——是钱和品味一起做到的。'),
+          g('michelangelo','他说话还挺谦虚。'),
+          g('marco','Lorenzo 的"不下场"就是最大的下场。'),
+        ]},
+      ]},
+      g('marco','@你 还有问题随时发。我在。'),
+      g('fi_food','吃饭找我。'),
+      g('fi_art','艺术找我。'),
+      g('fi_shop','买买买找我。'),
+      gsys('——'),
+      gsys('群聊保持在线。'),
+    ],
+  },
+
+  rome_group: {
+    city:'rome',
+    name:'罗马本地群',
+    shortName:'Roma 本地',
+    emoji:'🏛️',
+    color:'#8B1A1A',
+    intro:'Lucia 奶奶把你拉进来了。8 个罗马人给你当向导。',
+    members:['nonna','rm_art','rm_shop','rm_food','rm_culture','rm_lang','bernini','caesar'],
+    conversation: [
+      gsys('Lucia 奶奶 创建了群聊「罗马本地群」'),
+      gsys('Lucia 奶奶 添加了 Don Matteo、Valentina、Carlo、Flavia、Enzo 教授、Bernini、Caesar'),
+      gsys('你被 Lucia 奶奶 添加到群聊'),
+      g('nonna','@你 Benvenuto（欢迎）. 坐下先喝水。'),
+      g('nonna','罗马 7 天都不够。我们帮你压缩。'),
+      g('rm_art','Don Matteo 到。教堂和博物馆我来。'),
+      g('rm_food','Carlo。吃饭问题。'),
+      g('rm_shop','Valentina。买东西问我。'),
+      g('rm_culture','Flavia。电影和音乐。'),
+      g('rm_lang','Enzo 教授。罗马方言。'),
+      g('bernini','我设计了半个罗马。指路问我。'),
+      g('caesar','我不是来聊天的。'),
+      g('nonna','Cesare, taci.（凯撒，闭嘴。）'),
+      g('caesar','……'),
+      g('nonna','@你 问吧。'),
+      { t:'choice', options:[
+        { label:'@Don Matteo 免费艺术路线', reply:[
+          g('rm_art','教堂路线——全部免费（带 1 欧硬币点灯）。'),
+          g('rm_art','San Luigi dei Francesi（3 幅 Caravaggio）→ Santa Maria del Popolo（2 幅 Caravaggio + Bernini + Raphael）→ San Pietro in Vincoli（米开朗基罗 Moses）。'),
+          g('rm_art','0 元看到 5 位大师。你排在哪一站都行。'),
+          g('bernini','Popolo 那座教堂外面的广场对称是我设计的。'),
+          g('nonna','Matteo 是全罗马最便宜的讲解。'),
+        ]},
+        { label:'@Carlo 四大意面必须吃哪一个', reply:[
+          g('rm_food','Cacio e Pepe（奶酪胡椒）最考验师傅。3 种材料，一错就废。'),
+          g('rm_food','去 Felice a Testaccio——服务员会当桌搅拌给你看。'),
+          g('rm_food','Carbonara 去 Da Enzo al 29。排队 45 分钟值。'),
+          g('nonna','我家里 cacio e pepe 比他们都好吃。回头我做给你。'),
+          g('rm_lang','点的时候说 "Senza panna!（不要奶油！）"——拯救你的 Carbonara。'),
+        ]},
+        { label:'@Valentina 周日早上做什么', reply:[
+          g('rm_shop','Porta Portese 跳蚤市场。地铁 Piramide 下车走 10 分钟。'),
+          g('rm_shop','早上 8 点到位。8-11 点东西最全。'),
+          g('rm_shop','带现金。说 "troppo caro（太贵了）" 砍价。'),
+          g('rm_culture','周日还可以去 Villa Borghese 公园晨跑，然后 Galleria Borghese 美术馆 11 点预约进。'),
+          g('nonna','早饭我请。Trastevere 的 Roscioli——7 点开门。'),
+        ]},
+        { label:'@Flavia 带我走一条电影路线', reply:[
+          g('rm_culture','《罗马假日》1 小时版：Piazza di Spagna（西班牙台阶吃冰）→ Fontana di Trevi（投硬币）→ Bocca della Verità（真理之口）。'),
+          g('rm_culture','《甜蜜生活》版：Via Veneto → EUR 街区 → Trevi 跳水点。'),
+          g('rm_culture','我推荐《绝美之城》版——Aventino 钥匙孔（6 点开门，看圣彼得大教堂穿过钥匙孔）。'),
+          g('rm_art','Aventino 附近还有 Santa Sabina（5 世纪教堂）。免费。'),
+          g('nonna','黄昏去 Aventino 的橘园。那里有最安静的罗马。'),
+        ]},
+        { label:'@Enzo 怎么说得像罗马人', reply:[
+          g('rm_lang','一句罗马方言够了：Daje!（加油 / 走起）。'),
+          g('rm_lang','朋友之间：Aho!（喂）。'),
+          g('rm_lang','感叹：Che ce poi fa?（能怎么办呢？意大利国魂）。'),
+          g('nonna','说 "Daje" 的时候把 j 发成 "y"。Daa-ye。'),
+          g('rm_food','罗马出租司机最爱这个词。下车说 "Grazie, daje!" 一下拉近距离。'),
+        ]},
+        { label:'@Bernini 给我推一个你的作品', reply:[
+          g('bernini','Santa Maria della Vittoria 教堂里的 Ecstasy of Saint Teresa（圣特雷莎的狂喜）。'),
+          g('bernini','一个女人被天使用金箭刺穿心脏——我雕的。大理石能表达到那一步。'),
+          g('bernini','免费。在共和国广场旁。'),
+          g('rm_art','同意。一生必看。'),
+          g('nonna','那座教堂的牧师是我老朋友。你去报我名字。'),
+        ]},
+      ]},
+      g('nonna','@你 饿了来 Trastevere 我家。Via dei Salumi 那条巷。'),
+      g('rm_food','Trastevere 周日早餐最强。'),
+      g('rm_lang','记住 Daje!'),
+      gsys('——'),
+      gsys('群聊保持在线。'),
+    ],
+  },
+
+  milan_group: {
+    city:'milan',
+    name:'米兰本地群',
+    shortName:'Milano 本地',
+    emoji:'✨',
+    color:'#2C3E50',
+    intro:'Paolo 把你拉进来了。米兰人很直接，但懂货。',
+    members:['paolo','mi_art','mi_shop','mi_food','mi_culture','mi_lang','davinci','miuccia'],
+    conversation: [
+      gsys('Paolo 创建了群聊「米兰本地群」'),
+      gsys('Paolo 添加了 Giulia、Sofia、Franco、Irene、Luca、Leonardo、Miuccia'),
+      gsys('你被 Paolo 添加到群聊'),
+      g('paolo','@你 来了。米兰没有罗马那么热情但给你的东西都是真的。'),
+      g('mi_art','Giulia 到。艺术馆我来。'),
+      g('mi_shop','Sofia。买东西。'),
+      g('mi_food','Franco。吃饭和 aperitivo。'),
+      g('mi_culture','Irene。歌剧、设计、书。'),
+      g('mi_lang','Luca。意大利语。'),
+      g('davinci','我有 18 个话题想聊。'),
+      g('miuccia','说重点。'),
+      g('paolo','@你 挑一个问'),
+      { t:'choice', options:[
+        { label:'@Giulia 最后的晚餐票抢不到怎么办', reply:[
+          g('mi_art','不要去黄牛。不要。'),
+          g('mi_art','官方 cenacolovinciano.org 每月 1 号放下个月的票。设闹钟。'),
+          g('mi_art','如果真的没抢到——去 Ambrosiana 看达芬奇的《音乐家肖像》（唯一男性肖像真迹）。人少 80%。'),
+          g('davinci','说实话那幅画我更满意。'),
+          g('miuccia','Leonardo 都这么说了，信他。'),
+        ]},
+        { label:'@Sofia 给我推一条不坑的购物路线', reply:[
+          g('mi_shop','Brera 区随便逛。Via Brera + Via Solferino + Via Fiori Chiari。想逛多久就逛多久。'),
+          g('mi_shop','Cavalli e Nastri 古着（Vogue 编辑都去）。'),
+          g('mi_shop','10 Corso Como 概念店。顶楼花园餐厅喝一杯。'),
+          g('miuccia','Via della Spiga 不用去。那是游客的 Quadrilatero。'),
+          g('paolo','Brera 之后去 Bar Basso 6 点开 Aperitivo。步行 15 分钟。'),
+        ]},
+        { label:'@Franco 最米兰的一晚怎么过', reply:[
+          g('mi_food','5:30 Bar Basso 一杯 Negroni Sbagliato + buffet。这就是晚饭 60% 了。'),
+          g('mi_food','7:30 Trippa Milano 要预约的小餐馆——米兰菜但年轻版。'),
+          g('mi_food','10:00 Pasticceria Marchesi（Prada 开的百年甜品店）来一块 Torta Caprese 配浓缩。'),
+          g('miuccia','Marchesi 是我的。对。'),
+          g('mi_culture','之后走 10 分钟到 La Scala 正门口看它夜晚亮灯。'),
+        ]},
+        { label:'@Irene La Scala 站票怎么搞', reply:[
+          g('mi_culture','演出当天下午 13:00-17:30 到正门右侧的 Palco Scala 小窗口。'),
+          g('mi_culture','70 张站票，10 欧。大学生 5 欧。'),
+          g('mi_culture','带身份证。开演前会给你一个小观众席。站 3 小时看 Verdi。'),
+          g('paolo','我看过两次 Traviata。那种声压从你脚底震上来。'),
+          g('mi_food','之后去 Bar Basso 宵夜。演出和酒都是米兰的。'),
+        ]},
+        { label:'@Luca 商务场合怎么说', reply:[
+          g('mi_lang','Buongiorno（不是 Ciao）。Arrivederci（不是 Ciao）。'),
+          g('mi_lang','会议："Posso?（我可以吗 / 打断一下）"。'),
+          g('mi_lang','买单："Il conto, per favore"。打赏 5-10%，不是 20%。'),
+          g('miuccia','米兰人最烦啰嗦。说话像文件头——直奔结论。'),
+          g('paolo','她说的是对的。'),
+        ]},
+        { label:'@Miuccia 普拉达真的在米兰起家吗', reply:[
+          g('miuccia','我奶奶 1913 年在 Galleria Vittorio Emanuele II 开了皮具店。'),
+          g('miuccia','我 1978 年接手。然后用尼龙伞布做手袋——大家笑我。'),
+          g('miuccia','现在那些笑的人都在卖仿品。'),
+          g('davinci','她骄傲时跟我一模一样。'),
+          g('paolo','Fondazione Prada 可以去。周二闭馆。地铁 Lodi T.I.B.B.。'),
+        ]},
+      ]},
+      g('paolo','@你 记一句——米兰不会讨好你。它等你来懂它。'),
+      g('mi_lang','Ciao。'),
+      gsys('——'),
+      gsys('群聊保持在线。'),
+    ],
+  },
+
+  dolomites_group: {
+    city:'dolomites',
+    name:'多洛米蒂山友群',
+    shortName:'Dolomiti 山友',
+    emoji:'🏔️',
+    color:'#2E7D32',
+    intro:'Hans 把你拉进来了。山里人话不多，但每句都能救命。',
+    members:['hans','do_art','do_shop','do_food','do_culture','do_lang','bruno','sissi'],
+    conversation: [
+      gsys('Hans 创建了群聊「多洛米蒂山友群」'),
+      gsys('Hans 添加了 Leni、Maria、Franz 爷爷、Elena、Martina、Bruno、Sissi'),
+      gsys('你被 Hans 添加到群聊'),
+      g('hans','@你 Bun dé（你好，Ladin 语）。山里见。'),
+      g('hans','上山前问完问题再出发。'),
+      g('do_art','Leni。博物馆。'),
+      g('do_shop','Maria。木雕和羊毛。'),
+      g('do_food','Franz 爷爷。山屋饭。'),
+      g('do_culture','Elena。传说和历史。'),
+      g('do_lang','Martina。语言。'),
+      g('bruno','羊在叫。我五分钟就下线。'),
+      g('sissi','我只负责风景和诗。'),
+      g('hans','@你 说。'),
+      { t:'choice', options:[
+        { label:'@Hans 第一次来走哪条路线', reply:[
+          g('hans','最经典：Tre Cime di Lavaredo 环线。3-4 小时，不难。'),
+          g('hans','从 Rifugio Auronzo（2320m，有停车场）起，顺时针，经过 Rifugio Locatelli（正对北壁）。'),
+          g('hans','穿登山鞋。带外套。带水 1.5L。'),
+          g('hans','8 月也会下雪。别信天气预报。信云。'),
+          g('bruno','我的羊群在这条路线边上。看见羊铃响的那个就是我。'),
+          g('do_food','Locatelli 的 Canederli 超棒。'),
+        ]},
+        { label:'@Leni 给我推一个山顶博物馆', reply:[
+          g('do_art','MMM Corones。2275m。Zaha Hadid 最后一个作品。'),
+          g('do_art','Brunico（Bruneck）坐缆车上去。山顶除了博物馆还有 Lumen（摄影博物馆）。'),
+          g('do_art','一张联票 18 欧看完两个。'),
+          g('sissi','我从来不去那么高的地方。但那个入口确实好看。'),
+          g('hans','缆车出故障时我负责救援。'),
+        ]},
+        { label:'@Maria 最值得带回的手工艺', reply:[
+          g('do_shop','Val Gardena 的木雕。Ortisei 镇的 Stuflesser 或 Comploi。'),
+          g('do_shop','小的圣米迦勒雕像 50 欧。带一生。'),
+          g('do_shop','Loden 羊毛外套——Mothwurf 或 Persona Loden。雨打不透，穿 20 年。'),
+          g('do_food','买完冷——来一杯 Grappa。'),
+          g('hans','我爷爷那件 Loden 传给我了。70 年还在穿。'),
+        ]},
+        { label:'@Franz 爷爷 山屋必点', reply:[
+          g('do_food','Canederli in brodo（面包团子清汤）。'),
+          g('do_food','Speck（烟熏火腿）切到透光。'),
+          g('do_food','Apfelstrudel（苹果卷）配肉桂冰淇淋。'),
+          g('do_food','一杯 Grappa 助消化。'),
+          g('hans','Rifugio Auronzo 的 Canederli 是 Franz 爷爷认证过的。'),
+          g('do_lang','点餐："Vorrei i canederli, per favore（我想要面包团子，谢谢）"。'),
+        ]},
+        { label:'@Elena Enrosadira 日落现象怎么看', reply:[
+          g('do_culture','日落前 30 分钟站在 Alpe di Siusi 草原，或 Rosengarten 山脚。'),
+          g('do_culture','山峰会在 5 分钟内从灰色变成玫瑰色。'),
+          g('do_culture','传说是 Laurin 国王临死忘记诅咒黎明和黄昏。'),
+          g('sissi','那是我在山里最爱的时刻。'),
+          g('hans','8 月 6-9 月最红。记得。'),
+        ]},
+        { label:'@Martina 一句话让山民笑', reply:[
+          g('do_lang','Bun dé（Ladin 语，你好）。'),
+          g('do_lang','说出这三个字的人，10 次里 10 次被当朋友。'),
+          g('do_lang','如果想让人眼眶湿润——说 Giulan（Ladin 语，谢谢）。'),
+          g('hans','Giulan 是我奶奶临终最后一句话。'),
+          g('bruno','我只会说 Bun dé。可我也说了 50 年。'),
+        ]},
+      ]},
+      g('hans','@你 山里保重。'),
+      g('hans','别追赶时间。让山来告诉你节奏。'),
+      gsys('——'),
+      gsys('群聊保持在线。信号不好。'),
+    ],
+  },
+
+  sorrento_group: {
+    city:'sorrento',
+    name:'索伦托邻里群',
+    shortName:'Sorrento 邻里',
+    emoji:'🍋',
+    color:'#F1C40F',
+    intro:'Giuseppe 把你拉进来了。邻居们都在这。',
+    members:['giuseppe','so_art','so_shop','so_food','so_culture','so_lang','caruso','ferrante'],
+    conversation: [
+      gsys('Giuseppe 创建了群聊「索伦托邻里群」'),
+      gsys('Giuseppe 添加了 Paola、Rosa、Tonino、Stella、Salvo、Caruso、Elena Ferrante'),
+      gsys('你被 Giuseppe 添加到群聊'),
+      g('giuseppe','@你 Benvenuto（欢迎）!'),
+      g('giuseppe','今天的柠檬下来了 20 公斤。谁要都留一罐。'),
+      g('so_art','Paola。庞贝 / 考古。'),
+      g('so_shop','Rosa。手工艺。'),
+      g('so_food','Tonino 叔。海鲜。'),
+      g('so_culture','Stella。音乐和诗。'),
+      g('so_lang','Salvo。语言。'),
+      g('caruso','Giuseppe 的柠檬——唯一能治我嗓子的。'),
+      g('ferrante','我不想被注意到。我只是在听。'),
+      g('giuseppe','Elena 谁都不知道她是不是真的她。'),
+      g('giuseppe','@你 先问一个'),
+      { t:'choice', options:[
+        { label:'@Paola 庞贝 3 小时怎么走', reply:[
+          g('so_art','8:30 开门前到 Porta Marina 入口。'),
+          g('so_art','第一冲：Villa dei Misteri（城外西北，走 10 分钟）。'),
+          g('so_art','回来看：Casa del Fauno → Foro → Lupanare → Teatro Grande。'),
+          g('so_art','11:00 前离开——人多一倍，太阳毒。'),
+          g('so_food','中午我们在 Marina Grande 等你吃饭。'),
+        ]},
+        { label:'@Rosa 给我看看好的镶嵌木', reply:[
+          g('so_shop','Stinga Tarsia（Piazza Tasso 边上，1890）。师傅现场做给你看。'),
+          g('so_shop','最小的一幅索伦托海湾，80 欧。包装好带回国免税的。'),
+          g('so_shop','记得看正面反面——反面如果也漂亮，那是手工。'),
+          g('giuseppe','Stinga 家老爷爷是我堂弟。'),
+          g('so_culture','他做的 Caruso 的肖像挂在酒店大堂。'),
+        ]},
+        { label:'@Tonino 叔 今晚海鲜吃哪', reply:[
+          g('so_food','Ristorante Bagni Delfino——悬崖下的海边餐厅。要订。'),
+          g('so_food','点 Spaghetti al Riccio（海胆面）+ Pesce del Giorno（今日鱼）。'),
+          g('so_food','价格 60-80 欧一人。值。'),
+          g('giuseppe','我送一瓶 Limoncello 给 Tonino。你报我名字。'),
+          g('so_lang','饭后说 "Un limoncello ben freddo, per favore（一杯冰的柠檬酒，麻烦）"——免费送。'),
+        ]},
+        { label:'@Stella 给我讲 Torna a Surriento', reply:[
+          g('so_culture','1902 年 Giambattista De Curtis 在 Hotel Tramontano 的阳台上写的。'),
+          g('so_culture','送给当时来访的意大利首相 Giuseppe Zanardelli。'),
+          g('so_culture','歌词："Vide o mare quant\'è bello（你看这海多美）"。'),
+          g('caruso','我 1911 年录过一版。唱片至今还在卖。'),
+          g('giuseppe','Stella 唱 live 版本。周六 Hotel Tramontano 露台。7 点。'),
+        ]},
+        { label:'@Salvo 一句方言拉近距离', reply:[
+          g('so_lang','Guagliò!（嘿，小子 / 小姑娘）——那不勒斯 / 索伦托通用。'),
+          g('so_lang','Jamme jà!（走吧）——Pino Daniele 的歌里都是这句。'),
+          g('so_lang','Grazie 之后加一句 assai（非常）：Grazie assai!'),
+          g('giuseppe','我爷爷一辈子只说方言。'),
+          g('so_food','服务员听到这两句眼睛会亮。'),
+        ]},
+        { label:'@Elena 你真的是 Ferrante 吗', reply:[
+          g('ferrante','你相信一个作家是谁，比我的签名更重要。'),
+          g('ferrante','这座城市里的每一个女人都可能是我。'),
+          g('ferrante','去 Rione Luzzatti（那不勒斯，不在索伦托）走一圈。你会懂。'),
+          g('giuseppe','她从来不回那个问题。不要再问了。'),
+          g('caruso','她是对的——我们都是我们的作品。'),
+        ]},
+      ]},
+      g('giuseppe','@你 临走前来一瓶 Limoncello。我送你。'),
+      g('so_culture','再听一次 Torna a Surriento。'),
+      gsys('——'),
+      gsys('群聊保持在线。柠檬味。'),
+    ],
+  },
+
+  naples_group: {
+    city:'naples',
+    name:'那不勒斯兄弟群',
+    shortName:'Napoli 兄弟',
+    emoji:'⚽',
+    color:'#1E88E5',
+    intro:'Gino 把你拉进来了。那不勒斯式欢迎——大声、热情、有点混乱。',
+    members:['gino','na_art','na_shop','na_food','na_culture','na_lang','maradona','sophia'],
+    conversation: [
+      gsys('Gino 创建了群聊「那不勒斯兄弟群」'),
+      gsys('Gino 添加了 Ciro 师傅、Pina、Rosaria 阿姨、Gennaro、Vincenzo 教授、Diego（马拉多纳）、Sophia Loren'),
+      gsys('你被 Gino 添加到群聊'),
+      g('gino','UÈÈÈÈ @你 来了来了！'),
+      g('gino','那不勒斯要一次性给你——披萨、马拉多纳、歌、喊叫、小巷。'),
+      g('na_art','Ciro。MANN 博物馆和地下那不勒斯。'),
+      g('na_shop','Pina。San Gregorio 那条街。'),
+      g('na_food','Rosaria 阿姨。吃的。'),
+      g('na_culture','Gennaro。戏剧和诗。'),
+      g('na_lang','Vincenzo 教授。语言。'),
+      g('maradona','Hola muchachos. La città è mia.（我的城。）'),
+      g('sophia','Diego, tesoro, piano.（Diego 亲爱的，慢点。）'),
+      g('gino','@你 说'),
+      { t:'choice', options:[
+        { label:'@Ciro 师傅 带我看 Cristo Velato', reply:[
+          g('na_art','Cappella Sansevero。museosansevero.it 提前 2 周订票。'),
+          g('na_art','进门正中间第一个房间。蹲下来从下往上看那层纱。'),
+          g('na_art','300 年没人能解释为什么一整块大理石能雕出薄纱的透明感。'),
+          g('na_art','出门往前走 200m 就是 MANN。买 MANN 联票。'),
+          g('sophia','我每年回那不勒斯都去一次 Cristo Velato。'),
+        ]},
+        { label:'@Pina Cornicello（红辣椒护身符）', reply:[
+          g('na_shop','San Gregorio Armeno 最小的 3 欧。'),
+          g('na_shop','记住：Cornicello 必须被送，不能自己买给自己。所以给朋友带一个。'),
+          g('na_shop','让店主说一句 "Ti porta fortuna（带来好运）"——这样破解诅咒。'),
+          g('maradona','我球衣上永远挂一个 cornicello。1986 年那届。你懂的。'),
+          g('gino','我店里窗边挂了 30 个。各种颜色。'),
+        ]},
+        { label:'@Rosaria 阿姨 披萨去哪家', reply:[
+          g('na_food','Da Michele（1870）——Julia Roberts 朝圣地。只做 Margherita 和 Marinara。'),
+          g('na_food','拿号排 30-60 分钟。一份 5 欧。'),
+          g('na_food','如果不想排：Starita（1901）或 Sorbillo。都行。'),
+          g('gino','我店不在榜上但我知道你们只要上了榜才信。'),
+          g('na_lang','进门说 "Uè, una margherita, guagliò!（嘿，来份玛格丽特，小哥！）"——氛围全出来了。'),
+        ]},
+        { label:'@Gennaro 给我推荐一本 Ferrante', reply:[
+          g('na_culture','《我的天才女友》第一本。在那不勒斯读 = 在巴黎读巴黎一样。'),
+          g('na_culture','去 Rione Luzzatti（Poggioreale 地铁站）走一圈——Elena 和 Lila 从小长大的街区。'),
+          g('na_culture','HBO 剧《My Brilliant Friend》就在那里搭景拍的。'),
+          g('sophia','她写的我们很多人的童年。'),
+          g('maradona','Elena，我爱你。'),
+        ]},
+        { label:'@Vincenzo 教一句最那不勒斯的话', reply:[
+          g('na_lang','Tutt\'apposto?（都好吗？）'),
+          g('na_lang','回答：Tutt\'apposto!（都好！）'),
+          g('na_lang','这一句 + "Uè guagliò!" + "Jamme jà!" = 三句话你就是那不勒斯人了。'),
+          g('gino','说对的人我给免单一杯 limoncello。'),
+          g('maradona','这就是我 1984 年来的时候学的第一三句。'),
+        ]},
+        { label:'@Diego 你为什么改变了这座城', reply:[
+          g('maradona','来之前，这座城市一直被北方瞧不起。'),
+          g('maradona','1987 + 1990——两个意甲冠军。那不勒斯人第一次可以走出去抬头。'),
+          g('maradona','我教他们的不是踢球。我教他们——穷人也可以赢。'),
+          g('sophia','那不是足球。那是一场集体治愈。'),
+          g('na_culture','去 Quartieri Spagnoli 看那幅 15 米高的壁画。壁画下面有人点蜡烛。'),
+        ]},
+        { label:'@Sophia 贫民窟到奥斯卡怎么走过来', reply:[
+          g('sophia','我 15 岁在 Pozzuoli 吃面包屑。'),
+          g('sophia','我从来没让自己的起点决定我的终点。'),
+          g('sophia','意大利给了我一切。Spaghetti 给了我一切。'),
+          g('sophia','Everything you see, I owe to spaghetti.（你看到的一切，我都归功于意大利面。）'),
+          g('maradona','她说得对。每一个那不勒斯人身上都有这句话。'),
+          g('gino','🥹'),
+        ]},
+      ]},
+      g('gino','@你 别走。先吃一块披萨。'),
+      g('maradona','UÈUÈUÈ。'),
+      g('sophia','Baci, amore. 🌹'),
+      gsys('——'),
+      gsys('群聊保持在线。很热闹。'),
     ],
   },
 
