@@ -190,7 +190,7 @@ function ChatList({ city, state, onOpen, onOpenGroup, onBack, onTab, tab, onOpen
           const avatars = G.members.slice(0,4).map(mid => CHARACTERS[mid]);
           return (
             <button key={gid} onClick={()=>onOpenGroup(gid)}
-              style={{width:"100%",border:"none",background:`linear-gradient(135deg,${G.color}15,${G.color}05)`,padding:"14px 16px",marginBottom:8,borderRadius:16,display:"flex",gap:12,alignItems:"center",textAlign:"left",cursor:"pointer",boxShadow:"0 1px 4px rgba(60,40,20,.05)",border:`1px solid ${G.color}25`}}>
+              style={{width:"100%",background:`linear-gradient(135deg,${G.color}15,${G.color}05)`,padding:"14px 16px",marginBottom:8,borderRadius:16,display:"flex",gap:12,alignItems:"center",textAlign:"left",cursor:"pointer",boxShadow:"0 1px 4px rgba(60,40,20,.05)",border:`1px solid ${G.color}25`}}>
               <div style={{position:"relative",width:54,height:54,flexShrink:0}}>
                 {avatars.map((a,i)=>(
                   <div key={i} style={{position:"absolute",width:30,height:30,borderRadius:"50%",background:a.color,color:"#fff",display:"flex",alignItems:"center",justifyContent:"center",fontSize:14,border:"2px solid #faf7f2",top:i<2?0:24,left:i%2===0?0:24,zIndex:4-i}}>{a.emoji}</div>

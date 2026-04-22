@@ -57,11 +57,11 @@ export const PHOTOS = {
   art_urbino: "https://commons.wikimedia.org/wiki/Special:FilePath/Piero_della_Francesca_046.jpg?width=800",
   art_doni: "https://commons.wikimedia.org/wiki/Special:FilePath/Michelangelo_Buonarroti_-_Tondo_Doni_-_Google_Art_Project.jpg?width=720",
   art_apollo_daphne: "https://commons.wikimedia.org/wiki/Special:FilePath/Apollo_and_Daphne_(Bernini)_(cropped).jpg?width=600",
-  art_proserpina: "https://commons.wikimedia.org/wiki/Special:FilePath/Rape_Proserpina_Bernini.jpg?width=600",
-  art_david_goliath: "https://commons.wikimedia.org/wiki/Special:FilePath/Caravaggio_-_David_with_the_Head_of_Goliath_-_Galleria_Borghese,_Rome.jpg?width=600",
-  art_last_supper: "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4b/%C3%9Altima_Cena_-_Da_Vinci_5.jpg/1024px-%C3%9Altima_Cena_-_Da_Vinci_5.jpg",
+  art_proserpina: "https://commons.wikimedia.org/wiki/Special:FilePath/Rape_of_Prosepina_September_2015-3a.jpg?width=600",
+  art_david_goliath: "https://commons.wikimedia.org/wiki/Special:FilePath/Michelangelo_Caravaggio_061.jpg?width=600",
+  art_last_supper: "https://commons.wikimedia.org/wiki/Special:FilePath/The_Last_Supper_-_Leonardo_Da_Vinci_-_High_Resolution_32x16.jpg?width=800",
   art_creation_adam: "https://commons.wikimedia.org/wiki/Special:FilePath/Michelangelo_-_Creation_of_Adam_(cropped).jpg?width=800",
-  art_veiled_christ: "https://commons.wikimedia.org/wiki/Special:FilePath/Cristo_Velato_-_Cappella_San_Severo_-_Napoli.jpg?width=600",
+  art_veiled_christ: "https://commons.wikimedia.org/wiki/Special:FilePath/Cristo_Velato_Volto.jpg?width=600",
 };
 
 export const CITIES = {
