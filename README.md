@@ -1,12 +1,12 @@
-# Cultura Segreta
+# ittravel
 
 An interactive travel-chat web app for discovering Italian cities through fictionalized message threads, local guides, cultural prompts, photo check-ins, and Kimi-powered free chat.
 
-Live site: https://cultura-segreta.vercel.app/
+Live site: https://ittravel.vercel.app/
 
 ## 中文简介
 
-Cultura Segreta 是一个“像收到意大利本地人消息一样旅行”的互动网页应用。用户可以选择城市，阅读角色聊天、打开作品和地点卡片、完成轻量打卡，并通过安全的后端代理向角色继续提问。
+ittravel 是一个“像收到意大利本地人消息一样旅行”的互动网页应用。用户可以选择城市，阅读角色聊天、打开作品和地点卡片、完成轻量打卡，并通过安全的后端代理向角色继续提问。
 
 ## What It Does
 

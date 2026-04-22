@@ -1,5 +1,5 @@
 // ═══════════════════════════════════════════
-// CULTURA SEGRETA — Data Layer
+// ittravel — Data Layer
 // 6 cities · 30+ spots · 70+ stories
 // ═══════════════════════════════════════════
 

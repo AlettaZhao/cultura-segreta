@@ -1,5 +1,5 @@
 // ═══════════════════════════════════════════
-// CULTURA SEGRETA — Conversations (iMessage style)
+// ittravel — Conversations (iMessage style)
 // 17 characters · 6 cities · 200+ beats
 // ═══════════════════════════════════════════
 import { PHOTOS } from './data.js';
