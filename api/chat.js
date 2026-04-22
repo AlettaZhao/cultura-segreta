@@ -37,7 +37,7 @@ export default async function handler(req, res) {
         model: KIMI_MODEL,
         messages,
         max_tokens: 300,
-        temperature: 0.7,
+        temperature: 0.6,
         thinking: { type: "disabled" },
       }),
     });
