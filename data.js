@@ -59,7 +59,7 @@ export const PHOTOS = {
   art_apollo_daphne: "https://commons.wikimedia.org/wiki/Special:FilePath/Apollo_and_Daphne_(Bernini)_(cropped).jpg?width=600",
   art_proserpina: "https://commons.wikimedia.org/wiki/Special:FilePath/Rape_Proserpina_Bernini.jpg?width=600",
   art_david_goliath: "https://commons.wikimedia.org/wiki/Special:FilePath/Caravaggio_-_David_with_the_Head_of_Goliath_-_Galleria_Borghese,_Rome.jpg?width=600",
-  art_last_supper: "https://commons.wikimedia.org/wiki/Special:FilePath/Última_Cena_-_Da_Vinci_5.jpg?width=1024",
+  art_last_supper: "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4b/%C3%9Altima_Cena_-_Da_Vinci_5.jpg/1024px-%C3%9Altima_Cena_-_Da_Vinci_5.jpg",
   art_creation_adam: "https://commons.wikimedia.org/wiki/Special:FilePath/Michelangelo_-_Creation_of_Adam_(cropped).jpg?width=800",
   art_veiled_christ: "https://commons.wikimedia.org/wiki/Special:FilePath/Cristo_Velato_-_Cappella_San_Severo_-_Napoli.jpg?width=600",
 };

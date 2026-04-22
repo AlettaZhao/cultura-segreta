@@ -423,11 +423,11 @@ export const CHARACTERS = {
 const t = (text) => ({ t:'text', text });
 const me = (text) => ({ t:'text', mine:true, text });
 const choice = (...options) => ({ t:'choice', options });  // each option: { label, reply }
-const art = (image, title, location, why, observe) => ({ t:'artwork', image, title, location, why, observe });
+const art = (image, title, location, why, observe, extras) => ({ t:'artwork', image, title, location, why, observe, ...(extras||{}) });
 const task = (title, hint) => ({ t:'task', title, hint });
 const secret = (...texts) => ({ t:'secret', texts });
-const tip = (label, text) => ({ t:'tip', label, text });
-const ref = (label, text) => ({ t:'ref', label, text });  // movie/song reference
+const tip = (label, text, wiki) => ({ t:'tip', label, text, wiki });
+const ref = (label, text, wiki) => ({ t:'ref', label, text, wiki });  // movie/song reference
 // place message: Italian name + address, renders as a tap-to-navigate card
 const place = (italianName, address, zh) => ({ t:'place', italianName, address, zh });
 
@@ -450,7 +450,7 @@ export const CONVERSATIONS = {
     ),
     t('先说学院美术馆。大卫本人在那里。'),
     t('不是广场上那个复制品——广场那个是假的。'),
-    art(PHOTOS.art_david, '大卫 David', '学院美术馆 · 主厅尽头', '全世界最著名的裸男。1504 年我 29 岁雕的。', '蹲下来从下往上看脸。你会明白为什么头和手那么大。'),
+    art(PHOTOS.art_david, '大卫 David', '学院美术馆 · 主厅尽头', '全世界最著名的裸男。1504 年我 29 岁雕的。', '蹲下来从下往上看脸。你会明白为什么头和手那么大。', { wiki:'https://zh.wikipedia.org/wiki/大衛像' }),
     t('头大是因为原计划放大教堂屋顶上。从下往上看才不会显得头小。'),
     t('手大有另一层意思——大手 = 力量。佛罗伦萨靠这个打天下。'),
     choice(
@@ -499,7 +499,7 @@ export const CONVERSATIONS = {
     t('然后美第奇的报复来了。帕齐家族的人被从市政厅窗户扔下去，尸体挂在外墙示众。'),
     t('连帕齐这个姓都被禁止使用了。'),
     t('在教堂搞事后果很严重。尤其是对手姓美第奇。'),
-    ref('📖 文学彩蛋', '《神曲》地狱篇第 26 歌里我提到过佛罗伦萨——"佛罗伦萨啊，你应当高兴，因为你的声名已传遍海洋和大地，甚至传到地狱里。" 最毒的讽刺。'),
+    ref('📖 文学彩蛋', '《神曲》地狱篇第 26 歌里我提到过佛罗伦萨——"佛罗伦萨啊，你应当高兴，因为你的声名已传遍海洋和大地，甚至传到地狱里。" 最毒的讽刺。', 'https://zh.wikipedia.org/wiki/神曲'),
     task('去圣十字教堂找我的纪念碑', '空墓碑。我不在里面。这本身就是一个故事。'),
     place('Basilica di Santa Croce', 'Piazza di Santa Croce 16, 50122 Firenze FI', '圣十字圣殿 · 但丁纪念碑、米开朗基罗墓、伽利略墓'),
     secret(
@@ -526,10 +526,10 @@ export const CONVERSATIONS = {
     t('其中一个 13 岁的小孩——米开朗基罗。住我家。'),
     t('还有达芬奇、波提切利。都在我这儿混过。'),
     t('乌菲兹里很多画，就是我们家订的。'),
-    art(PHOTOS.art_birth_venus, '维纳斯的诞生', '乌菲兹 · 10-14 厅（波提切利厅）', '我堂弟订的。画里的维纳斯是 Simonetta Vespucci——全城最美的女人。', '维纳斯的脸：波提切利对她一辈子的执念。她 22 岁就死了。波提切利要求死后葬在她旁边。真的做到了。'),
+    art(PHOTOS.art_birth_venus, '维纳斯的诞生', '乌菲兹 · 10-14 厅（波提切利厅）', '我堂弟订的。画里的维纳斯是 Simonetta Vespucci——全城最美的女人。', '维纳斯的脸：波提切利对她一辈子的执念。她 22 岁就死了。波提切利要求死后葬在她旁边。真的做到了。', { wiki:'https://zh.wikipedia.org/wiki/維納斯的誕生_(波提且利)' }),
     t('Simonetta 的堂弟叫 Amerigo Vespucci。美洲 (America) 的名字就是他的。'),
     t('所以：你站在维纳斯面前时，面对的是一张改变了世界地图的脸。'),
-    ref('🎬 电影彩蛋', '《汉尼拔》里 Anthony Hopkins 化名 Dr. Fell 在佛罗伦萨隐居，身份是乌菲兹前馆长。影片开头那段大教堂全景+钟声——让这座城市成了影史最优雅的犯罪背景。'),
+    ref('🎬 电影彩蛋', '《汉尼拔》里 Anthony Hopkins 化名 Dr. Fell 在佛罗伦萨隐居，身份是乌菲兹前馆长。影片开头那段大教堂全景+钟声——让这座城市成了影史最优雅的犯罪背景。', 'https://zh.wikipedia.org/wiki/漢尼拔_(電影)'),
     tip('🛍️ 纪念品提示', '别在老桥上买珠宝——游客价。去 Oltrarno 区（河对岸）的手工作坊，同样的金饰便宜一半，还是手工的。'),
     t('对了，老桥的故事——'),
     art(PHOTOS.ponte, '老桥 Ponte Vecchio', '阿诺河上 · 1345 年建', '1593 年之前这桥上全是肉铺。臭死了。', '注意桥中段上方那条走廊——瓦萨里走廊。我家族专用通道，普通人以前不能上去。'),
@@ -556,7 +556,7 @@ export const CONVERSATIONS = {
     t('游客最容易犯的错：想看完所有展厅。做不到。乌菲兹有 100 多个展厅。'),
     t('聪明的做法：锁定 5-6 件必看。剩下时间随心走。'),
     art(PHOTOS.art_annunciation, '天使报喜', '乌菲兹 · 15 展厅', '达芬奇 25 岁画的。看天使翅膀——不是装饰，是可以真的飞的解剖学结构。', '左下角圣母的右臂——后世学者发现比例不对。有说法是达芬奇故意的，让观者下意识凑近看。'),
-    art(PHOTOS.art_medusa, '美杜莎', '乌菲兹 · 90 展厅', '卡拉瓦乔画的。画在一面盾牌上。', '美杜莎的脸——其实是卡拉瓦乔自己。砍下自己的头当礼物送给大公。'),
+    art(PHOTOS.art_medusa, '美杜莎', '乌菲兹 · 90 展厅', '卡拉瓦乔画的。画在一面盾牌上。', '美杜莎的脸——其实是卡拉瓦乔自己。砍下自己的头当礼物送给大公。', { wiki:'https://zh.wikipedia.org/wiki/美杜莎_(卡拉瓦喬)' }),
     art(PHOTOS.art_urbino, '乌尔比诺公爵夫妇', '乌菲兹 · 8 展厅', '皮耶罗·德拉·弗兰切斯卡画。严格的侧面像。', '侧面不是风格——是因为公爵在一次决斗中丢了右眼。他不让人画正脸。'),
     choice(
       { label:'票怎么买不排队', reply:'官网提前预约。Firenzecard 包含乌菲兹+学院+碧提宫+米开朗基罗广场。如果待 3 天以上超值。' },
@@ -568,7 +568,7 @@ export const CONVERSATIONS = {
     t('司汤达 1817 年参观完佛罗伦萨写："我心跳加速，生命从我体内流失，走路都走不稳了。"'),
     t('听起来像言情小说但这是真的生理反应。'),
     t('如果你朋友突然说头晕——可能不是低血糖，是被美击中了。恭喜，得了一种很有文化的病。'),
-    ref('🎬 电影彩蛋', '《看得见风景的房间》(A Room with a View, 1985) 整部围绕佛罗伦萨。女主就是得了司汤达综合征在圣十字教堂晕倒。'),
+    ref('🎬 电影彩蛋', '《看得见风景的房间》(A Room with a View, 1985) 整部围绕佛罗伦萨。女主就是得了司汤达综合征在圣十字教堂晕倒。', 'https://zh.wikipedia.org/wiki/看得見風景的房間'),
     tip('🛍️ 当地推荐', '皮具：San Lorenzo 市场价格乱，新学校 Scuola del Cuoio（圣十字教堂后面）是真手工作坊。面包：Forno Pugi 的 schiacciata——佛罗伦萨人早餐只吃这个。'),
     task('去米开朗基罗广场看日落', '夕阳把穹顶染成金色的那 10 分钟。为什么那么多人在这座城市得了司汤达综合征——那一刻你就懂了。'),
     place('Piazzale Michelangelo', 'Piazzale Michelangelo, 50125 Firenze FI', '米开朗基罗广场 · 佛罗伦萨全景最佳观景点'),
@@ -602,7 +602,7 @@ export const CONVERSATIONS = {
     t('女粉丝花钱买他们的汗水当"爱情魔药"。'),
     t('墙上到处是他们的涂鸦。庞贝出土的涂鸦写："Celadus 让女孩们心碎。"'),
     t('两千年前的饭圈文化。'),
-    ref('🎬 电影彩蛋', '《角斗士》(2000) 在斗兽场取景但大部分戏在马耳他的复制品。真实斗兽场不允许拍摄。《角斗士2》(2024) 又来了——海战那段是真历史。'),
+    ref('🎬 电影彩蛋', '《角斗士》(2000) 在斗兽场取景但大部分戏在马耳他的复制品。真实斗兽场不允许拍摄。《角斗士2》(2024) 又来了——海战那段是真历史。', 'https://zh.wikipedia.org/wiki/角斗士_(2000年电影)'),
     t('再跟你说万神殿。它是我死后 118 年才重建的。'),
     art(PHOTOS.pantheon, '万神殿 Pantheon', 'Piazza della Rotonda', '2000 岁。穹顶直径 43.3 米，至今仍是世界最大无筋混凝土穹顶。', '中央有个 9 米的洞。没有玻璃。就是一个洞。下雨时穹顶内部热空气把雨吹散——天然空调。'),
     t('大雨呢？就真淋湿了。工作人员拉警戒线。地板有 22 个排水孔。'),
@@ -627,7 +627,7 @@ export const CONVERSATIONS = {
     t('我的所有代表作都在那里。'),
     t('我 25 岁完成《阿波罗与达芙妮》。'),
     t('当时罗马人的反应——"这不可能是人做的。"'),
-    art(PHOTOS.art_apollo_daphne, '阿波罗与达芙妮', '博尔盖塞 · 3 号厅', '希腊神话：河神的女儿为了逃脱阿波罗的追求，在被抓到的瞬间变成月桂树。', '绕到雕塑背后看达芙妮的手指——你能看到手指正在变成树枝。不是已经变完，是"正在"变。'),
+    art(PHOTOS.art_apollo_daphne, '阿波罗与达芙妮', '博尔盖塞 · 3 号厅', '希腊神话：河神的女儿为了逃脱阿波罗的追求，在被抓到的瞬间变成月桂树。', '绕到雕塑背后看达芙妮的手指——你能看到手指正在变成树枝。不是已经变完，是"正在"变。', { wiki:'https://zh.wikipedia.org/wiki/阿波羅與達芙妮_(貝尼尼)' }),
     t('皮肤正在变成树皮。头发正在变成树叶。'),
     t('你的大脑说这是石头。你的眼睛说不是。'),
     t('25 岁做出来的。'),
@@ -635,18 +635,18 @@ export const CONVERSATIONS = {
       { label:'你是怎么做到的', reply:'秘密：我雕石头时当它是会呼吸的。不是"从石头里刻出一个东西"——是"把包裹在外面的东西去掉"。米开朗基罗说过类似的话。' },
       { label:'为什么看起来那么软', reply:'看《劫掠普洛塞庇娜》更明显——大力神的手指陷进少女大腿的皮肤里。石头被"压"凹了。4 号厅。去看。' },
     ),
-    art(PHOTOS.art_proserpina, '劫掠普洛塞庇娜', '博尔盖塞 · 4 号厅', '冥王哈迪斯抢走少女。我 23 岁雕的。', '死死盯着哈迪斯按住普洛塞庇娜大腿的那只手——石头被"压"成皮肤的凹陷。这是雕塑史上最著名的"不可能"之一。'),
+    art(PHOTOS.art_proserpina, '劫掠普洛塞庇娜', '博尔盖塞 · 4 号厅', '冥王哈迪斯抢走少女。我 23 岁雕的。', '死死盯着哈迪斯按住普洛塞庇娜大腿的那只手——石头被"压"成皮肤的凹陷。这是雕塑史上最著名的"不可能"之一。', { wiki:'https://zh.wikipedia.org/wiki/劫掠普洛塞庇娜' }),
     t('买博尔盖塞门票必须提前预约。每场限 360 人，每人 2 小时。'),
     t('别贪心——10 间屋子，2 小时刚好够。'),
     t('对了，再跟你说个八卦——博尔盖塞还藏着卡拉瓦乔最私人的一幅画。'),
-    art(PHOTOS.art_david_goliath, '大卫与歌利亚', '博尔盖塞 · 8 号厅', '大卫提着歌利亚的头。那个"歌利亚的头"——是卡拉瓦乔自己的脸。', '他在画这幅画时正在逃亡——杀了人。这幅画是寄给教皇的"求饶信"：我知道有罪，请饶命。'),
+    art(PHOTOS.art_david_goliath, '大卫与歌利亚', '博尔盖塞 · 8 号厅', '大卫提着歌利亚的头。那个"歌利亚的头"——是卡拉瓦乔自己的脸。', '他在画这幅画时正在逃亡——杀了人。这幅画是寄给教皇的"求饶信"：我知道有罪，请饶命。', { wiki:'https://zh.wikipedia.org/wiki/大衛與歌利亞的頭' }),
     t('那个"自己的头"的表情不是恐惧。是疲惫。'),
     t('一个知道自己完了但还是得试试的人的脸。'),
     t('教皇最后赦免了他。但他在回罗马的路上就死了。'),
     t('天才和罪犯之间的距离，有时候只有一把刀。'),
     t('再说许愿池——那是我师兄 Salvi 设计的，但灵感来自我。'),
     art(PHOTOS.trevi, '许愿池 Trevi Fountain', 'Piazza di Trevi', '全世界最赚钱的喷泉。游客每年扔 140 万欧硬币。每晚打捞，全捐慈善。', '面对喷泉，右手拿硬币越过左肩扔——扔一次：会再回罗马。扔两次：爱情。扔三次：结婚。'),
-    ref('🎬 电影彩蛋', '《甜蜜的生活》(1960) Anita Ekberg 在零度的水里穿晚礼服戏水。男主 Mastroianni 西装里偷偷穿了潜水衣。费里尼说：Anita 才是真正的猛人。'),
+    ref('🎬 电影彩蛋', '《甜蜜的生活》(1960) Anita Ekberg 在零度的水里穿晚礼服戏水。男主 Mastroianni 西装里偷偷穿了潜水衣。费里尼说：Anita 才是真正的猛人。', 'https://zh.wikipedia.org/wiki/甜蜜的生活'),
     tip('🛍️ 购物提示', '不要在许愿池附近买冰淇淋——那些是工业冰淇淋。去 Giolitti（Via Uffici del Vicario 40）——1900 年就在了。开心果味必点。'),
     task('在阿波罗与达芙妮雕塑周围走一圈', '站着不动看它是没意义的——这个雕塑是为 360 度设计的。每个角度都是一个不同的瞬间。'),
     place('Galleria Borghese', 'Piazzale Scipione Borghese 5, 00197 Roma RM', '博尔盖塞美术馆 · 一定要提前官网预约'),
@@ -682,7 +682,7 @@ export const CONVERSATIONS = {
     t('不要在西班牙台阶坐下！2019 年起罚款最高 400 欧。'),
     t('不要在许愿池里游泳！以为我在开玩笑？每年都有喝醉的游客跳进去。'),
     t('不要点"卡布奇诺"吃午饭！意大利人只在早上 11 点前喝卡布。之后只喝 espresso。服务员会笑你但他们太礼貌不会说。'),
-    ref('🎬 电影彩蛋', '《罗马假日》(1953) 奥黛丽·赫本吃冰淇淋的那个西班牙台阶——现在坐下就罚款。想重现经典？只能站着吃。'),
+    ref('🎬 电影彩蛋', '《罗马假日》(1953) 奥黛丽·赫本吃冰淇淋的那个西班牙台阶——现在坐下就罚款。想重现经典？只能站着吃。', 'https://zh.wikipedia.org/wiki/罗马假日'),
     task('在 Trastevere 找一家只有意大利语菜单的小馆子', '不要拍菜单，要拍手写的每日特供（有时写在小黑板上）。学一句"Che cosa mi consiglia?"（你推荐什么？）。'),
     place('Trastevere', 'Piazza di Santa Maria in Trastevere, 00153 Roma RM', '特拉斯特维列区 · 从广场出发随便走'),
     secret(
@@ -702,7 +702,7 @@ export const CONVERSATIONS = {
     t('你叫我达芬奇——其实 Vinci 是我出生的小镇，不是我的姓。'),
     t('我是个私生子。没有姓。只有"来自 Vinci 的 Leonardo"。'),
     t('说正事——《最后的晚餐》。'),
-    art(PHOTOS.art_last_supper, '最后的晚餐', 'Santa Maria delle Grazie · 修道院餐厅', '我 1495-1498 画的。世界最难预约的 15 分钟。', '预约要提前至少 2 个月。每批限 25 人。每次 15 分钟。严格计时。'),
+    art(PHOTOS.art_last_supper, '最后的晚餐', 'Santa Maria delle Grazie · 修道院餐厅', '我 1495-1498 画的。世界最难预约的 15 分钟。', '预约要提前至少 2 个月。每批限 25 人。每次 15 分钟。严格计时。', { wiki:'https://zh.wikipedia.org/wiki/最後的晚餐_(達·文西)' }),
     t('一个坦白——我把这幅画搞砸了。'),
     t('传统 fresco 要趁灰泥湿的时候快画。我嫌太赶——想慢慢改。'),
     t('我发明了一种油彩 + 蛋彩混合技法。'),
@@ -727,7 +727,7 @@ export const CONVERSATIONS = {
     t('我设计的船闸让船能在不同水位间通行。'),
     t('这套系统的基本原理今天全世界还在用，包括巴拿马运河。'),
     t('你坐在那喝酒时，脚下的水利工程是一个画《蒙娜丽莎》的人设计的。'),
-    ref('🎬 电影彩蛋', '《达芬奇密码》(2006) 那段暗码——画里门徒的坐次"M"形状。Dan Brown 编的。但你站在画前你还是会忍不住看。这就是好故事的力量。'),
+    ref('🎬 电影彩蛋', '《达芬奇密码》(2006) 那段暗码——画里门徒的坐次"M"形状。Dan Brown 编的。但你站在画前你还是会忍不住看。这就是好故事的力量。', 'https://zh.wikipedia.org/wiki/達文西密碼_(電影)'),
     task('在运河区喝一杯 Spritz', '傍晚 6-8 点去。Bar Rita、Mag Cafè、Backdoor 43（最小的酒吧世界纪录）都好。花 10 欧喝到晚上 9 点半。'),
     place('Navigli', 'Naviglio Grande, 20144 Milano MI', '米兰运河区 · 地铁 M2 线 Porta Genova 站'),
     secret(
@@ -1085,7 +1085,7 @@ export const CONVERSATIONS = {
     t('你会看到晾衣绳、鱼贩大喊、摩托车疯狂、小孩踢球。'),
     t('就是最真实的那不勒斯。不要怕。'),
     t('对了，那不勒斯还有一个你必须看的——'),
-    art(PHOTOS.art_veiled_christ, '蒙纱的基督 · Cappella Sansevero', 'Via Francesco de Sanctis 19', '19 世纪王子炼金术士建的私人礼拜堂。中心是 Sanmartino 1753 年的《蒙纱的基督》。', '大理石雕的面纱——薄到你能"看到"皮肤。甚至能看到布料下的血管。整块大理石。不是真布。'),
+    art(PHOTOS.art_veiled_christ, '蒙纱的基督 · Cappella Sansevero', 'Via Francesco de Sanctis 19', '19 世纪王子炼金术士建的私人礼拜堂。中心是 Sanmartino 1753 年的《蒙纱的基督》。', '大理石雕的面纱——薄到你能"看到"皮肤。甚至能看到布料下的血管。整块大理石。不是真布。', { wiki:'https://zh.wikipedia.org/wiki/蒙紗的基督' }),
     t('这座雕塑几乎所有人都认为面纱是真布铺上去的。'),
     t('1753 年。没有 3D 打印，没有激光。'),
     t('就是一个人拿着锤子和凿子从石头里"解放"出来的。'),
@@ -1176,7 +1176,7 @@ export const CONVERSATIONS = {
     t('最诡异的是那些石膏人形——把石膏灌入火山灰中的空腔，再现了死者最后的姿势。'),
     t('有人在保护孩子，有人在逃跑，有人在祈祷。'),
     t('时间冻结在午餐前。'),
-    ref('🎬 电影彩蛋', 'Pink Floyd 1971 年在庞贝古剧场录了一场没有观众的演唱会。空城 + 摇滚。《Live at Pompeii》。极其超现实。'),
+    ref('🎬 电影彩蛋', 'Pink Floyd 1971 年在庞贝古剧场录了一场没有观众的演唱会。空城 + 摇滚。《Live at Pompeii》。极其超现实。', 'https://zh.wikipedia.org/wiki/Pink_Floyd:_Live_at_Pompeii'),
     t('那不勒斯人还有一种我觉得全世界最美的传统——'),
     art(PHOTOS.underground, 'Fontanelle 墓地', 'Rione Sanità 街区', '17 世纪瘟疫 4 万颗无名头骨。那不勒斯人"认领"头骨当"干亲"。', '给头骨起名字，每天来擦拭、祈祷。相信头骨的灵魂会庇佑自己。有人给头骨戴花、写情书、求中彩票。'),
     t('教会多次试图禁止。那不勒斯人不在乎。'),
@@ -1327,7 +1327,7 @@ export const CONVERSATIONS = {
     t('罗马这座城被拍过太多次电影，但最经典的路线只有 3 条。'),
     ref('🎬 《罗马假日》(1953)', `西班牙台阶（Spanish Steps）吃冰淇淋\n→ ${it('Bocca della Verità','真理之口')} 把手伸进去\n→ 骑 Vespa 绕 Piazza Venezia\n—\n奥黛丽·赫本当年只是个 24 岁新人。这部片之后全世界都想去罗马。`),
     ref('🎬 《甜蜜生活》La Dolce Vita (1960)', '特雷维喷泉跳水（Anita Ekberg 那段）\n→ Via Veneto 夜生活\n→ EUR 街区的法西斯建筑\n—\nFellini 用这部片发明了一个词：paparazzi（狗仔队）——片中那个摄影师的名字。'),
-    ref('🎬 《罗马》(2013 · 保罗·索伦蒂诺)', `${it('La grande bellezza','绝美之城')}——这就是片名直译。\n主角 Jep 夜游罗马的路线：Piazza Navona → Palazzo Spada → Tiber 河边 Tempietto。\n—\n奥斯卡最佳外语片。罗马的失落贵族美学。`),
+    ref('🎬 《罗马》(2013 · 保罗·索伦蒂诺)', `${it('La grande bellezza','绝美之城')}——这就是片名直译。\n主角 Jep 夜游罗马的路线：Piazza Navona → Palazzo Spada → Tiber 河边 Tempietto。\n—\n奥斯卡最佳外语片。罗马的失落贵族美学。`, 'https://zh.wikipedia.org/wiki/絕美之城'),
     choice(
       { label:'带我去一家电影感的酒吧', reply:'Bar Il Marchese（Via di Ripetta）。Negroni 单品博物馆，30 种。西班牙台阶走路 8 分钟。' },
       { label:'听一首罗马的歌', reply:'Antonello Venditti《Roma Capoccia》（1972）——每个罗马人酒后都会哭着唱。' },
@@ -1352,7 +1352,7 @@ export const CONVERSATIONS = {
     t('Ciao. 我是 Giulia。米兰的美术馆被低估了。'),
     t('所有人都知道《最后的晚餐》——但你要先知道怎么看它。'),
     tip(`🖼️ ${it('Cenacolo','最后的晚餐')} · 预约铁律`, '必须提前 2 个月在 cenacolovinciano.org 官方订票。\n每场 15 分钟。35 人。不能再加。\n淡季黄牛票 45 欧，官方 15 欧。\n带学生证 -50%。'),
-    art(null, `${it('Ultima Cena','最后的晚餐')}`, 'Santa Maria delle Grazie · 前修道院食堂', '1495-1498。达芬奇用实验性的"油性 tempera"画在干墙上——他觉得壁画限制他修改。结果颜料 20 年就开始脱落。\n今天你看到的是 1999 年完成的 22 年修复成果。', '站在正中间——达芬奇用一点透视法把灭点正好压在耶稣的太阳穴上。整个房间都朝他汇聚。'),
+    art(PHOTOS.art_last_supper, `${it('Ultima Cena','最后的晚餐')}`, 'Santa Maria delle Grazie · 前修道院食堂', '1495-1498。达芬奇用实验性的"油性 tempera"画在干墙上——他觉得壁画限制他修改。结果颜料 20 年就开始脱落。\n今天你看到的是 1999 年完成的 22 年修复成果。', '站在正中间——达芬奇用一点透视法把灭点正好压在耶稣的太阳穴上。整个房间都朝他汇聚。', { wiki:'https://zh.wikipedia.org/wiki/最後的晚餐_(達·文西)' }),
     choice(
       { label:'除了晚餐还有什么', reply:'Pinacoteca di Brera——Raphael《圣母的婚礼》+ Caravaggio《Emmaus 晚餐》+ Piero della Francesca《Brera Madonna》。每月第一个周日免费。' },
       { label:'有没有人少一点的', reply:'Ambrosiana 图书馆美术馆。达芬奇《音乐家肖像》（唯一男性肖像真迹）+ Caravaggio《水果篮》。周末游客只有 Brera 的 1/5。' },
