@@ -45,6 +45,23 @@ export const PHOTOS = {
   san_severo: "https://images.unsplash.com/photo-1610024804356-f814d8969399?w=800&h=500&fit=crop&q=80",
   underground: "https://images.unsplash.com/photo-1753368226756-667190e0a1c6?w=800&h=500&fit=crop&q=80",
   pompeii: "https://images.unsplash.com/photo-1662291755552-5b5d0e61e4da?w=800&h=500&fit=crop&q=80",
+  pizza_margherita: "https://images.unsplash.com/photo-1574071318508-1cdbab80d002?w=800&h=500&fit=crop&q=80",
+  naples_pizza: "https://images.unsplash.com/photo-1574071318508-1cdbab80d002?w=800&h=500&fit=crop&q=80",
+
+  // ═══ Artwork close-ups (Wikipedia Commons via Special:FilePath for hotlinking) ═══
+  art_david: "https://commons.wikimedia.org/wiki/Special:FilePath/'David'_by_Michelangelo_JBU0001.JPG?width=600",
+  art_birth_venus: "https://commons.wikimedia.org/wiki/Special:FilePath/Sandro_Botticelli_-_La_nascita_di_Venere_-_Google_Art_Project_-_edited.jpg?width=800",
+  art_primavera: "https://commons.wikimedia.org/wiki/Special:FilePath/Botticelli-primavera.jpg?width=800",
+  art_annunciation: "https://commons.wikimedia.org/wiki/Special:FilePath/Leonardo_da_Vinci_-_Annunciazione_-_Google_Art_Project.jpg?width=800",
+  art_medusa: "https://commons.wikimedia.org/wiki/Special:FilePath/Medusa_by_Carvaggio.jpg?width=600",
+  art_urbino: "https://commons.wikimedia.org/wiki/Special:FilePath/Piero_della_Francesca_046.jpg?width=800",
+  art_doni: "https://commons.wikimedia.org/wiki/Special:FilePath/Michelangelo_Buonarroti_-_Tondo_Doni_-_Google_Art_Project.jpg?width=720",
+  art_apollo_daphne: "https://commons.wikimedia.org/wiki/Special:FilePath/Apollo_and_Daphne_(Bernini)_(cropped).jpg?width=600",
+  art_proserpina: "https://commons.wikimedia.org/wiki/Special:FilePath/Rape_Proserpina_Bernini.jpg?width=600",
+  art_david_goliath: "https://commons.wikimedia.org/wiki/Special:FilePath/Caravaggio_-_David_with_the_Head_of_Goliath_-_Galleria_Borghese,_Rome.jpg?width=600",
+  art_last_supper: "https://commons.wikimedia.org/wiki/Special:FilePath/Última_Cena_-_Da_Vinci_5.jpg?width=1024",
+  art_creation_adam: "https://commons.wikimedia.org/wiki/Special:FilePath/Michelangelo_-_Creation_of_Adam_(cropped).jpg?width=800",
+  art_veiled_christ: "https://commons.wikimedia.org/wiki/Special:FilePath/Cristo_Velato_-_Cappella_San_Severo_-_Napoli.jpg?width=600",
 };
 
 export const CITIES = {

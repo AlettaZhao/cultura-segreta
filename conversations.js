@@ -48,6 +48,10 @@ const secret = (...texts) => ({ t:'secret', texts });
 const tip = (label, text) => ({ t:'tip', label, text });
 const ref = (label, text) => ({ t:'ref', label, text });  // movie/song reference
 
+// ─── Group chat helpers ───
+const g = (from, text) => ({ t:'text', from, text });
+const gsys = (text) => ({ t:'system', text });  // system notice (e.g., "X 加入了群聊")
+
 // ─── Conversations ───
 export const CONVERSATIONS = {
 
@@ -61,7 +65,7 @@ export const CONVERSATIONS = {
     ),
     t('先说学院美术馆。大卫本人在那里。'),
     t('不是广场上那个复制品——广场那个是假的。'),
-    art(PHOTOS.accademia, '大卫 David', '学院美术馆 · 主厅尽头', '全世界最著名的裸男。1504 年我 29 岁雕的。', '蹲下来从下往上看脸。你会明白为什么头和手那么大。'),
+    art(PHOTOS.art_david, '大卫 David', '学院美术馆 · 主厅尽头', '全世界最著名的裸男。1504 年我 29 岁雕的。', '蹲下来从下往上看脸。你会明白为什么头和手那么大。'),
     t('头大是因为原计划放大教堂屋顶上。从下往上看才不会显得头小。'),
     t('手大有另一层意思——大手 = 力量。佛罗伦萨靠这个打天下。'),
     choice(
@@ -70,7 +74,7 @@ export const CONVERSATIONS = {
     ),
     t('再跟你说乌菲兹。'),
     t('35 展厅有我唯一的画板画——《圣家族》（Doni Tondo）。'),
-    art(PHOTOS.uffizi, '圣家族 (Doni Tondo)', '乌菲兹 · 35 展厅', '我这辈子几乎只雕石头。这是我画画的一个意外。', '看背景里那些没穿衣服的年轻人。当时吓到了所有人。'),
+    art(PHOTOS.art_doni, '圣家族 (Doni Tondo)', '乌菲兹 · 35 展厅', '我这辈子几乎只雕石头。这是我画画的一个意外。', '看背景里那些没穿衣服的年轻人。当时吓到了所有人。'),
     t('那些裸体是古希腊异教元素。在一幅圣家族画里塞这个——说难听点，是挑衅。'),
     t('对了，西斯廷那事你也得听我讲。我在罗马那个工地上被一个叫 Biagio 的人烦死了。'),
     t('他说我裸体画太多。'),
@@ -135,7 +139,7 @@ export const CONVERSATIONS = {
     t('其中一个 13 岁的小孩——米开朗基罗。住我家。'),
     t('还有达芬奇、波提切利。都在我这儿混过。'),
     t('乌菲兹里很多画，就是我们家订的。'),
-    art(PHOTOS.uffizi, '维纳斯的诞生 · 春', '乌菲兹 · 10-14 厅（波提切利厅）', '都是我堂弟订的。画里的维纳斯是 Simonetta Vespucci——全城最美的女人。', '维纳斯的脸：波提切利对她一辈子的执念。她 22 岁就死了。波提切利要求死后葬在她旁边。真的做到了。'),
+    art(PHOTOS.art_birth_venus, '维纳斯的诞生', '乌菲兹 · 10-14 厅（波提切利厅）', '我堂弟订的。画里的维纳斯是 Simonetta Vespucci——全城最美的女人。', '维纳斯的脸：波提切利对她一辈子的执念。她 22 岁就死了。波提切利要求死后葬在她旁边。真的做到了。'),
     t('Simonetta 的堂弟叫 Amerigo Vespucci。美洲 (America) 的名字就是他的。'),
     t('所以：你站在维纳斯面前时，面对的是一张改变了世界地图的脸。'),
     ref('🎬 电影彩蛋', '《汉尼拔》里 Anthony Hopkins 化名 Dr. Fell 在佛罗伦萨隐居，身份是乌菲兹前馆长。影片开头那段大教堂全景+钟声——让这座城市成了影史最优雅的犯罪背景。'),
@@ -163,9 +167,9 @@ export const CONVERSATIONS = {
     t('你有几个小时？我告诉你真正值得看的。'),
     t('游客最容易犯的错：想看完所有展厅。做不到。乌菲兹有 100 多个展厅。'),
     t('聪明的做法：锁定 5-6 件必看。剩下时间随心走。'),
-    art(PHOTOS.uffizi, '天使报喜', '乌菲兹 · 15 展厅', '达芬奇 25 岁画的。看天使翅膀——不是装饰，是可以真的飞的解剖学结构。', '左下角圣母的右臂——后世学者发现比例不对。有说法是达芬奇故意的，让观者下意识凑近看。'),
-    art(PHOTOS.uffizi, '美杜莎', '乌菲兹 · 90 展厅', '卡拉瓦乔画的。画在一面盾牌上。', '美杜莎的脸——其实是卡拉瓦乔自己。砍下自己的头当礼物送给大公。'),
-    art(PHOTOS.uffizi, '乌尔比诺公爵夫妇', '乌菲兹 · 8 展厅', '皮耶罗·德拉·弗兰切斯卡画。严格的侧面像。', '侧面不是风格——是因为公爵在一次决斗中丢了右眼。他不让人画正脸。'),
+    art(PHOTOS.art_annunciation, '天使报喜', '乌菲兹 · 15 展厅', '达芬奇 25 岁画的。看天使翅膀——不是装饰，是可以真的飞的解剖学结构。', '左下角圣母的右臂——后世学者发现比例不对。有说法是达芬奇故意的，让观者下意识凑近看。'),
+    art(PHOTOS.art_medusa, '美杜莎', '乌菲兹 · 90 展厅', '卡拉瓦乔画的。画在一面盾牌上。', '美杜莎的脸——其实是卡拉瓦乔自己。砍下自己的头当礼物送给大公。'),
+    art(PHOTOS.art_urbino, '乌尔比诺公爵夫妇', '乌菲兹 · 8 展厅', '皮耶罗·德拉·弗兰切斯卡画。严格的侧面像。', '侧面不是风格——是因为公爵在一次决斗中丢了右眼。他不让人画正脸。'),
     choice(
       { label:'票怎么买不排队', reply:'官网提前预约。Firenzecard 包含乌菲兹+学院+碧提宫+米开朗基罗广场。如果待 3 天以上超值。' },
       { label:'哪个时间去人最少', reply:'开门那一刻（8:15）直冲 10-14 展厅看波提切利。或者闭馆前两小时——团客都走了。' },
@@ -233,7 +237,7 @@ export const CONVERSATIONS = {
     t('我的所有代表作都在那里。'),
     t('我 25 岁完成《阿波罗与达芙妮》。'),
     t('当时罗马人的反应——"这不可能是人做的。"'),
-    art(PHOTOS.borghese, '阿波罗与达芙妮', '博尔盖塞 · 3 号厅', '希腊神话：河神的女儿为了逃脱阿波罗的追求，在被抓到的瞬间变成月桂树。', '绕到雕塑背后看达芙妮的手指——你能看到手指正在变成树枝。不是已经变完，是"正在"变。'),
+    art(PHOTOS.art_apollo_daphne, '阿波罗与达芙妮', '博尔盖塞 · 3 号厅', '希腊神话：河神的女儿为了逃脱阿波罗的追求，在被抓到的瞬间变成月桂树。', '绕到雕塑背后看达芙妮的手指——你能看到手指正在变成树枝。不是已经变完，是"正在"变。'),
     t('皮肤正在变成树皮。头发正在变成树叶。'),
     t('你的大脑说这是石头。你的眼睛说不是。'),
     t('25 岁做出来的。'),
@@ -241,11 +245,11 @@ export const CONVERSATIONS = {
       { label:'你是怎么做到的', reply:'秘密：我雕石头时当它是会呼吸的。不是"从石头里刻出一个东西"——是"把包裹在外面的东西去掉"。米开朗基罗说过类似的话。' },
       { label:'为什么看起来那么软', reply:'看《劫掠普洛塞庇娜》更明显——大力神的手指陷进少女大腿的皮肤里。石头被"压"凹了。4 号厅。去看。' },
     ),
-    art(PHOTOS.borghese, '劫掠普洛塞庇娜', '博尔盖塞 · 4 号厅', '冥王哈迪斯抢走少女。我 23 岁雕的。', '死死盯着哈迪斯按住普洛塞庇娜大腿的那只手——石头被"压"成皮肤的凹陷。这是雕塑史上最著名的"不可能"之一。'),
+    art(PHOTOS.art_proserpina, '劫掠普洛塞庇娜', '博尔盖塞 · 4 号厅', '冥王哈迪斯抢走少女。我 23 岁雕的。', '死死盯着哈迪斯按住普洛塞庇娜大腿的那只手——石头被"压"成皮肤的凹陷。这是雕塑史上最著名的"不可能"之一。'),
     t('买博尔盖塞门票必须提前预约。每场限 360 人，每人 2 小时。'),
     t('别贪心——10 间屋子，2 小时刚好够。'),
     t('对了，再跟你说个八卦——博尔盖塞还藏着卡拉瓦乔最私人的一幅画。'),
-    art(PHOTOS.borghese, '大卫与歌利亚', '博尔盖塞 · 8 号厅', '大卫提着歌利亚的头。那个"歌利亚的头"——是卡拉瓦乔自己的脸。', '他在画这幅画时正在逃亡——杀了人。这幅画是寄给教皇的"求饶信"：我知道有罪，请饶命。'),
+    art(PHOTOS.art_david_goliath, '大卫与歌利亚', '博尔盖塞 · 8 号厅', '大卫提着歌利亚的头。那个"歌利亚的头"——是卡拉瓦乔自己的脸。', '他在画这幅画时正在逃亡——杀了人。这幅画是寄给教皇的"求饶信"：我知道有罪，请饶命。'),
     t('那个"自己的头"的表情不是恐惧。是疲惫。'),
     t('一个知道自己完了但还是得试试的人的脸。'),
     t('教皇最后赦免了他。但他在回罗马的路上就死了。'),
@@ -306,7 +310,7 @@ export const CONVERSATIONS = {
     t('你叫我达芬奇——其实 Vinci 是我出生的小镇，不是我的姓。'),
     t('我是个私生子。没有姓。只有"来自 Vinci 的 Leonardo"。'),
     t('说正事——《最后的晚餐》。'),
-    art(PHOTOS.last_supper, '最后的晚餐', 'Santa Maria delle Grazie · 修道院餐厅', '我 1495-1498 画的。世界最难预约的 15 分钟。', '预约要提前至少 2 个月。每批限 25 人。每次 15 分钟。严格计时。'),
+    art(PHOTOS.art_last_supper, '最后的晚餐', 'Santa Maria delle Grazie · 修道院餐厅', '我 1495-1498 画的。世界最难预约的 15 分钟。', '预约要提前至少 2 个月。每批限 25 人。每次 15 分钟。严格计时。'),
     t('一个坦白——我把这幅画搞砸了。'),
     t('传统 fresco 要趁灰泥湿的时候快画。我嫌太赶——想慢慢改。'),
     t('我发明了一种油彩 + 蛋彩混合技法。'),
@@ -684,7 +688,7 @@ export const CONVERSATIONS = {
     t('你会看到晾衣绳、鱼贩大喊、摩托车疯狂、小孩踢球。'),
     t('就是最真实的那不勒斯。不要怕。'),
     t('对了，那不勒斯还有一个你必须看的——'),
-    art(PHOTOS.san_severo, 'Cappella Sansevero', 'Via Francesco de Sanctis 19', '19 世纪的王子炼金术士建的私人礼拜堂。中心是 Sanmartino 1753 年的《蒙纱的基督》。', '大理石雕的面纱——薄到你能"看到"皮肤。甚至能看到布料下的血管。整块大理石。不是真布。'),
+    art(PHOTOS.art_veiled_christ, '蒙纱的基督 · Cappella Sansevero', 'Via Francesco de Sanctis 19', '19 世纪王子炼金术士建的私人礼拜堂。中心是 Sanmartino 1753 年的《蒙纱的基督》。', '大理石雕的面纱——薄到你能"看到"皮肤。甚至能看到布料下的血管。整块大理石。不是真布。'),
     t('这座雕塑几乎所有人都认为面纱是真布铺上去的。'),
     t('1753 年。没有 3D 打印，没有激光。'),
     t('就是一个人拿着锤子和凿子从石头里"解放"出来的。'),
@@ -728,7 +732,7 @@ export const CONVERSATIONS = {
     t('结果——一个穷人的街头食物变成了国家象征。'),
     t('讲故事比做披萨更重要。至少对生意来说。'),
     t('但做披萨也得做得好。别骗自己。'),
-    art(PHOTOS.naples_pizza || PHOTOS.naples, 'Pizza Margherita', 'L\'Antica Pizzeria da Michele 1870 年至今', '经典中的经典。只有 Margherita 和 Marinara 两种选择。', '不要加菠萝。不要加培根。不要加任何你以为合适的东西。Margherita 就是 Margherita。'),
+    art(PHOTOS.pizza_margherita, 'Pizza Margherita', 'L\'Antica Pizzeria da Michele 1870 年至今', '经典中的经典。只有 Margherita 和 Marinara 两种选择。', '不要加菠萝。不要加培根。不要加任何你以为合适的东西。Margherita 就是 Margherita。'),
     t('还有一件关于那不勒斯披萨的事——'),
     t('面团必须发酵至少 8 小时。最好 24 小时。'),
     t('这不是为了好吃——是为了好消化。'),
@@ -796,6 +800,213 @@ export const CONVERSATIONS = {
 
 };
 
+// ═══════════════════════════════════════════
+// GROUP CHATS — cross-city, cross-era
+// ═══════════════════════════════════════════
+export const GROUPS = {
+
+  goat_debate: {
+    name: '谁才是意大利之光',
+    shortName: '意大利之光',
+    emoji: '🏆',
+    color: '#B8860B',
+    intro: '没人让他们在一个群里。但他们就是进来了。',
+    members: ['lorenzo','michelangelo','davinci','dante','maradona','sophia'],
+    conversation: [
+      gsys('Lorenzo · 美第奇 创建了群聊「谁才是意大利之光」'),
+      gsys('Lorenzo 添加了 Michelangelo、Leonardo、Dante、Maradona、Sophia Loren'),
+      g('lorenzo', '各位。我出钱，你们出活，这次评评理——谁对意大利贡献最大。'),
+      g('lorenzo', '规则：我不下场。我只付账。'),
+      gsys('你被 Lorenzo 添加到群聊'),
+      g('lorenzo', '@你 坐好。我需要一个中立的外国人当评委。'),
+      g('michelangelo', '不用评。答案显而易见。'),
+      g('michelangelo', '没有大卫，没有西斯廷，没有圣彼得穹顶。'),
+      g('michelangelo', '你们站的每一座文艺复兴的山，我是那座山的山脊。'),
+      g('davinci', '😊'),
+      g('davinci', '山脊很硬。但谁设计了飞行器、直升机、机关枪、潜水艇、装甲车——的草图？'),
+      g('davinci', '还在画画的时候顺便发明了现代工程学。'),
+      g('michelangelo', '草图。'),
+      g('michelangelo', '一张都没造出来。'),
+      g('davinci', '我至少尝试了。你只会骂人和凿石头。'),
+      g('dante', '两位。'),
+      g('dante', '我被流放 20 年。一个人在别人家里写完了地狱、炼狱、天堂。'),
+      g('dante', '你们用的"意大利语"——是我发明的。'),
+      g('dante', '在我之前人们说 7 种互相听不懂的方言。'),
+      g('dante', '你们现在在群里打字？用的是我的字。'),
+      g('michelangelo', '……'),
+      g('davinci', '这点确实。'),
+      g('maradona', 'Hola cabrones.'),
+      g('maradona', '你们说完了？'),
+      g('maradona', '1986 年。英格兰。我一个人。5 个防守球员。一个进球。'),
+      g('maradona', '那天那不勒斯全城哭了。'),
+      g('maradona', '不是为了我——是因为他们终于相信自己不再是垃圾。'),
+      g('maradona', '一个贫民窟的男孩让一座被嘲笑 200 年的城市赢了。'),
+      g('maradona', '艺术救不了穷人的尊严。我可以。'),
+      g('dante', '这个……'),
+      g('dante', '我写《神曲》也是为了佛罗伦萨的穷人。'),
+      g('maradona', '你的书他们读得懂？'),
+      g('dante', '……'),
+      g('sophia', 'Ragazzi。'),
+      g('sophia', '你们都对。也都错。'),
+      g('sophia', '我 15 岁在那不勒斯街头捡面包屑。现在我 90 岁，家里挂着两座奥斯卡。'),
+      g('sophia', '意大利之光不是一个人。是一个国家让穷人的女儿也能发光的能力。'),
+      g('sophia', 'Dante 给了我们语言。Leonardo 给了我们想象力。Michelangelo 给了我们骄傲。Diego 给了我们希望。'),
+      g('sophia', '我？我只是带着这一切走出去给全世界看。'),
+      g('michelangelo', '……'),
+      g('davinci', 'Brava.'),
+      g('dante', '她说得对。'),
+      g('maradona', '😭'),
+      g('lorenzo', '@你 听完了吧。'),
+      g('lorenzo', '你的一票给谁？'),
+      { t:'choice', options:[
+        { label:'米开朗基罗。石头之神。', reply:[
+          g('michelangelo', '懂行。下次来佛罗伦萨，学院美术馆 6 号厅，主厅尽头。找我。'),
+          g('davinci', '她品位不错但不全面。'),
+          g('maradona', '随便啦。'),
+        ]},
+        { label:'达芬奇。跨界之王。', reply:[
+          g('davinci', '谢谢。去米兰。Navigli 运河边的水闸系统是我的。'),
+          g('michelangelo', '草图胜利？行吧。'),
+          g('dante', '我也支持 Leonardo 的跨界精神。'),
+        ]},
+        { label:'但丁。语言之父。', reply:[
+          g('dante', '🙏 你读过《神曲》吗？'),
+          g('michelangelo', '学术派投票。'),
+          g('maradona', '读不懂的人才需要诗。'),
+        ]},
+        { label:'马拉多纳。穷人之神。', reply:[
+          g('maradona', 'VAMOS! 那不勒斯见。Quartieri Spagnoli 整条巷子的壁画都是我。'),
+          g('michelangelo', '足球？'),
+          g('sophia', 'Diego 值得。'),
+        ]},
+        { label:'Sophia。她说对了。', reply:[
+          g('sophia', 'Grazie, tesoro. 🌹'),
+          g('sophia', '"Everything you see, I owe to spaghetti."'),
+          g('michelangelo', '她确实总结了我们。'),
+          g('davinci', '同意。'),
+          g('dante', '同意。'),
+          g('maradona', '同意。'),
+        ]},
+        { label:'都很重要，我不选。', reply:[
+          g('lorenzo', '哈，你比我狡猾。'),
+          g('michelangelo', '政治家回答。'),
+          g('davinci', '最聪明的答案。'),
+          g('sophia', 'Bravo. 这才是旅行者的视角。'),
+        ]},
+      ]},
+      g('lorenzo', '行。我买单。散了吧。'),
+      g('lorenzo', '——'),
+      g('lorenzo', '临走给你一句话。'),
+      g('lorenzo', '我们家族用三百年告诉世界——钱花在谁身上，谁就会被永远记得。'),
+      g('lorenzo', '你花时间读完这段，他们就已经赢了。'),
+      gsys('——'),
+      gsys('群里安静了。但没人退群。'),
+    ],
+  },
+
+  tourist_complaints: {
+    name: '游客又来了',
+    shortName: '游客吐槽群',
+    emoji: '🙄',
+    color: '#6B4423',
+    intro: '本地人的秘密群聊。一般不给外人看。',
+    members: ['nonna','gino','giuseppe','paolo','bruno','hans','marco'],
+    conversation: [
+      gsys('Lucia 奶奶 创建了群聊「游客又来了」'),
+      gsys('Lucia 奶奶 添加了 Gino、Giuseppe、Paolo、Bruno、Hans、Marco'),
+      g('nonna', 'Ragazzi。今年又开始了。'),
+      g('nonna', '刚才一个美国人在我家门口点了 cappuccino——下午 4 点。'),
+      g('gino', '🤦 又来。'),
+      g('paolo', '下午 4 点 cappuccino = 夜里 4 点吃早餐。他们不懂。'),
+      g('nonna', '我没说他。我给他倒了。笑着。'),
+      g('nonna', '但我心里哭了。'),
+      g('gino', '我这边更惨。'),
+      g('gino', '昨天有个游客问我："Can I have pineapple pizza?"'),
+      g('gino', '我盯着他看了 3 秒。'),
+      g('gino', '我说——"Sir, in this city, that question is illegal."'),
+      g('giuseppe', '哈哈哈哈。'),
+      g('bruno', '山里人呢——昨天一对情侣穿运动鞋上 Tre Cime。'),
+      g('bruno', '到一半下雨了。鞋全湿了。'),
+      g('bruno', '我借他们我的备用登山靴。他们说"我们不知道山里会冷"。'),
+      g('bruno', '2800 米。8 月也会下雪。'),
+      g('bruno', '谷歌过再来吧 ragazzi.'),
+      g('hans', '加一。'),
+      g('hans', '每年都有游客问我"山里有 Wi-Fi 吗"。'),
+      g('hans', '有的话还叫山吗。'),
+      g('marco', '乌菲兹这边——'),
+      g('marco', '昨天一群人想"30 分钟看完整个美术馆"。'),
+      g('marco', '我说：波提切利那张《春》里有 190 种植物都能被植物学家识别。'),
+      g('marco', '30 分钟你连维纳斯的脚趾都数不完。'),
+      g('giuseppe', '😂'),
+      g('giuseppe', '我柠檬园这边——'),
+      g('giuseppe', '一个游客抱着一颗 800 克的柠檬问我："Is this GMO?"'),
+      g('giuseppe', '我说"是阳光"。'),
+      g('giuseppe', '她不信。'),
+      g('paolo', '你们说的都算温柔的。'),
+      g('paolo', '上周圣西罗球场——一个游客穿尤文球衣来看米兰德比。'),
+      g('paolo', '保安劝他换了件 T 恤才让他进。'),
+      g('paolo', '不是规定。是保护他。'),
+      g('nonna', '可是 ragazzi——'),
+      g('nonna', '说真的。'),
+      g('nonna', '我们吐槽归吐槽。'),
+      g('nonna', '其实我很高兴他们来。'),
+      g('gino', '奶奶你又要说那句话了。'),
+      g('nonna', '是的。'),
+      g('nonna', '因为如果他们不来——我们的披萨、柠檬、羊、山、面、画、球——都只是我们自己的。'),
+      g('nonna', '他们来了，这些东西才变成世界的。'),
+      g('nonna', '他们做错几件事没关系。教他们。笑着教。'),
+      g('gino', 'Sì, nonna.'),
+      g('paolo', 'Sì, nonna.'),
+      g('bruno', 'Sì, nonna.'),
+      gsys('你被 Marco 添加到群聊'),
+      g('marco', '@你 来了来了。本人就在这。'),
+      g('marco', '你被抓包的时候别慌。'),
+      g('marco', '就问一个问题——我们都不会拒绝的那个。'),
+      { t:'choice', options:[
+        { label:'请问这附近有什么只有本地人去的地方？', reply:[
+          g('nonna', '😍 这孩子上道。'),
+          g('nonna', '来 Trastevere。Da Enzo al 29。告诉老板是我让你来的。'),
+          g('gino', '那不勒斯来 Da Michele 排队。别点别的，就 Margherita。'),
+          g('giuseppe', 'Massa Lubrense 山里找我们家柠檬园。导航搜 "Limoneto"。'),
+          g('paolo', 'San Maurizio 教堂。10 分钟。免费。进去不许说话。'),
+          g('bruno', 'Malga Fanes。走 1 小时山路。值。'),
+          g('hans', 'Lago di Sorapis。徒步 3 小时。翡翠色。'),
+          g('marco', 'Giardino Bardini。紫藤花隧道。99% 游客不知道。'),
+        ]},
+        { label:'我真的很想融入，请指点一下我哪里做得不对', reply:[
+          g('nonna', 'Cappuccino 只早上 11 点前喝。之后 espresso。'),
+          g('gino', 'Pizza 不配菠萝。不切小块。用手折起来吃。'),
+          g('paolo', '吃饭时间：12-2 点午餐，7-10 点晚餐。其他时间厨房关了。'),
+          g('bruno', '上山穿登山鞋。带外套。看天气。别信 8 月不会冷。'),
+          g('giuseppe', '看见老人让座。意大利奶奶比规则还硬。'),
+          g('marco', '进教堂收好手机。拍照可以，别聊天。'),
+          g('hans', '最重要——学一句 "Buongiorno / Grazie / Scusi"。3 秒。但你会得到完全不同的待遇。'),
+        ]},
+        { label:'对不起，是我错了', reply:[
+          g('nonna', '哎哟这孩子。'),
+          g('nonna', '没什么对不起的。来我家。我给你做 cacio e pepe。'),
+          g('gino', '来我店。坐门口那个最好的位子。'),
+          g('giuseppe', '送你一瓶 Limoncello。真的。IGP 认证的。'),
+          g('paolo', '我带你去 Bar Basso 喝一杯 Negroni Sbagliato。'),
+          g('bruno', '你要是来山里——Malga Fanes 的奶酪拼盘我请。'),
+          g('marco', '😭'),
+          g('hans', '这就是为什么我们其实不讨厌游客。'),
+          g('hans', '我们讨厌的是不愿意学的人。'),
+          g('hans', '你愿意学。你就是我们的人。'),
+        ]},
+      ]},
+      g('nonna', '行了 ragazzi。该干活干活。'),
+      g('nonna', '@你 记住——'),
+      g('nonna', '我们嘴上嫌弃你。'),
+      g('nonna', '其实我们的厨房永远给你留一个位置。'),
+      g('nonna', 'Baci. 🌹'),
+      gsys('——'),
+      gsys('群聊陷入沉默。但没人退群。'),
+    ],
+  },
+
+};
+
 // ─── Helper: build chat list for a city ───
 export function charactersInCity(city) {
   return Object.entries(CHARACTERS)
@@ -810,4 +1021,14 @@ export function getPreview(charId) {
     if (msg.t === 'text' && !msg.mine) return msg.text;
   }
   return '...';
+}
+
+// ─── Helper: first text preview for a group ───
+export function getGroupPreview(groupId) {
+  const g = GROUPS[groupId];
+  if (!g) return '...';
+  for (const msg of g.conversation) {
+    if (msg.t === 'text' && msg.text) return msg.text;
+  }
+  return g.intro || '...';
 }
