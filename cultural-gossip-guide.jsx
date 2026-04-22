@@ -92,7 +92,7 @@ function Welcome({ onPick }){
           </p>
           <div style={{display:"inline-flex",alignItems:"center",gap:6,marginTop:18,padding:"6px 12px",background:"#fff",borderRadius:20,boxShadow:"0 2px 10px rgba(0,0,0,.05)",fontSize:12,color:"#8a6f47",fontWeight:600}}>
             <span style={{width:8,height:8,borderRadius:"50%",background:"#4caf50",display:"inline-block",animation:"pulse 2s infinite"}}/>
-            {Object.keys(CITIES).reduce((n,c)=>n+charactersInCity(c).length,0)} 人在线 · 6 个城市群
+            {Object.keys(CITIES).reduce((n,c)=>n+charactersInCity(c).length,0)} 位角色 · 6 个城市群
           </div>
         </div>
         <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fit,minmax(150px,1fr))",gap:12,marginTop:24}}>
@@ -555,7 +555,7 @@ function ChatEndCard({ entity, isGroup, charId }){
   }
   return (
     <div className="anim-up" style={{textAlign:"center",padding:"24px 24px 8px",margin:"16px 0 0"}}>
-      <div style={{fontSize:11,color:"#b5a58a",letterSpacing:2,marginBottom:6}}>— FINE —</div>
+      <div style={{fontSize:11,color:"#b5a58a",letterSpacing:2,marginBottom:6}}>— 本段结束 —</div>
       <div style={{fontSize:13,color:"#7a6a54",fontStyle:"italic",lineHeight:1.7,fontFamily:CN_SERIF,letterSpacing:.3}}>{msg}</div>
     </div>
   );
@@ -1190,6 +1190,7 @@ function TagPicker({ photo, onPick, onCancel }){
 
 function PhotoPreview({ photo, onClose, onRetag, onDelete }){
   const [showTags, setShowTags] = useState(false);
+  const [confirmDelete, setConfirmDelete] = useState(false);
   return (
     <div style={{position:"fixed",inset:0,background:"rgba(0,0,0,.92)",zIndex:100,display:"flex",flexDirection:"column"}}>
       <div onClick={onClose} style={{flex:1,display:"flex",alignItems:"center",justifyContent:"center",padding:20,cursor:"pointer"}}>
@@ -1199,7 +1200,14 @@ function PhotoPreview({ photo, onClose, onRetag, onDelete }){
         <button onClick={()=>setShowTags(v=>!v)} style={{background:"rgba(255,255,255,.15)",border:"1px solid rgba(255,255,255,.25)",color:"#fff",padding:"8px 16px",borderRadius:22,fontSize:13,cursor:"pointer"}}>
           🏷️ {photo.tag && TAG_BY_ID[photo.tag] ? `${TAG_BY_ID[photo.tag].emoji} ${TAG_BY_ID[photo.tag].label}` : "加标签"}
         </button>
-        <button onClick={()=>{if(confirm("删除这张照片？"))onDelete();}} style={{background:"rgba(255,59,48,.85)",border:"none",color:"#fff",padding:"8px 16px",borderRadius:22,fontSize:13,cursor:"pointer"}}>🗑 删除</button>
+        {confirmDelete ? (
+          <>
+            <button onClick={onDelete} style={{background:"rgba(255,59,48,.95)",border:"none",color:"#fff",padding:"8px 16px",borderRadius:22,fontSize:13,cursor:"pointer",fontWeight:700}}>确认删除</button>
+            <button onClick={()=>setConfirmDelete(false)} style={{background:"rgba(255,255,255,.15)",border:"1px solid rgba(255,255,255,.25)",color:"#fff",padding:"8px 16px",borderRadius:22,fontSize:13,cursor:"pointer"}}>取消</button>
+          </>
+        ) : (
+          <button onClick={()=>setConfirmDelete(true)} style={{background:"rgba(255,59,48,.85)",border:"none",color:"#fff",padding:"8px 16px",borderRadius:22,fontSize:13,cursor:"pointer"}}>🗑 删除</button>
+        )}
         <button onClick={onClose} style={{background:"rgba(255,255,255,.15)",border:"1px solid rgba(255,255,255,.25)",color:"#fff",padding:"8px 16px",borderRadius:22,fontSize:13,cursor:"pointer"}}>关闭</button>
       </div>
       {showTags && (
